@@ -19,7 +19,7 @@
 <div id="c3d"></div>
 <div id="ui"><b>البيت — 11.5 × 9.5 م (v3 · درج البرج المعتمد)</b>
 <div><button data-f="both" class="on">الطابقان</button><button data-f="ground">الأرضي فقط</button><button data-f="first">الأول فقط</button></div>
-<div><button id="bAuto">دوران تلقائي</button><button id="bTop">منظور علوي</button><button id="bTower">إخفاء البرج (عرض الدرج)</button></div></div>
+<div><button id="bAuto">دوران تلقائي</button><button id="bTop">منظور علوي</button><button id="bTower">إخفاء البرج (عرض الدرج)</button><button id="bRoof">إخفاء سقف الأول</button></div></div>
 <div id="hint">اسحب للتدوير · عجلة الفأرة أو إصبعان للتقريب</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -143,6 +143,7 @@ function ground(g,wallH){
 // tower x 9.1-11.5 (2.4 m), z 9.5-15 (5.5 m), height 6.13 m; stair tread width 1.1 m
 var TW=2.4, X0=9.1, X1=X0+TW, XC=X0+TW/2, SW=1.1, TH=6.13;
 var wE=X1-SW/2, wW=X0+SW/2;                       // east / west stair lanes
+var roofs1=[];                                    // toggled by the "hide 1st-floor roof" button
 var towerShells=[];                               // toggled by the "hide tower" button (stairs stay visible)
 function tower(g){
   var T=0.16, ZC=12.25, ZD=5.5;
@@ -202,11 +203,11 @@ function first(g){
   floor(g,0,9.5,XB2,ZB2,0xf2e3c4,y);
   w.wx(0,9.5,ZB2);w.wx(XB2,9.5,ZB2);w.wz(ZB2,0,1.6);w.wz(ZB2,2.4,XB2);
   w.wz(9.5,XB2-0.08,4.1+0.08);            // close the 0.6 m gap at the corner (x 3.5-4.1, z 9.5)
-  box(g,XB2,0.22,ZB2-9.5,XB2/2,y+3.0+0.11,(9.5+ZB2)/2,mat(0xcfc7b3));  // roof over the extension
+  roofs1.push(box(g,XB2,0.22,ZB2-9.5,XB2/2,y+3.0+0.11,(9.5+ZB2)/2,mat(0xcfc7b3)));  // roof over the extension
   furniture(g,y);
   // slab under the first floor (visible edge) + balconies, gallery, stairwell landing
   box(g,W,0.25,H,W/2,y-0.13,H/2,mat(0xb4b2a9));
-  box(g,W,0.22,H,W/2,y+FW+0.11,H/2,mat(0xcfc7b3));   // roof cover over first floor (main block z0-9.5; balconies & stairwell open)
+  roofs1.push(box(g,W,0.22,H,W/2,y+FW+0.11,H/2,mat(0xcfc7b3)));   // roof cover over first floor (main block z0-9.5; balconies & stairwell open)
   box(g,5,0.25,4,9.0,y-0.13,-2.0,mat(0xd8d2c2));box(g,4.1,0.25,5.5,2.05,y-0.13,12.25,mat(0xd8d2c2));  // balcony 2 = 5x4 (x 6.5-11.5, z -4..0); balcony 1 = full garage roof
   box(g,5.0,0.25,3.0,6.6,y-0.13,11.0,mat(0xe4ddcb));                                        // external corridor 3 m wide (z 9.5-12.5, x 4.1-9.1)
   function rx(x,z1,z2){box(g,0.06,0.5,z2-z1,x,y+0.25,(z1+z2)/2,M.rail);}
@@ -240,6 +241,7 @@ el.addEventListener('touchmove',function(e){if(e.touches.length===2){var d=Math.
 document.getElementById('bAuto').onclick=function(){auto=!auto;};
 document.getElementById('bTop').onclick=function(){auto=false;phi=0.15;theta=Math.PI;};
 document.getElementById('bTower').onclick=function(){var hide=!this.classList.contains('on');towerShells.forEach(function(s){s.visible=!hide;});this.classList.toggle('on',hide);this.textContent=hide?'إظهار البرج':'إخفاء البرج (عرض الدرج)';};
+document.getElementById('bRoof').onclick=function(){var hide=!this.classList.contains('on');roofs1.forEach(function(s){s.visible=!hide;});this.classList.toggle('on',hide);this.textContent=hide?'إظهار سقف الأول':'إخفاء سقف الأول';};
 (function anim(){requestAnimationFrame(anim);if(auto)theta+=0.0035;place();renderer.render(scene,camera);})();
 })();
 </script>
