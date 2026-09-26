@@ -25,7 +25,7 @@
 <div id="c3d"></div>
 <div id="ui"><b>البيت — 11.5 × 9.5 م (v3 · درج البرج المعتمد)</b>
 <div><button data-f="both" class="on">الطابقان</button><button data-f="ground">الأرضي فقط</button><button data-f="first">الأول فقط</button></div>
-<div><button id="bAuto">دوران تلقائي</button><button id="bTop">منظور علوي</button><button id="bTower">إخفاء البرج (عرض الدرج)</button><button id="bRoof">إخفاء سقف الأول</button></div>
+<div><button id="bAuto">دوران تلقائي</button><button id="bTop">منظور علوي</button><button id="bTower">إخفاء البرج (عرض الدرج)</button><button id="bRoof">إخفاء سقف الأول</button><button id="bCave">إظهار الكهف</button></div>
 <div><button id="bGoF">الأساسات ↓</button></div></div>
 <div id="hint">اسحب للتدوير · عجلة الفأرة أو إصبعان للتقريب</div>
 </section>
@@ -48,7 +48,8 @@ var W=11.5,H=9.5,FH=3.2;  // floor-to-floor height
 var gGround=new THREE.Group(),gFirst=new THREE.Group(),gTall=new THREE.Group();scene.add(gGround);scene.add(gFirst);scene.add(gTall);
 
 function box(g,w,h,d,x,y,z,m){var o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);g.add(o);return o;}
-function floor(g,x1,z1,x2,z2,c,y){box(g,x2-x1,0.06,z2-z1,(x1+x2)/2,y+0.03,(z1+z2)/2,mat(c));}
+var gndFloors=[];                                  // ground-level floors, made see-through by the cave button
+function floor(g,x1,z1,x2,z2,c,y){var o=box(g,x2-x1,0.06,z2-z1,(x1+x2)/2,y+0.03,(z1+z2)/2,mat(c));if(y<0.01)gndFloors.push(o);}
 function label(g,t,sub,x,y,z,sc){var cv=document.createElement('canvas');cv.width=512;cv.height=200;var c=cv.getContext('2d');
   c.font='500 60px sans-serif';c.textAlign='center';c.fillStyle='#3a3a36';c.fillText(t,256,84);
   if(sub){c.font='400 44px sans-serif';c.fillStyle='#6b6a64';c.fillText(sub,256,150);}
@@ -138,7 +139,8 @@ function ground(g,wallH){
   label(g,'8. Garage','3 × 4.5',1.5,y+1.7,11.1,2.4);
   // entrance path, courtyard, fountain, street wall with two gates, private passage, stairwell
   // courtyard now x 4.1-9.1 (tower widened west to 2.4 m: x 9.1-11.5)
-  floor(g,4.1,9.5,9.1,11,0xe4ddcb,y);floor(g,4.1,11,9.1,15.0,0xe3e6d3,y);floor(g,9.1,9.5,11.5,15.0,0xc9c2b2,y);
+  floor(g,4.1,9.5,9.1,11,0xe4ddcb,y);floor(g,4.1,11,9.1,15.0,0xe3e6d3,y);floor(g,10.2,9.5,11.5,15.0,0xc9c2b2,y);floor(g,9.1,14.4,10.2,15.0,0xc9c2b2,y);floor(g,9.1,9.5,10.2,10.2,0xc9c2b2,y);   // tower floor with the cave-stair opening (x 9.1-10.2, z 10.2-14.4)
+  box(g,0.05,0.9,4.2,10.22,y+0.45,12.3,M.rail);box(g,1.1,0.9,0.05,9.65,y+0.45,10.22,M.rail);   // guard rail around the cave-stair opening
   w.wz(15,3.0,5.3);w.wz(15,6.3,9.1);
   box(g,1.2,0.5,1.2,5.0,y+0.25,13.8,M.stone);box(g,0.9,0.1,0.9,5.0,y+0.5,13.8,M.water);box(g,0.15,0.9,0.15,5.0,y+0.7,13.8,M.stone);
   [[4.5,14.6],[8.4,14.6],[4.5,11.1],[8.6,11.1]].forEach(function(p){box(g,0.4,0.6,0.4,p[0],y+0.3,p[1],M.plant);});
@@ -227,12 +229,26 @@ function first(g){
   label(g,'14. Balcony 2','5 × 4',9.0,L,-2.1,2.6);label(g,'15. Balcony 1','4.1 × 3.0 + 0.6 strip',1.9,L,13.5,2.6);
   label(g,'16. External Corridor','width 3 m',6.6,L,11.0,2.2);label(g,'13. Stairwell','from ground',XC,L,11.2,2.0);
 }
-box(scene,15,0.3,24,5.75,-0.15,4.0,mat(0xb4b2a9));   // plot: x -1.75..13.25, z -8..16 (8 m backyard)
-box(scene,11.5,0.06,8,5.75,0.03,-4.0,mat(0xcfd9b8));   // backyard ground (z -8..0)
+var plotM=[mat(0xb4b2a9),mat(0xcfd9b8)];box(scene,15,0.3,24,5.75,-0.15,4.0,plotM[0]);   // plot: x -1.75..13.25, z -8..16 (8 m backyard)
+box(scene,11.5,0.06,8,5.75,0.03,-4.0,plotM[1]);   // backyard ground (z -8..0)
 ground(gGround,1.1);ground(gTall,FH-0.2);first(gFirst);
+/* ---- underground cave under living room + Salwa's room + kitchen strip: x 5.5-11.5, z 2.5-9.5 (6 x 7), floor -2.8 m (foundation v1) ---- */
+var gCave=new THREE.Group();scene.add(gCave);gCave.visible=false;
+(function(){var g=gCave,CY=-2.8,T=0.2,Mc=mat(0xa89f8c),Hc=-CY;
+  box(g,6.0,0.2,7.0,8.5,CY-0.1,6.0,mat(0xd6cdb8));                                  // cave floor
+  box(g,T,Hc,7.0,5.5,CY+Hc/2,6.0,Mc);box(g,T,Hc,7.0,11.5,CY+Hc/2,6.0,Mc);box(g,6.0+T,Hc,T,8.5,CY+Hc/2,2.5,Mc);   // west, east, front walls
+  box(g,3.6,Hc,T,7.3,CY+Hc/2,9.5,Mc);box(g,1.3,Hc,T,10.85,CY+Hc/2,9.5,Mc);box(g,1.1,Hc-2.1,T,9.65,CY+2.1+(Hc-2.1)/2,9.5,Mc);   // back wall z 9.5 with opening x 9.1-10.2 to the stair
+  // stair shaft under the tower west lane: 15 steps (rise 0.175, tread 0.28) from the ground at z 14.4 down to a landing at z 9.5-10.2
+  box(g,T,Hc,5.0,9.1,CY+Hc/2,12.0,Mc);box(g,T,Hc,5.0,10.2,CY+Hc/2,12.0,Mc);box(g,1.1+T,Hc,T,9.65,CY+Hc/2,14.5,Mc);
+  box(g,1.0,0.2,0.7,9.65,CY-0.1,9.85,mat(0xd6cdb8));                                // bottom landing
+  for(var s=0;s<15;s++){var top=-(s+1)*0.175;box(g,1.0,top-CY,0.28,9.65,(top+CY)/2,14.4-(s+0.5)*0.28,M.wood);}
+  box(g,1.4,0.5,0.9,6.8,CY+0.25,4.0,M.stone);box(g,0.9,1.8,0.4,11.1,CY+0.9,5.0,M.dark);   // storage bench + shelf
+  label(g,'18. Underground Cave','6 × 7 · −2.8 m',8.0,CY+1.9,6.0,3.2);label(g,'Cave stairs','under the tower',9.65,-0.6,12.4,2.0);
+})();
 
 var mode='both';
-function apply(){gFirst.visible=(mode!=='ground');gGround.visible=(mode==='ground');gTall.visible=(mode==='both');
+var caveOn=false;
+function apply(){gFirst.visible=(mode!=='ground')&&!caveOn;gGround.visible=(mode==='ground')||caveOn;gTall.visible=(mode==='both')&&!caveOn;   // cave view: low ground walls only
   gTall.children.forEach(function(o){if(o.isSprite)o.visible=false;});}
 apply();
 document.querySelectorAll('#ui button[data-f]').forEach(function(b){b.onclick=function(){mode=b.dataset.f;document.querySelectorAll('#ui button[data-f]').forEach(function(x){x.classList.toggle('on',x===b);});apply();};});
@@ -246,6 +262,10 @@ el.addEventListener('pointerup',function(){drag=false;el.style.cursor='grab';});
 el.addEventListener('wheel',function(e){e.preventDefault();r+=e.deltaY*0.02;r=Math.max(10,Math.min(50,r));},{passive:false});
 el.addEventListener('touchstart',function(e){if(e.touches.length===2)pd=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);});
 el.addEventListener('touchmove',function(e){if(e.touches.length===2){var d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);r-=(d-pd)*0.05;r=Math.max(10,Math.min(50,r));pd=d;}},{passive:true});
+document.getElementById('bCave').onclick=function(){caveOn=!caveOn;gCave.visible=caveOn;
+  plotM.concat(gndFloors.map(function(o){return o.material;})).forEach(function(m){m.transparent=caveOn;m.opacity=caveOn?0.25:1;m.depthWrite=!caveOn;m.needsUpdate=true;});
+  var tw=document.getElementById('bTower').classList.contains('on');towerShells.forEach(function(s){s.visible=!caveOn&&!tw;});   // open the tower to show the cave stairs
+  this.classList.toggle('on',caveOn);this.textContent=caveOn?'إخفاء الكهف':'إظهار الكهف';apply();};
 document.getElementById('bGoF').onclick=function(){document.getElementById('sFound').scrollIntoView({behavior:'smooth'});};
 document.getElementById('bAuto').onclick=function(){auto=!auto;};
 document.getElementById('bTop').onclick=function(){auto=false;phi=0.15;theta=Math.PI;};
