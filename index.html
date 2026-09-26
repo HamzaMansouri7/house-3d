@@ -5,22 +5,30 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>House 3D v3 — with approved tower stairs</title>
 <style>
-  html,body{margin:0;height:100%;background:#f2eee6;font-family:"Segoe UI",Tahoma,sans-serif;color:#3a3a36;overflow:hidden}
-  #c3d{position:fixed;inset:0;cursor:grab;touch-action:none}
-  #ui{position:fixed;top:14px;right:14px;background:rgba(255,255,255,.88);backdrop-filter:blur(6px);border:1px solid #d8d2c4;border-radius:10px;padding:10px 14px;font-size:14px;line-height:1.7;max-width:260px}
-  #ui b{display:block;font-size:15px;margin-bottom:4px}
-  #ui button{margin:3px 0 3px 6px;border:1px solid #b8b0a0;background:#fff;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer;font-family:inherit}
-  #ui button.on{background:#3a3a36;color:#fff;border-color:#3a3a36}
-  #ui button:hover:not(.on){background:#efe9dd}
-  #hint{position:fixed;bottom:12px;left:0;right:0;text-align:center;font-size:13px;color:#7a7264}
+  html,body{margin:0;height:100%;background:#f2eee6;font-family:"Segoe UI",Tahoma,sans-serif;color:#3a3a36}
+  .sec{position:relative;height:100vh;overflow:hidden}
+  .sec+.sec{border-top:2px solid #d8d2c4}
+  #c3d,#f3d{position:absolute;inset:0;cursor:grab;touch-action:none}
+  #ui,#fui{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.88);backdrop-filter:blur(6px);border:1px solid #d8d2c4;border-radius:10px;padding:10px 14px;font-size:14px;line-height:1.7;max-width:260px}
+  #ui b,#fui b{display:block;font-size:15px;margin-bottom:4px}
+  #ui button,#fui button{margin:3px 0 3px 6px;border:1px solid #b8b0a0;background:#fff;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer;font-family:inherit}
+  #ui button.on,#fui button.on{background:#3a3a36;color:#fff;border-color:#3a3a36}
+  #ui button:hover:not(.on),#fui button:hover:not(.on){background:#efe9dd}
+  #fui{max-width:280px}
+  #fui .k{font-size:12px;color:#6b6a64}
+  #fui .dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-left:5px;vertical-align:middle}
+  #hint,#fhint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:13px;color:#7a7264}
 </style>
 </head>
 <body>
+<section class="sec" id="sHouse">
 <div id="c3d"></div>
 <div id="ui"><b>البيت — 11.5 × 9.5 م (v3 · درج البرج المعتمد)</b>
 <div><button data-f="both" class="on">الطابقان</button><button data-f="ground">الأرضي فقط</button><button data-f="first">الأول فقط</button></div>
-<div><button id="bAuto">دوران تلقائي</button><button id="bTop">منظور علوي</button><button id="bTower">إخفاء البرج (عرض الدرج)</button><button id="bRoof">إخفاء سقف الأول</button></div></div>
+<div><button id="bAuto">دوران تلقائي</button><button id="bTop">منظور علوي</button><button id="bTower">إخفاء البرج (عرض الدرج)</button><button id="bRoof">إخفاء سقف الأول</button></div>
+<div><button id="bGoF">الأساسات ↓</button></div></div>
 <div id="hint">اسحب للتدوير · عجلة الفأرة أو إصبعان للتقريب</div>
+</section>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
@@ -238,6 +246,7 @@ el.addEventListener('pointerup',function(){drag=false;el.style.cursor='grab';});
 el.addEventListener('wheel',function(e){e.preventDefault();r+=e.deltaY*0.02;r=Math.max(10,Math.min(50,r));},{passive:false});
 el.addEventListener('touchstart',function(e){if(e.touches.length===2)pd=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);});
 el.addEventListener('touchmove',function(e){if(e.touches.length===2){var d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);r-=(d-pd)*0.05;r=Math.max(10,Math.min(50,r));pd=d;}},{passive:true});
+document.getElementById('bGoF').onclick=function(){document.getElementById('sFound').scrollIntoView({behavior:'smooth'});};
 document.getElementById('bAuto').onclick=function(){auto=!auto;};
 document.getElementById('bTop').onclick=function(){auto=false;phi=0.15;theta=Math.PI;};
 document.getElementById('bTower').onclick=function(){var hide=!this.classList.contains('on');towerShells.forEach(function(s){s.visible=!hide;});this.classList.toggle('on',hide);this.textContent=hide?'إظهار البرج':'إخفاء البرج (عرض الدرج)';};
@@ -245,5 +254,114 @@ document.getElementById('bRoof').onclick=function(){var hide=!this.classList.con
 (function anim(){requestAnimationFrame(anim);if(auto)theta+=0.0035;place();renderer.render(scene,camera);})();
 })();
 </script>
+<!-- ===== foundation (from foundation-3d-v1.html) ===== -->
+<section class="sec" id="sFound">
+<div id="f3d"></div>
+<div id="fui"><b>مخطط الأساسات — v1 (الرسم اليدوي + مقاسات V3)</b>
+<div><button id="fAuto">دوران تلقائي</button><button id="fTop">منظور علوي</button><button id="fDim" class="on">الأبعاد</button><button id="fGround">إظهار الأرض</button></div>
+<div><button id="fGoH">↑ البيت</button></div>
+<div class="k"><span class="dot" style="background:#9a9486"></span>قاعدة (سمل) · <span class="dot" style="background:#6f6a60"></span>عمود · <span class="dot" style="background:#c9c2b2"></span>جسر أرضي</div>
+<div class="k"><span class="dot" style="background:#2f7fd9"></span>العمود الأزرق = قاعدة قوية تحمل وزناً كبيراً · قاعدة الطابق السفلي (−2.8 م)</div>
+<div class="k">المقاسات مأخوذة من تصميم V3 · الخط المتقطع = الفناء المفتوح</div></div>
+<div id="fhint">اسحب للتدوير · عجلة الفأرة أو إصبعان للتقريب</div>
+<script>
+(function(){
+var el=document.getElementById('f3d');
+var scene=new THREE.Scene();
+var camera=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,0.1,400);
+var renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setClearColor(0,0);
+el.appendChild(renderer.domElement);
+addEventListener('resize',function(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+scene.add(new THREE.AmbientLight(0xffffff,0.8));
+var s1=new THREE.DirectionalLight(0xffffff,0.55);s1.position.set(14,26,10);scene.add(s1);
+var s2=new THREE.DirectionalLight(0xffffff,0.25);s2.position.set(-12,14,-12);scene.add(s2);
+function mat(c){return new THREE.MeshLambertMaterial({color:c});}
+var M={pad:mat(0x9a9486),col:mat(0x6f6a60),beam:mat(0xc9c2b2),red:mat(0xd9412b),blue:mat(0x2f7fd9)};
+function box(g,w,h,d,x,y,z,m){var o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);g.add(o);return o;}
+function label(g,t,x,y,z,sc,col){var cv=document.createElement('canvas');cv.width=512;cv.height=128;var c=cv.getContext('2d');
+  var fs=64;c.font='600 '+fs+'px sans-serif';while(c.measureText(t).width>496&&fs>20){fs-=2;c.font='600 '+fs+'px sans-serif';}c.textAlign='center';c.fillStyle=col||'#a0306a';c.fillText(t,256,86);
+  var tx=new THREE.CanvasTexture(cv);tx.minFilter=THREE.LinearFilter;var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,depthTest:false}));
+  sp.scale.set(sc||2.4,(sc||2.4)*0.25,1);sp.position.set(x,y,z);g.add(sp);return sp;}
+
+/* ---- grid = hand sketch topology, snapped to the V3 walls (house-3d-v3.html; V3 wins on sizes) ----
+   x: L1 0 west wall | L2 3.0 west-strip wall | L2b 4.1 corridor west | L3 5.5 corridor east / living west | L4 8.5 kitchen+grandma west | L5 11.5 east wall
+   z: X1 -4 grandma back | X2 0 grandma/kitchen | A 2.5 yard line | B 5.5 living front (sketch 3) | C 9.5 main back (sketch 4) | D 11.5 (sketch 2) | E 15 street line */
+var L1=0,L2=3.0,L2b=4.1,L3=5.5,L4=8.5,L5=11.5;
+var A=2.5,B=5.5,C=9.5,D=11.5,E=15,X1=-4,X2=0;
+var BW=0.25,BH=0.4;          // ground beam 25 x 40 cm
+var CS=0.25;                 // column 25 x 25 cm
+var PD=1.0,PT=0.35,DEPTH=1.2;// pad footing 1.0 x 1.0 x 0.35 at -1.2 m (assumed)
+
+var gStruct=new THREE.Group(),gDim=new THREE.Group();scene.add(gStruct);scene.add(gDim);
+
+var cols=[
+  [L1,A],[L2,A],[L2b,A],[L3,A],[L4,A],[L5,A],
+  [L1,B],[L2,B],[L2b,B],[L3,B],[L4,B,'blue'],[L5,B],
+  [L1,C],[L3,C],[L4,C],[L5,C],   // red-circled column at (L2,C) removed — wrong on sketch
+  [L1,D],[L2,D],[L3,D],[L4,D],[L5,D],
+  [L1,E],[L2,E],[L5,E],
+  [L4,X1],[L5,X1],[L4,X2],[L5,X2]
+];
+cols.forEach(function(p){
+  var m=p[2]?M[p[2]]:M.col;
+  var dp=p[2]==='blue'?2.8+PT:DEPTH;                                   // blue = base of the underground floor (floor at -2.8 m)
+  box(gStruct,PD,PT,PD,p[0],-dp+PT/2,p[1],p[2]?m:M.pad);               // pad footing
+  box(gStruct,CS,dp-PT+0.6,CS,p[0],(-dp+PT+0.6)/2,p[1],m);             // column starter (0.6 m above ground beam)
+  if(p[2]==='blue')label(gDim,'قاعدة قوية (حمل كبير) · −2.8 م',p[0],-dp-0.4,p[1],3.2,'#2f7fd9');
+  if(p[2]){var ring=new THREE.Mesh(new THREE.TorusGeometry(0.7,0.06,8,40),m);ring.rotation.x=Math.PI/2;ring.position.set(p[0],0.02,p[1]);gStruct.add(ring);}
+});
+
+function beamX(z,x1,x2){box(gStruct,x2-x1+BW,BH,BW,(x1+x2)/2,-BH/2,z,M.beam);}
+function beamZ(x,z1,z2){box(gStruct,BW,BH,z2-z1+BW,x,-BH/2,(z1+z2)/2,M.beam);}
+// rows
+beamX(A,L1,L5);beamX(B,L1,L5);beamX(C,L1,L5);beamX(D,L2,L5);beamX(E,L1,L5);
+beamX(X1,L4,L5);beamX(X2,L4,L5);
+// column lines
+beamZ(L1,A,E);beamZ(L2,A,E);beamZ(L2b,A,B);beamZ(L3,A,C);beamZ(L4,X1,B);beamZ(L5,X1,E);
+
+// dashed outline (not built) from the sketch — position estimated
+var dash=new THREE.LineDashedMaterial({color:0x3a3a36,dashSize:0.3,gapSize:0.2});
+var pts=[[L1,A],[L1,X2],[7.9,X2],[7.9,X1],[L4,X1]].map(function(p){return new THREE.Vector3(p[0],0.01,p[1]);});
+var ln=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),dash);ln.computeLineDistances();gStruct.add(ln);
+
+// ground (optional)
+var ground=box(scene,16,0.02,20,L5/2,-0.01,(X1+E)/2,new THREE.MeshLambertMaterial({color:0xb9a888,transparent:true,opacity:0.55}));ground.visible=false;
+
+// dimensions (from V3)
+var y=0.9;
+label(gDim,'3.0',(L1+L2)/2,y,E+0.9);
+label(gDim,'1.1',(L2+L2b)/2,y,A-0.6,1.6);
+label(gDim,'1.4',(L2b+L3)/2,y,A-0.6,1.6);
+label(gDim,'3.0',(L3+L4)/2,y,A-0.6);
+label(gDim,'3.0',(L4+L5)/2,y,X1-0.7);
+label(gDim,'4',L5+1.0,y,(X1+X2)/2);
+label(gDim,'2.5',L5+1.0,y,(X2+A)/2);
+label(gDim,'3',L5+1.0,y,(A+B)/2);
+label(gDim,'4',L5+1.0,y,(B+C)/2);
+label(gDim,'2',L5+1.0,y,(C+D)/2);
+label(gDim,'3.5',L5+1.0,y,(D+E)/2);
+label(gDim,'11.5',(L1+L5)/2,y,E+1.8,2.4,'#3a3a36');
+label(gDim,'19',L5+2.4,y,(X1+E)/2,2.4,'#3a3a36');
+
+// camera
+var cx=L5/2,cz=(X1+E)/2,theta=0.9,phi=0.9,r=28,auto=true;
+function place(){camera.position.set(cx+r*Math.sin(phi)*Math.sin(theta),r*Math.cos(phi),cz+r*Math.sin(phi)*Math.cos(theta));camera.lookAt(cx,-0.3,cz);}
+var drag=false,px=0,py=0,pd=0;
+el.addEventListener('pointerdown',function(e){drag=true;auto=false;px=e.clientX;py=e.clientY;el.setPointerCapture(e.pointerId);el.style.cursor='grabbing';});
+el.addEventListener('pointermove',function(e){if(!drag)return;theta-=(e.clientX-px)*0.008;phi-=(e.clientY-py)*0.006;phi=Math.max(0.15,Math.min(1.55,phi));px=e.clientX;py=e.clientY;});
+el.addEventListener('pointerup',function(){drag=false;el.style.cursor='grab';});
+el.addEventListener('wheel',function(e){e.preventDefault();r+=e.deltaY*0.02;r=Math.max(8,Math.min(50,r));},{passive:false});
+el.addEventListener('touchstart',function(e){if(e.touches.length===2)pd=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);});
+el.addEventListener('touchmove',function(e){if(e.touches.length===2){var d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);r-=(d-pd)*0.05;r=Math.max(8,Math.min(50,r));pd=d;}},{passive:true});
+document.getElementById('fGoH').onclick=function(){document.getElementById('sHouse').scrollIntoView({behavior:'smooth'});};
+document.getElementById('fAuto').onclick=function(){auto=!auto;};
+document.getElementById('fTop').onclick=function(){auto=false;phi=0.15;theta=0;};
+document.getElementById('fDim').onclick=function(){gDim.visible=!gDim.visible;this.classList.toggle('on',gDim.visible);};
+document.getElementById('fGround').onclick=function(){ground.visible=!ground.visible;this.classList.toggle('on',ground.visible);this.textContent=ground.visible?'إخفاء الأرض':'إظهار الأرض';};
+(function anim(){requestAnimationFrame(anim);if(auto)theta+=0.0035;place();renderer.render(scene,camera);})();
+})();
+</script>
+</section>
 </body>
 </html>
