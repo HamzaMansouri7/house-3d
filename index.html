@@ -16,6 +16,10 @@
   #ui button:hover:not(.on),#fui button:hover:not(.on),#mui button:hover:not(.on),#a_ui button:hover:not(.on){background:#efe9dd}
   #fui,#mui{max-width:280px}
   #fui .k,#mui .k{font-size:12px;color:#6b6a64}
+  /* control panels as a header toolbar across the top of each section */
+  #ui,#fui,#mui,#a_ui{top:0;left:0;right:0;max-width:none;border-radius:0;border-width:0 0 1px;padding:6px 12px;display:flex;flex-wrap:wrap;align-items:center;gap:2px 12px}
+  #ui>div,#fui>div,#mui>div,#a_ui>div{display:flex;flex-wrap:wrap;align-items:center}
+  #ui b,#fui b,#mui b,#a_ui b{margin:0 0 0 6px}
   #fui .dot,#mui .dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-left:5px;vertical-align:middle}
   #hint,#fhint,#mhint,#a_hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:13px;color:#7a7264}
 </style>
@@ -148,7 +152,8 @@ function ground(g,wallH){
   floor(g,4.1,9.5,9.1,11,0xe4ddcb,y);floor(g,4.1,11,9.1,15.0,0xe3e6d3,y);floor(g,9.1,9.5,10.4,15.0,0xc9c2b2,y);floor(g,10.4,14.4,11.5,15.0,0xc9c2b2,y);floor(g,10.4,9.5,11.5,10.2,0xc9c2b2,y);   // tower floor with the cave-stair opening under flight 1 (x 10.4-11.5, z 10.2-14.4)
   w.wz(15,3.0,5.3);w.wz(15,6.3,9.1);
   box(g,1.2,0.5,1.2,3.7,y+0.25,14.3,M.stone);box(g,0.9,0.1,0.9,3.7,y+0.5,14.3,M.water);box(g,0.15,0.9,0.15,3.7,y+0.7,14.3,M.stone);   // fountain in the corner: garage wall (x 3.0) x street wall (z 15)
-  [[4.5,14.6],[8.4,14.6],[4.5,11.1],[8.6,11.1]].forEach(function(p){box(g,0.4,0.6,0.4,p[0],y+0.3,p[1],M.plant);});
+  [[4.5,14.6],[8.4,14.6]].forEach(function(p){box(g,0.4,0.6,0.4,p[0],y+0.3,p[1],M.plant);});
+  [[4.5,11.1],[8.87,11.1]].forEach(function(p){box(g,0.3,FH-0.25,0.3,p[0],y+(FH-0.25)/2,p[1],M.stone);box(g,0.5,0.15,0.5,p[0],y+0.075,p[1],M.stone);});   // 2 columns (with base) under the 1st-floor external corridor; east one flush against the tower wall (face x 9.02)
   label(g,'9. Courtyard','',6.6,y+1.7,12.0,2.2);label(g,'10. Fountain','',3.7,y+1.4,14.3,1.5);label(g,'11. Street Door','ground',5.8,y+1.4,15.6,2.8);
   label(g,'12. Private Door','1st floor',10.95,y+1.4,15.6,2.8);label(g,'13. Stairwell','',10.3,y+1.7,10.6,2.0);
   tower(g);
@@ -167,7 +172,7 @@ function tower(g){
   box(sh,T,TH,ZD,X1,TH/2,ZC,M.stone);                                 // east wall (house east line)
   var ZD1=12.05;                                                      // 1st-floor door centre — top-right corner of the 3 m corridor (z 9.5-12.5)
   // ground-floor door from the courtyard to the cave stairs: west wall x 9.1, z 11.3-12.2, h 2.1 (under the 1st-floor door)
-  box(sh,T,TH,1.8,X0,TH/2,10.4,M.stone);box(sh,T,TH-FH,0.3,X0,FH+(TH-FH)/2,11.45,M.stone);   // west wall, back part (z 9.5 -> 11.3, plus z 11.3-11.6 above the ground floor)
+  box(sh,T,FH,1.8,X0,FH/2,10.4,M.stone);box(sh,T,TH-FH,0.25,X0,FH+(TH-FH)/2,9.625,M.stone);box(sh,T,TH-FH,0.65,X0,FH+(TH-FH)/2,10.975,M.stone);box(sh,T,TH-FH-2.0,0.9,X0,(TH+FH+2.0)/2,10.2,M.stone);box(sh,T,TH-FH,0.3,X0,FH+(TH-FH)/2,11.45,M.stone);   // west wall, back part z 9.5 -> 11.6 with the 1st-floor stair-exit door z 9.75-10.65 (top of flight 2->3)
   box(g,0.08,2.1,0.9,X0,1.05,11.75,M.wood);                          // cave-stair door leaf
   // west wall, front part (z 12.2 -> 15) cut on a diagonal next to the cave-stair door: open below the line (z 12.2, y 2.1) -> (z 14.6, y 0)
   (function(){var s=new THREE.Shape();s.moveTo(12.2,2.1);s.lineTo(12.2,FH);s.lineTo(12.5,FH);s.lineTo(12.5,TH);s.lineTo(15,TH);s.lineTo(15,0);s.lineTo(14.9,0);s.lineTo(14.9,2.1);s.lineTo(14.0,2.1);s.lineTo(14.0,0.525);s.lineTo(12.2,2.1);   // + stair door z 14.0-14.9 (h 2.1) to flight 1
@@ -235,7 +240,7 @@ function first(g){
   function rz(z,x1,x2){box(g,x2-x1,0.5,0.06,(x1+x2)/2,y+0.25,z,M.rail);}
   rz(-4,6.5,11.5);rx(6.5,-4,0);rx(11.5,-4,0);
   rz(15,0,4.1);rx(0,ZB2,15);rx(4.1,12.5,15);rz(12.5,4.1,9.1);
-  box(g,0.08,2.0,0.85,X0,y+1.0,12.05,M.wood);                                                  // door corridor -> tower, top-right corner of corridor
+  box(g,0.08,2.0,0.85,X0,y+1.0,12.05,M.wood);box(g,0.08,2.0,0.9,X0,y+1.0,10.2,M.wood);   // + stair-exit door (z 9.75-10.65)                                                   // door corridor -> tower, top-right corner of corridor
   var L=y+1.7;
   label(g,'14. Balcony 2','5 × 4',9.0,L,-2.1,2.6);label(g,'15. Balcony 1','4.1 × 3.0 + 0.6 strip',1.9,L,13.5,2.6);
   label(g,'16. External Corridor','width 3 m',6.6,L,11.0,2.2);label(g,'13. Stairwell','from ground',XC,L,11.2,2.0);
