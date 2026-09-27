@@ -147,9 +147,9 @@ function ground(g,wallH){
   // courtyard now x 4.1-9.1 (tower widened west to 2.4 m: x 9.1-11.5)
   floor(g,4.1,9.5,9.1,11,0xe4ddcb,y);floor(g,4.1,11,9.1,15.0,0xe3e6d3,y);floor(g,9.1,9.5,10.4,15.0,0xc9c2b2,y);floor(g,10.4,14.4,11.5,15.0,0xc9c2b2,y);floor(g,10.4,9.5,11.5,10.2,0xc9c2b2,y);   // tower floor with the cave-stair opening under flight 1 (x 10.4-11.5, z 10.2-14.4)
   w.wz(15,3.0,5.3);w.wz(15,6.3,9.1);
-  box(g,1.2,0.5,1.2,4.8,y+0.25,13.8,M.stone);box(g,0.9,0.1,0.9,4.8,y+0.5,13.8,M.water);box(g,0.15,0.9,0.15,4.8,y+0.7,13.8,M.stone);   // fountain in the corner against the garage wall (x 4.2-5.4)
+  box(g,1.2,0.5,1.2,3.7,y+0.25,14.3,M.stone);box(g,0.9,0.1,0.9,3.7,y+0.5,14.3,M.water);box(g,0.15,0.9,0.15,3.7,y+0.7,14.3,M.stone);   // fountain in the corner: garage wall (x 3.0) x street wall (z 15)
   [[4.5,14.6],[8.4,14.6],[4.5,11.1],[8.6,11.1]].forEach(function(p){box(g,0.4,0.6,0.4,p[0],y+0.3,p[1],M.plant);});
-  label(g,'9. Courtyard','',6.6,y+1.7,12.0,2.2);label(g,'10. Fountain','',4.8,y+1.4,14.6,1.5);label(g,'11. Street Door','ground',5.8,y+1.4,15.6,2.8);
+  label(g,'9. Courtyard','',6.6,y+1.7,12.0,2.2);label(g,'10. Fountain','',3.7,y+1.4,14.3,1.5);label(g,'11. Street Door','ground',5.8,y+1.4,15.6,2.8);
   label(g,'12. Private Door','1st floor',10.95,y+1.4,15.6,2.8);label(g,'13. Stairwell','',10.3,y+1.7,10.6,2.0);
   tower(g);
 }
