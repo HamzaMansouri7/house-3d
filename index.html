@@ -194,7 +194,10 @@ function tower(g){
   box(sh,T,TH,ZD,X1,TH/2,ZC,M.stone);                                 // east wall (house east line)
   var ZD1=12.05;                                                      // 1st-floor door centre — top-right corner of the 3 m corridor (z 9.5-12.5)
   // ground-floor door from the courtyard to the cave stairs: west wall x 9.1, z 11.3-12.2, h 2.1 (under the 1st-floor door)
-  box(sh,T,FH,1.8,X0,FH/2,10.4,M.stone);box(sh,T,TH-FH,0.25,X0,FH+(TH-FH)/2,9.625,M.stone);box(sh,T,TH-FH,0.65,X0,FH+(TH-FH)/2,10.975,M.stone);box(sh,T,TH-FH-2.0,0.9,X0,(TH+FH+2.0)/2,10.2,M.stone);box(sh,T,TH-FH,0.3,X0,FH+(TH-FH)/2,11.45,M.stone);   // west wall, back part z 9.5 -> 11.6 with the 1st-floor stair-exit door z 9.75-10.65 (top of flight 2->3)
+  box(sh,T,FH,1.8,X0,FH/2,10.4,M.stone);
+  if(SALWA){   // SALWA: 2 m corridor -> ONE 1st-floor door on the west wall, z 10.55-11.45 (h 2.0); the stair-exit (10.2) and the old z 12.05 doors are walled
+    box(sh,T,TH-FH,1.05,X0,FH+(TH-FH)/2,10.025,M.stone);box(sh,T,TH-FH-2.0,0.9,X0,(TH+FH+2.0)/2,11.0,M.stone);box(sh,T,TH-FH,1.05,X0,FH+(TH-FH)/2,11.975,M.stone);
+  }else{box(sh,T,TH-FH,0.25,X0,FH+(TH-FH)/2,9.625,M.stone);box(sh,T,TH-FH,0.65,X0,FH+(TH-FH)/2,10.975,M.stone);box(sh,T,TH-FH-2.0,0.9,X0,(TH+FH+2.0)/2,10.2,M.stone);box(sh,T,TH-FH,0.3,X0,FH+(TH-FH)/2,11.45,M.stone);}   // west wall, back part z 9.5 -> 11.6 with the 1st-floor stair-exit door z 9.75-10.65 (top of flight 2->3)
   box(g,0.08,2.1,0.9,X0,1.05,11.75,M.wood);                          // cave-stair door leaf
   // west wall, front part (z 12.2 -> 15) cut on a diagonal next to the cave-stair door: open below the line (z 12.2, y 2.1) -> (z 14.6, y 0)
   (function(){var s=new THREE.Shape();s.moveTo(12.2,2.1);s.lineTo(12.2,FH);s.lineTo(12.5,FH);s.lineTo(12.5,TH);s.lineTo(15,TH);s.lineTo(15,0);s.lineTo(14.9,0);s.lineTo(14.9,2.1);s.lineTo(14.0,2.1);s.lineTo(14.0,0.525);s.lineTo(12.2,2.1);   // + stair door z 14.0-14.9 (h 2.1) to flight 1
@@ -221,14 +224,12 @@ function tower(g){
     for(var s=0;s<6;s++){box(g,SW,r1,t1,wE,10*r1+(s+0.5)*r1,14.21-(s+0.5)*t1,M.wood);}      // flight 3: east lane, 6 steps back toward the house (y 2.0 -> 3.2, z 14.21 -> 12.71), last step flush with the landing
     box(g,TW,0.12,12.71-9.5,XC,FH-0.06,(12.71+9.5)/2,M.rail);                                // 1st-floor floor: tower covered from the last step to the back wall (z 12.71 -> 9.5), y 3.2
     // 1st floor (3.2) -> top (6.13): 16 risers
-    // corridor is 2 m (z 9.5-11.5): the tower door onto it is the one at z 10.2 (9.75-10.65); the old z 12.05 door is walled up
-    box(sh,T,2.0,0.9,X0,FH+1.0,12.05,M.stone);
-    var r2=(TH-FH)/16,zBk=9.58,zDc=10.2,tA2=0.20,xS=X0+0.08;
+    var r2=(TH-FH)/16,zBk=9.58,zDc=12.05,tA2=0.20,xS=X0+0.08;
     for(var s=0;s<6;s++){box(g,tA2,r2,SW,xS+(s+0.5)*tA2,FH+(s+0.5)*r2,zDc,M.wood);}         // flight 4: X from the corridor door, west -> east (x 9.18 -> 10.38)
-    var xT=xS+6*tA2,xE2=X1-0.08,z4a=zDc+SW/2;
-    box(g,xE2-xT,0.12,SW,(xT+xE2)/2,FH+7*r2-0.06,zDc,M.rail);                              // turn landing at the east end (x 10.38 -> 11.42, z 9.65 -> 10.75), y 4.48
-    var tB2=0.213;
-    for(var s=0;s<9;s++){box(g,SW,r2,tB2,wE,FH+7*r2+(s+0.5)*r2,z4a+(s+0.5)*tB2,M.wood);}    // flight 5: east lane, 9 steps back -> front (z 10.75 -> 12.67), top step at 6.13
+    var xT=xS+6*tA2,xE2=X1-0.08,z4a=zDc-SW/2;
+    box(g,xE2-xT,0.12,SW,(xT+xE2)/2,FH+7*r2-0.06,zDc,M.rail);                              // turn landing at the east end (x 10.38 -> 11.42, z 11.5 -> 12.6), y 4.48
+    var tB2=(z4a-zBk)/9;
+    for(var s=0;s<9;s++){box(g,SW,r2,tB2,wE,FH+7*r2+(s+0.5)*r2,z4a-(s+0.5)*tB2,M.wood);}    // flight 5: east lane, 9 steps front -> back to the back wall (z 11.5 -> 9.58), top step at 6.13
     return;
   }
   // --- level 1: door -> 6 steps -> flat run -> back turn (2) -> 4 wide X steps -> 1st floor (3) ---
@@ -298,7 +299,7 @@ function first(g){
   function rz(z,x1,x2){box(g,x2-x1,0.5,0.06,(x1+x2)/2,y+0.25,z,M.rail);}
   rz(-4,6.5,11.5);rx(6.5,-4,0);rx(11.5,-4,0);
   var zCE=SALWA?11.5:12.5;rz(15,0,4.1);rx(0,ZB2,15);rx(4.1,zCE,15);rz(zCE,4.1,9.1);
-  if(!SALWA)box(g,0.08,2.0,0.85,X0,y+1.0,12.05,M.wood);box(g,0.08,2.0,0.9,X0,y+1.0,10.2,M.wood);   // + stair-exit door (z 9.75-10.65)                                                   // door corridor -> tower, top-right corner of corridor
+  if(SALWA)box(g,0.08,2.0,0.9,X0,y+1.0,11.0,M.wood);else{box(g,0.08,2.0,0.85,X0,y+1.0,12.05,M.wood);box(g,0.08,2.0,0.9,X0,y+1.0,10.2,M.wood);}   // + stair-exit door (z 9.75-10.65)                                                   // door corridor -> tower, top-right corner of corridor
   var L=y+1.7;
   label(g,'14. Balcony 2','5 × 4',9.0,L,-2.1,2.6);label(g,'15. Balcony 1','4.1 × 3.0 + 0.6 strip',1.9,L,13.5,2.6);
   label(g,'16. External Corridor',SALWA?'width 2 m':'width 3 m',6.6,L,SALWA?10.5:11.0,2.2);label(g,'13. Stairwell','from ground',XC,L,11.2,2.0);
