@@ -8,20 +8,20 @@
   html,body{margin:0;height:100%;background:#f2eee6;font-family:"Segoe UI",Tahoma,sans-serif;color:#3a3a36}
   .sec{position:relative;height:100vh;overflow:hidden}
   .sec+.sec{border-top:2px solid #d8d2c4}
-  #c3d,#f3d,#m3d,#a_c3d{position:absolute;inset:0;cursor:grab;touch-action:none}
-  #ui,#fui,#mui,#a_ui{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.88);backdrop-filter:blur(6px);border:1px solid #d8d2c4;border-radius:10px;padding:10px 14px;font-size:14px;line-height:1.7;max-width:260px}
-  #ui b,#fui b,#mui b,#a_ui b{display:block;font-size:15px;margin-bottom:4px}
-  #ui button,#fui button,#mui button,#a_ui button{margin:3px 0 3px 6px;border:1px solid #b8b0a0;background:#fff;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer;font-family:inherit}
-  #ui button.on,#fui button.on,#mui button.on,#a_ui button.on{background:#3a3a36;color:#fff;border-color:#3a3a36}
-  #ui button:hover:not(.on),#fui button:hover:not(.on),#mui button:hover:not(.on),#a_ui button:hover:not(.on){background:#efe9dd}
+  #c3d,#f3d,#m3d,#a_c3d,#s_c3d{position:absolute;inset:0;cursor:grab;touch-action:none}
+  #ui,#fui,#mui,#a_ui,#s_ui{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.88);backdrop-filter:blur(6px);border:1px solid #d8d2c4;border-radius:10px;padding:10px 14px;font-size:14px;line-height:1.7;max-width:260px}
+  #ui b,#fui b,#mui b,#a_ui b,#s_ui b{display:block;font-size:15px;margin-bottom:4px}
+  #ui button,#fui button,#mui button,#a_ui button,#s_ui button{margin:3px 0 3px 6px;border:1px solid #b8b0a0;background:#fff;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer;font-family:inherit}
+  #ui button.on,#fui button.on,#mui button.on,#a_ui button.on,#s_ui button.on{background:#3a3a36;color:#fff;border-color:#3a3a36}
+  #ui button:hover:not(.on),#fui button:hover:not(.on),#mui button:hover:not(.on),#a_ui button:hover:not(.on),#s_ui button:hover:not(.on){background:#efe9dd}
   #fui,#mui{max-width:280px}
   #fui .k,#mui .k{font-size:12px;color:#6b6a64}
   /* control panels as a header toolbar across the top of each section */
-  #ui,#fui,#mui,#a_ui{top:0;left:0;right:0;max-width:none;border-radius:0;border-width:0 0 1px;padding:6px 12px;display:flex;flex-wrap:wrap;align-items:center;gap:2px 12px}
-  #ui>div,#fui>div,#mui>div,#a_ui>div{display:flex;flex-wrap:wrap;align-items:center}
-  #ui b,#fui b,#mui b,#a_ui b{margin:0 0 0 6px}
+  #ui,#fui,#mui,#a_ui,#s_ui{top:0;left:0;right:0;max-width:none;border-radius:0;border-width:0 0 1px;padding:6px 12px;display:flex;flex-wrap:wrap;align-items:center;gap:2px 12px}
+  #ui>div,#fui>div,#mui>div,#a_ui>div,#s_ui>div{display:flex;flex-wrap:wrap;align-items:center}
+  #ui b,#fui b,#mui b,#a_ui b,#s_ui b{margin:0 0 0 6px}
   #fui .dot,#mui .dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-left:5px;vertical-align:middle}
-  #hint,#fhint,#mhint,#a_hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:13px;color:#7a7264}
+  #hint,#fhint,#mhint,#a_hint,#s_hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:13px;color:#7a7264}
 </style>
 </head>
 <body>
@@ -35,7 +35,7 @@
 </section>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-function houseView(P,ALL){var $id=function(i){return document.getElementById(P+i);};
+function houseView(P,ALL,SALWA){var $id=function(i){return document.getElementById(P+i);};
 var el=$id('c3d');
 var scene=new THREE.Scene();
 var camera=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,0.1,400);
@@ -189,6 +189,15 @@ function tower(g){
   box(sh,SW,TH-2.3,T,wE,(TH+2.3)/2,15.0,M.stone);                     // header above door (y 2.3-6.13)
   box(g,0.10,2.3,0.18,wE-SW/2+0.05,1.15,15.0,M.wood);box(g,0.10,2.3,0.18,X1-0.05,1.15,15.0,M.wood); // door frame (stays visible)
   box(sh,TW+0.2,0.25,ZD+0.2,XC,TH+0.12,ZC,M.stone);                   // parapet cap
+  if(SALWA){   // ==== SALWA proposal stairs (from stairs-SALWA-proposal.html) ====
+    var r1=FH/16,t1=0.25,zDoor=14.91,t2=0.20,z2=13.41;
+    box(g,0.05,2.2,0.95,wE-SW/2+0.08,1.1,15.09+0.475,M.wood);                                // street door leaf, open 90deg outward to the street
+    for(var s=0;s<4;s++){box(g,SW,r1,t1,wE,(s+0.5)*r1,zDoor-(s+0.5)*t1,M.wood);}            // flight 1: 1 m from the door (z 14.91 -> 13.91), east lane
+    box(g,TW,0.12,1.0,XC,5*r1-0.06,zDoor-4*t1-0.5,M.rail);                                  // landing 1 m deep (z 13.91 -> 12.91), y 1.0
+    for(var s=0;s<4;s++){box(g,SW,r1,t2,wW,5*r1+(s+0.5)*r1,z2+(s+0.5)*t2,M.wood);}          // flight 2: west lane back toward the door (y 1.0 -> 2.0)
+    box(g,TW,0.12,0.7,XC,10*r1-0.06,z2+4*t2+0.35,M.rail);                                   // upper landing above the door (z 14.21 -> 14.91), y 2.0
+    return;
+  }
   // --- level 1: door -> 6 steps -> flat run -> back turn (2) -> 4 wide X steps -> 1st floor (3) ---
   (function(){var y=0,top=FH,nA=6,rise=(top-y)/(nA+3),tread=0.40,zF=13.8,zBack=10.2;   // tread 0.40 (was 0.30)
     for(var s=0;s<nA;s++){box(g,SW,rise,tread,wE,y+(s+0.5)*rise,zF-s*tread,M.wood);}
@@ -554,5 +563,15 @@ document.getElementById('mGround').onclick=function(){ground.visible=!ground.vis
 <div id="a_hint">اسحب للتدوير · عجلة الفأرة أو إصبعان للتقريب</div>
 </section>
 <script>houseView('a_',true);</script>
+<!-- ===== Salwa proposal: house with the Salwa stairs (from stairs-SALWA-proposal.html) ===== -->
+<section class="sec" id="sSalwa">
+<div id="s_c3d"></div>
+<div id="s_ui"><b>اقتراح سلوى — Salwa proposal (درج البرج)</b>
+<div><button data-f="both" class="on">الطابقان</button><button data-f="ground">الأرضي فقط</button><button data-f="first">الأول فقط</button></div>
+<div><button id="s_bAuto">دوران تلقائي</button><button id="s_bTop">منظور علوي</button><button id="s_bTower">إخفاء البرج (عرض الدرج)</button><button id="s_bRoof">إخفاء سقف الأول</button><button id="s_bCave">إظهار الكهف</button></div>
+<div><button id="s_bGoF">الأساسات ↓</button></div></div>
+<div id="s_hint">اسحب للتدوير · عجلة الفأرة أو إصبعان للتقريب</div>
+</section>
+<script>houseView('s_',false,true);</script>
 </body>
 </html>
