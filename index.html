@@ -68,7 +68,7 @@ function interior(g,y,wallH){
   function wz(z,x1,x2){box(g,x2-x1,wallH,T,(x1+x2)/2,y+wallH/2,z,M.wall);}
   floor(g,0,0,4.1,5.0,0xf2e3c4,y);floor(g,4.1,0,5.5,9.5,0xecdfc2,y);   // corridor full length (bathroom drawn per floor)
   floor(g,0,5.0,4.1,9.5,0xf2e3c4,y);floor(g,5.5,0,11.5,5.5,0xf0e9d8,y);floor(g,5.5,5.5,11.5,9.5,0xedeae0,y);   // living room 6x4 (z 5.5-9.5)
-  wz(0,8.5,10.6);wz(0,11.4,11.5);wx(11.5,0,9.5);wx(0,2.5,9.5);   // ground: x 0-8.5 at z 0 and west wall z 0-2.5 are open yard (1st floor closes them)
+  if(SALWA&&y>0)wz(0,9.3,10.6);else wz(0,8.5,10.6);wz(0,11.4,11.5);wx(11.5,0,9.5);wx(0,2.5,9.5);   // SALWA 1st floor: wide kitchen window x 7.3-9.3 (see first()); ground: x 0-8.5 at z 0 and west wall z 0-2.5 are open yard (1st floor closes them)
   // wz(9.5,5.2,11.5) living-room back wall drawn per floor (1st floor has a window)
   wx(5.5,2.5,2.7);wx(5.5,3.5,5.7);wz(5.5,5.5,9.5);wz(5.5,10.4,11.5);   // x=5.5 z 0-2.5 open yard on ground (1st floor closes); x=5.5 z 5.7-9.5 (living west wall) drawn per floor; gap x 9.5-10.4 = kitchen door from living (closed on 1st floor)
   // x=4.1 wall drawn per floor (ground: rooms end at x 3)
@@ -251,7 +251,11 @@ function tower(g){
 function first(g){
   var FW=3.0;                              // first-floor room height 3 m
   var y=FH,w=interior(g,y,FW);
-  w.wz(0,0,8.5);w.wx(0,0,2.5);w.wx(5.5,0,2.5);   // 1st floor: close the ground yard openings
+  if(SALWA){w.wz(0,0,7.3);   // SALWA: wide window 2.0 x 1.2 in the kitchen back wall (z 0, x 7.3-9.3, sill 1.0) onto balcony 2
+    box(g,2.0,1.0,0.16,8.3,y+0.5,0,M.wall);box(g,2.0,FW-2.2,0.16,8.3,y+2.2+(FW-2.2)/2,0,M.wall);
+    box(g,2.0,1.2,0.05,8.3,y+1.6,0,M.glass);box(g,2.06,0.06,0.2,8.3,y+1.0,0,M.rail);box(g,2.06,0.06,0.2,8.3,y+2.2,0,M.rail);
+  }else w.wz(0,0,8.5);
+  w.wx(0,0,2.5);w.wx(5.5,0,2.5);   // 1st floor: close the ground yard openings
   w.wz(5.0,0,4.1);                         // 1st floor: master / bedroom 2 split at z 5.0
   // living-room back wall (z 9.5) with a 1.2 x 1.2 window onto the external corridor, centred x 8.5, sill 1.0 m
   w.wz(9.5,5.2,6.7);w.wz(9.5,7.9,11.5);
