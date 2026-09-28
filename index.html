@@ -257,6 +257,7 @@ function first(g){
     box(g,5.5,0.9,0.05,2.75,y+0.45,0.02,M.rail);box(g,0.05,0.9,0.5,0.02,y+0.45,0.25,M.rail);   // walkway rail (back edge + west end)
     // SALWA: kitchen 6 x 4 (z 1.5-5.5): back wall moved to z 1.5 with the wide window 2.0 x 1.2 (x 7.3-9.3, sill 1.0); strip z 0-1.5 joins balcony 2
     w.wz(1.5,5.5,7.3);w.wz(1.5,9.3,11.5);
+    w.wz(0,5.5,6.5);             // SALWA: close the strip at z 0 between the bathroom wall (x 5.5) and balcony 2 (x 6.5)
     box(g,2.0,1.0,0.16,8.3,y+0.5,1.5,M.wall);box(g,2.0,FW-2.2,0.16,8.3,y+2.2+(FW-2.2)/2,1.5,M.wall);
     box(g,2.0,1.2,0.05,8.3,y+1.6,1.5,M.glass);box(g,2.06,0.06,0.2,8.3,y+1.0,1.5,M.rail);box(g,2.06,0.06,0.2,8.3,y+2.2,1.5,M.rail);
   }else w.wz(0,0,8.5);
