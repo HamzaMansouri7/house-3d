@@ -197,7 +197,7 @@ function tower(g){
     for(var s=0;s<4;s++){box(g,SW,r1,t2,wW,5*r1+(s+0.5)*r1,z2+(s+0.5)*t2,M.wood);}          // flight 2: west lane back toward the door (y 1.0 -> 2.0)
     box(g,TW,0.12,0.7,XC,10*r1-0.06,z2+4*t2+0.35,M.rail);                                   // upper landing above the door (z 14.21 -> 14.91), y 2.0
     for(var s=0;s<6;s++){box(g,SW,r1,t1,wE,10*r1+(s+0.5)*r1,14.21-(s+0.5)*t1,M.wood);}      // flight 3: east lane, 6 steps back toward the house (y 2.0 -> 3.2, z 14.21 -> 12.71), last step flush with the landing
-    box(g,TW,0.12,12.71-11.6,XC,FH-0.06,(12.71+11.6)/2,M.rail);                              // 1st-floor landing (z 12.71 -> 11.6), y 3.2, reaches the corridor door (z 12.05)
+    box(g,TW,0.12,12.71-9.5,XC,FH-0.06,(12.71+9.5)/2,M.rail);                                // 1st-floor floor: tower covered from the last step to the back wall (z 12.71 -> 9.5), y 3.2
     return;
   }
   // --- level 1: door -> 6 steps -> flat run -> back turn (2) -> 4 wide X steps -> 1st floor (3) ---
