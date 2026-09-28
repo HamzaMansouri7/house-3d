@@ -90,7 +90,7 @@ function furniture(g,y,gnd){
   var lx=0;
   box(g,0.7,0.55,2.6,6.55+lx,y+0.28,7.6,M.cush);box(g,3.3,0.55,0.7,7.85+lx,y+0.28,6.55,M.cush);box(g,1.35,0.3,0.85,8.9+lx,y+0.15,7.9,M.wood);box(g,0.32,1.2,2.5,5.8+lx,y+0.6,7.95,M.tyre);   // living furniture (room z 5.5-9.5)
   var L=y+1.7;
-  label(g,gnd?"1. Girls' Bedroom":'1. Master Bedroom',gnd?'3 × 4':'4.1 × 5.0',gnd?1.5:2.0,L,gnd?4.1:4.3,gnd?2.8:3.6);label(g,'2. Bedroom 2',gnd?'3 × 4':'4.1 × 4.5',gnd?1.5:2.05,L,gnd?8.5:8.5);
+  label(g,gnd?"1. Girls' Bedroom":'1. Master Bedroom',gnd?'3 × 4':(SALWA?'4 × 5':'4.1 × 5.0'),gnd?1.5:2.0,L,gnd?4.1:4.3,gnd?2.8:3.6);label(g,'2. Bedroom 2',gnd?'3 × 4':(SALWA?'4 × 5':'4.1 × 4.5'),gnd?1.5:2.05,L,gnd?8.5:8.5);
   if(gnd)label(g,'3. Bathroom','1.5 × 2.5',3.75,L,3.75,1.8);else label(g,'3. Bathroom','',4.8,L,1.3,1.8);
   label(g,'4. Corridor',gnd?'1.4 / 2.5':'1.4',gnd?4.3:4.8,L,gnd?7.5:4.6,1.6);
   label(g,'5. Kitchen',gnd?'3 × 5.5':(SALWA?'6 × 4':'6 × 4.5'),gnd?10.0:8.5,L,gnd?1.2:(SALWA?3.0:1.6));label(g,'6. Living Room','6 × 4',8.6,L,8.6);
