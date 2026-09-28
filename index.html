@@ -139,6 +139,9 @@ function ground(g,wallH){
   floor(g,5.5,0,8.5,2.5,0xcfd9b8,y+0.001);   // yard up to the z=2.5 line
   bed(g,10.6,-2.4,1.4,2.0,y);box(g,1.4,0.6,0.55,9.4,y+0.3,-3.6,M.counter);box(g,0.55,0.6,1.0,8.9,y+0.3,-0.8,M.wood);
   label(g,"7. Grandmother's Room",'3 × 4',10.0,y+1.7,-1.0,3.0);
+  if(SALWA){var fh=Math.min(2.2,wallH);                                                       // SALWA: backyard boundary wall (fence)
+    box(g,8.5,fh,0.2,4.25,y+fh/2,-4,M.stone);                                                  // along z=-4, from x 0 to the grandmother's back-west corner (x 8.5)
+    box(g,0.2,fh,6.5,0,y+fh/2,-0.75,M.stone);}                                                 // along x=0, from z -4 to the house back line (z 2.5)
   // garage 4.1 x 5.5
   // garage 3x4 directly behind bedroom 2: x 0-3, z 11-15, roll-up front on the street; door to courtyard on x=3 at z 11.5-12.3
   floor(g,0,10.5,3.0,15.0,0xdcd8d0,y);floor(g,3.0,9.5,4.1,15,0xe3e6d3,y);
