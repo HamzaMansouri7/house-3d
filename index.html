@@ -267,7 +267,7 @@ function first(g){
     box(g,2.0,1.0,0.16,9.5,y+0.5,1.5,M.wall);box(g,2.0,FW-2.2,0.16,9.5,y+2.2+(FW-2.2)/2,1.5,M.wall);
     box(g,2.0,1.2,0.05,9.5,y+1.6,1.5,M.glass);box(g,2.06,0.06,0.2,9.5,y+1.0,1.5,M.rail);box(g,2.06,0.06,0.2,9.5,y+2.2,1.5,M.rail);
   }else w.wz(0,0,9.7);
-  w.wx(0,SALWA?0.5:0,1.5);w.wx(6.7,0,0.5);   // SALWA: bathroom east wall x 6.7 shortened to z 0-0.5 (1 m cut, 2026-10-02)   // 1st floor: close the ground yard openings
+  w.wx(0,SALWA?0.5:0,1.5);w.wx(6.7,0,1.5);   // SALWA: bathroom east wall x 6.7, z 0-1.5   // 1st floor: close the ground yard openings
   if(SALWA){   // SALWA 1st floor: master 4 x 5 (x 0-4, z 0.5-5.5); bedroom 2 4 x 4 (x 0-4, z 5.5-9.5); corridor x 4-5.5
     w.wz(5.5,0,4.0);w.wx(4.0,0,4.5);w.wx(4.0,5.3,6.0);w.wx(4.0,6.8,9.5);w.wz(9.5,0,4.0);   // shared wall z 5.5 + x 4 wall (master door z 4.5-5.3, bedroom 2 door z 6.0-6.8) + bedroom 2 end z 9.5
     box(g,0.08,2.0,0.8,4.0,y+1.0,4.9,M.wood);box(g,0.08,2.0,0.8,4.0,y+1.0,6.4,M.wood);        // door leaves
