@@ -27,7 +27,7 @@
 <body>
 <section class="sec" id="sHouse">
 <div id="c3d"></div>
-<div id="ui"><b>البيت — 11.5 × 9.5 م (v3 · درج البرج المعتمد)</b>
+<div id="ui"><b>البيت — 12.7 × 9.5 م (v3 · درج البرج المعتمد)</b>
 <div><button data-f="both" class="on">الطابقان</button><button data-f="ground">الأرضي فقط</button><button data-f="first">الأول فقط</button></div>
 <div><button id="bAuto">دوران تلقائي</button><button id="bTop">منظور علوي</button><button id="bTower">إخفاء البرج (عرض الدرج)</button><button id="bRoof">إخفاء سقف الأول</button><button id="bCave">إظهار الكهف</button></div>
 <div><button id="bGoF">الأساسات ↓</button></div></div>
@@ -48,7 +48,7 @@ var s1=new THREE.DirectionalLight(0xffffff,0.55);s1.position.set(14,26,10);scene
 var s2=new THREE.DirectionalLight(0xffffff,0.25);s2.position.set(-12,14,-12);scene.add(s2);
 function mat(c){return new THREE.MeshLambertMaterial({color:c});}
 var M={wall:mat(0xdcd6c8),rail:mat(0x8a8272),wood:mat(0xc9a06b),dark:mat(0xb58a55),cush:mat(0xe6ded0),white:mat(0xffffff),blue:mat(0xc8d6dc),counter:mat(0xd9cbaa),car:mat(0xc9ccd0),glass:mat(0xdfe3e7),tyre:mat(0x4a4438),water:mat(0x9fc3d6),plant:mat(0x8fae6a),stone:mat(0xb9b3a6)};
-var W=11.5,H=9.5,FH=3.2;  // floor-to-floor height
+var W=12.7,H=9.5,FH=3.2;  // floor-to-floor height
 var gGround=new THREE.Group(),gFirst=new THREE.Group(),gTall=new THREE.Group();scene.add(gGround);scene.add(gFirst);scene.add(gTall);
 
 function box(g,w,h,d,x,y,z,m){var o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);g.add(o);return o;}
@@ -66,11 +66,11 @@ function interior(g,y,wallH){
   var T=0.16;
   function wx(x,z1,z2){box(g,T,wallH,z2-z1,x,y+wallH/2,(z1+z2)/2,M.wall);}
   function wz(z,x1,x2){box(g,x2-x1,wallH,T,(x1+x2)/2,y+wallH/2,z,M.wall);}
-  floor(g,0,0,4.1,5.0,0xf2e3c4,y);floor(g,4.1,0,5.5,9.5,0xecdfc2,y);   // corridor full length (bathroom drawn per floor)
-  floor(g,0,5.0,4.1,9.5,0xf2e3c4,y);floor(g,5.5,0,11.5,5.5,0xf0e9d8,y);floor(g,5.5,5.5,11.5,9.5,0xedeae0,y);   // living room 6x4 (z 5.5-9.5)
-  if(!(SALWA&&y>0)){wz(0,8.5,10.6);wz(0,11.4,11.5);}wx(11.5,0,9.5);wx(0,2.5,9.5);   // SALWA 1st floor: no wall on z 0 (x 5.5-11.5), see first(); ground: x 0-8.5 at z 0 and west wall z 0-2.5 are open yard (1st floor closes them)
+  floor(g,0,0,4.1,5.0,0xf2e3c4,y);floor(g,4.1,0,6.7,9.5,0xecdfc2,y);   // corridor full length (bathroom drawn per floor)
+  floor(g,0,5.0,4.1,9.5,0xf2e3c4,y);floor(g,6.7,0,12.7,5.5,0xf0e9d8,y);floor(g,6.7,5.5,12.7,9.5,0xedeae0,y);   // living room 6x4 (z 5.5-9.5)
+  if(!(SALWA&&y>0)){wz(0,9.7,11.8);wz(0,12.6,12.7);}wx(12.7,0,9.5);wx(0,2.5,9.5);   // SALWA 1st floor: no wall on z 0 (x 5.5-11.5), see first(); ground: x 0-8.5 at z 0 and west wall z 0-2.5 are open yard (1st floor closes them)
   // wz(9.5,5.2,11.5) living-room back wall drawn per floor (1st floor has a window)
-  wx(5.5,2.5,2.7);wx(5.5,3.5,5.7);wz(5.5,5.5,9.5);wz(5.5,10.4,11.5);   // x=5.5 z 0-2.5 open yard on ground (1st floor closes); x=5.5 z 5.7-9.5 (living west wall) drawn per floor; gap x 9.5-10.4 = kitchen door from living (closed on 1st floor)
+  wx(6.7,2.5,2.7);wx(6.7,3.5,5.7);wz(5.5,6.7,10.7);wz(5.5,11.6,12.7);   // x=5.5 z 0-2.5 open yard on ground (1st floor closes); x=5.5 z 5.7-9.5 (living west wall) drawn per floor; gap x 9.5-10.4 = kitchen door from living (closed on 1st floor)
   // x=4.1 wall drawn per floor (ground: rooms end at x 3)
   // wz(5.0,0,4.1) bedroom split is drawn per floor (ground z 5.5, first z 5.0)
   return {wx:wx,wz:wz};
@@ -78,38 +78,38 @@ function interior(g,y,wallH){
 function furniture(g,y,gnd){
   bed(g,gnd?1.2:1.35,gnd?4.25:1.75,1.9,2.5,y);if(gnd){box(g,0.6,0.9,1.6,2.6,y+0.45,5.5,M.dark);}else{box(g,0.6,0.9,2.6,SALWA?2.65:3.7,y+0.45,SALWA?4.6:3.3,M.dark);box(g,0.4,0.6,1.0,0.4,y+0.3,3.9,M.wood);}
   var zb=gnd?7.9:(SALWA?8.0:6.4);bed(g,0.85,zb,1.1,2.0,y);bed(g,gnd?2.15:2.25,zb,1.1,2.0,y);
-  if(gnd||SALWA)box(g,2.2,0.9,0.6,1.5,y+0.45,10.1,M.dark);else box(g,0.6,0.9,2.2,3.6,y+0.45,zb+0.1,M.dark);
+  if(gnd||SALWA)box(g,2.2,0.9,0.6,1.5,y+0.45,gnd?10.1:5.9,M.dark);else box(g,0.6,0.9,2.2,3.6,y+0.45,zb+0.1,M.dark);
   if(gnd){box(g,0.55,0.15,0.55,3.35,y+0.1,2.95,M.blue);box(g,0.4,0.35,0.5,4.15,y+0.2,3.0,M.white);box(g,0.45,0.5,0.3,3.4,y+0.3,4.7,M.white);}
-  else{var dz=SALWA?0.45:0,dx=SALWA?-1.1:0;box(g,0.55,0.15,0.55,4.4+dx,y+0.1,0.4+dz,M.blue);box(g,0.4,0.35,0.5,5.2+dx,y+0.2,0.5+dz,M.white);box(g,0.45,0.5,0.3,5.15+dx,y+0.3,1.85,M.white);}
+  else{var dz=SALWA?0.45:0,dx=SALWA?0.3:0;box(g,0.55,0.15,0.55,4.4+dx,y+0.1,0.4+dz,M.blue);box(g,0.4,0.35,0.5,5.2+dx,y+0.2,0.5+dz,M.white);box(g,0.45,0.5,0.3,5.15+dx,y+0.3,1.85,M.white);}
   var kb=(SALWA&&!gnd)?1.5:0,ks=SALWA&&!gnd;   // SALWA 1st floor: kitchen 6 x 4 starts at z 1.5
-  box(g,2.0,0.6,0.55,9.5,y+0.3,0.38+kb,M.counter);box(g,0.55,0.6,ks?2.2:3.1,11.2,y+0.3,ks?4.3:2.55,M.counter);box(g,0.7,1.3,gnd?0.9:1.0,gnd?8.95:5.9,y+0.65,ks?4.6:(gnd?1.6:0.75),mat(0xcfd4d6));
-  if(gnd){box(g,1.9,0.1,1.35,9.7,y+0.5,3.0,M.wood);box(g,1.7,0.42,1.2,9.7,y+0.25,3.0,M.dark);   // ground: table in the 3 m kitchen east part
-    for(var k=0;k<2;k++){box(g,0.45,0.5,0.28,9.35+k*0.75,y+0.25,2.1,M.dark);box(g,0.45,0.5,0.28,9.35+k*0.75,y+0.25,3.9,M.dark);}}
-  else{var tz=SALWA?1.0:0;box(g,2.6,0.1,1.35,8.3,y+0.5,3.3+tz,M.wood);box(g,2.4,0.42,1.2,8.3,y+0.25,3.3+tz,M.dark);
-    for(var k=0;k<3;k++){box(g,0.45,0.5,0.28,7.4+k*0.75,y+0.25,2.4+tz,M.dark);box(g,0.45,0.5,0.28,7.4+k*0.75,y+0.25,4.2+tz,M.dark);}}
-  var lx=0;
+  box(g,2.0,0.6,0.55,10.7,y+0.3,0.38+kb,M.counter);box(g,0.55,0.6,ks?2.2:3.1,12.4,y+0.3,ks?4.3:2.55,M.counter);box(g,0.7,1.3,gnd?0.9:1.0,gnd?10.15:7.1,y+0.65,ks?4.6:(gnd?1.6:0.75),mat(0xcfd4d6));
+  if(gnd){box(g,1.9,0.1,1.35,10.9,y+0.5,3.0,M.wood);box(g,1.7,0.42,1.2,10.9,y+0.25,3.0,M.dark);   // ground: table in the 3 m kitchen east part
+    for(var k=0;k<2;k++){box(g,0.45,0.5,0.28,10.55+k*0.75,y+0.25,2.1,M.dark);box(g,0.45,0.5,0.28,10.55+k*0.75,y+0.25,3.9,M.dark);}}
+  else{var tz=SALWA?1.0:0;box(g,2.6,0.1,1.35,9.5,y+0.5,3.3+tz,M.wood);box(g,2.4,0.42,1.2,9.5,y+0.25,3.3+tz,M.dark);
+    for(var k=0;k<3;k++){box(g,0.45,0.5,0.28,8.6+k*0.75,y+0.25,2.4+tz,M.dark);box(g,0.45,0.5,0.28,8.6+k*0.75,y+0.25,4.2+tz,M.dark);}}
+  var lx=1.2;
   box(g,0.7,0.55,2.6,6.55+lx,y+0.28,7.6,M.cush);box(g,3.3,0.55,0.7,7.85+lx,y+0.28,6.55,M.cush);box(g,1.35,0.3,0.85,8.9+lx,y+0.15,7.9,M.wood);box(g,0.32,1.2,2.5,5.8+lx,y+0.6,7.95,M.tyre);   // living furniture (room z 5.5-9.5)
   var L=y+1.7;
-  label(g,gnd?"1. Girls' Bedroom":'1. Master Bedroom',gnd?'3 × 4':(SALWA?'4 × 5':'4.1 × 5.0'),gnd?1.5:2.0,L,gnd?4.1:(SALWA?3.0:4.3),gnd?2.8:3.6);label(g,'2. Bedroom 2',gnd?'3 × 4':(SALWA?'3 × 4':'4.1 × 4.5'),gnd||SALWA?1.5:2.05,L,gnd?8.5:8.5);
-  if(gnd)label(g,'3. Bathroom','1.5 × 2.5',3.75,L,3.75,1.8);else label(g,'3. Bathroom',SALWA?'1.5 × 2.2':'',SALWA?4.75:4.8,L,1.1,1.8);
-  label(g,'4. Corridor',gnd?'1.4 / 2.5':(SALWA?'2.5':'1.4'),gnd?4.3:4.8,L,gnd?7.5:4.6,1.6);
-  label(g,'5. Kitchen',gnd?'3 × 5.5':(SALWA?'6 × 4':'6 × 4.5'),gnd?10.0:8.5,L,gnd?1.2:(SALWA?3.5:1.6));label(g,'6. Living Room','6 × 4',8.6,L,8.6);
+  label(g,gnd?"1. Girls' Bedroom":'1. Master Bedroom',gnd?'3 × 4':(SALWA?'4 × 5':'4.1 × 5.0'),gnd?1.5:2.0,L,gnd?4.1:(SALWA?3.0:4.3),gnd?2.8:3.6);label(g,'2. Bedroom 2',gnd?'3 × 4':(SALWA?'4 × 4':'4.1 × 4.5'),gnd?1.5:(SALWA?2.0:2.05),L,gnd?8.5:(SALWA?7.5:8.5));
+  if(gnd)label(g,'3. Bathroom','1.5 × 2.5',3.75,L,3.75,1.8);else label(g,'3. Bathroom',SALWA?'2.7 × 2.2':'',SALWA?5.35:4.8,L,1.1,1.8);
+  label(g,'4. Corridor',gnd?'1.4 / 2.5':(SALWA?'2.7':'1.4'),gnd?4.3:5.35,L,gnd?7.5:4.6,1.6);
+  label(g,'5. Kitchen',gnd?'3 × 5.5':(SALWA?'6 × 4':'6 × 4.5'),gnd?11.2:9.7,L,gnd?1.2:(SALWA?3.5:1.6));label(g,'6. Living Room','6 × 4',9.8,L,8.6);
 }
 
 /* ---- ground floor ---- */
 function ground(g,wallH){
   var y=0,w=interior(g,y,wallH);
-  w.wz(9.5,3.0,4.4);w.wz(9.5,5.2,6.0);w.wz(9.5,6.9,7.6);w.wz(9.5,8.8,11.5);   // corridor strip ends at z 9.5; corridor door to courtyard 4.4-5.2; living back wall with door x 6.0-6.9 + window x 7.6-8.8
-  (function(){var T=0.16;if(wallH>2.1)box(g,0.9,wallH-2.1,T,6.45,y+(wallH+2.1)/2,9.5,M.wall);   // living -> courtyard door header
-    box(g,0.9,2.1,0.08,6.45,y+1.05,9.5,M.wood);                                                 // door leaf (in the wall line, like the other doors)
-    box(g,1.2,Math.min(1.0,wallH),T,8.2,y+Math.min(1.0,wallH)/2,9.5,M.wall);                    // wall under the window (sill 1.0)
-    if(wallH>2.2)box(g,1.2,wallH-2.2,T,8.2,y+(wallH+2.2)/2,9.5,M.wall);                        // header above the window
-    box(g,1.2,1.2,0.05,8.2,y+1.6,9.5,M.glass);box(g,1.26,0.06,0.2,8.2,y+1.0,9.5,M.rail);box(g,1.26,0.06,0.2,8.2,y+2.2,9.5,M.rail);   // glass + sill + head (shown full height even with low walls, like the door leaves)
+  w.wz(9.5,3.0,4.4);w.wz(9.5,5.2,7.2);w.wz(9.5,8.1,8.8);w.wz(9.5,10.0,12.7);   // corridor strip ends at z 9.5; corridor door to courtyard 4.4-5.2; living back wall with door x 7.2-8.1 + window x 8.8-10.0
+  (function(){var T=0.16;if(wallH>2.1)box(g,0.9,wallH-2.1,T,7.65,y+(wallH+2.1)/2,9.5,M.wall);   // living -> courtyard door header
+    box(g,0.9,2.1,0.08,7.65,y+1.05,9.5,M.wood);                                                 // door leaf (in the wall line, like the other doors)
+    box(g,1.2,Math.min(1.0,wallH),T,9.4,y+Math.min(1.0,wallH)/2,9.5,M.wall);                    // wall under the window (sill 1.0)
+    if(wallH>2.2)box(g,1.2,wallH-2.2,T,9.4,y+(wallH+2.2)/2,9.5,M.wall);                        // header above the window
+    box(g,1.2,1.2,0.05,9.4,y+1.6,9.5,M.glass);box(g,1.26,0.06,0.2,9.4,y+1.0,9.5,M.rail);box(g,1.26,0.06,0.2,9.4,y+2.2,9.5,M.rail);   // glass + sill + head (shown full height even with low walls, like the door leaves)
   })();
   // ground west strip: girls' bedroom 3x4 (z 0-4), bathroom (z 4-5.5), bedroom 2 3x4 (z 5.5-9.5)
   w.wz(10.5,0,3.0);                                    // bedroom 2 back wall z 10.5 (room z 6.5-10.5)
   // backyard notch x 0-3, z 0-3 (outside); girls' bedroom 3x4 (x 0-3, z 3-7): east wall x 3 with door z 3.3-4.1
-  floor(g,0,0,5.5,2.5,0xcfd9b8,y+0.001);w.wz(2.5,0,3.0);w.wz(2.5,3.0,4.5);w.wz(2.5,5.4,5.5);   // yard x 0-5.5 z 0-2.5; covered area ends on the z=2.5 line; corridor yard door x 4.5-5.4
+  floor(g,0,0,6.7,2.5,0xcfd9b8,y+0.001);w.wz(2.5,0,3.0);w.wz(2.5,3.0,4.5);w.wz(2.5,5.4,6.7);   // yard x 0-5.5 z 0-2.5; covered area ends on the z=2.5 line; corridor yard door x 4.5-5.4
   box(g,0.9,2.1,0.08,4.95,y+1.05,2.5,M.wood);        // corridor -> yard door leaf
   if(SALWA&&wallH>2.1)box(g,0.9,wallH-2.1,0.16,4.95,y+(wallH+2.1)/2,2.5,M.wall);   // SALWA: header above the corridor -> yard door (fills the gap)
   w.wx(3.0,2.5,5.3);w.wx(3.0,6.1,6.5);w.wz(6.5,0,3.0);floor(g,3.0,5.0,4.1,6.5,0xecdfc2,y+0.001);
@@ -121,28 +121,28 @@ function ground(g,wallH){
   box(g,0.08,2.0,0.8,3.0,y+1.0,7.4,M.wood);           // bedroom 2 door leaf
   floor(g,3.0,6.5,4.1,9.5,0xecdfc2,y+0.001);   // corridor widening (west)
   // living room 6x4 (x 5.5-11.5, z 5.5-9.5): west wall at x 5.5 with door z 5.7-6.5
-  w.wx(5.5,6.5,9.5);
-  box(g,0.08,2.0,0.8,5.5,y+1.0,6.1,M.wood);           // living room door leaf
+  w.wx(6.7,6.5,9.5);
+  box(g,0.08,2.0,0.8,6.7,y+1.0,6.1,M.wood);           // living room door leaf
   box(g,0.08,2.0,0.8,3.0,y+1.0,5.7,M.wood);                                                   // girls' bedroom door leaf (x 3, z 5.3-6.1)
   furniture(g,y,true);
   // Salwa's room 3x3 next to the living room: x 5.5-8.5, z 2.5-5.5 (back wall on the z=2.5 line); door on x 5.5, z 2.7-3.5
-  floor(g,5.5,2.5,8.5,5.5,0xf3e6d8,y+0.001);
-  w.wx(8.5,2.5,5.5);w.wz(2.5,5.5,8.5);
-  box(g,0.08,2.0,0.8,5.5,y+1.0,3.1,M.wood);           // door leaf (corridor -> Salwa)
-  label(g,"17. Salwa's Room",'3 × 3',7.0,y+1.7,4.0,2.6);
-  box(g,0.9,2.1,0.08,9.95,y+1.05,5.5,M.wood);          // kitchen door leaf (living room -> kitchen, x 9.5-10.4)
-  // grandmother's room 3x4 under balcony 2 (x 8.5-11.5, z -4..0)
-  floor(g,8.5,-4,11.5,0,0xe9dfc6,y);w.wz(-4,8.5,11.5);w.wx(11.5,-4,0);
-  w.wz(0,10.6,11.4);                                   // no door to the kitchen: close the shared gap (ground only)
-  w.wx(8.5,-4,-2.45);w.wx(8.5,-1.55,0);                // west wall with 0.9 m door opening to the backyard (z -2.45..-1.55)
-  box(g,0.08,2.1,0.9,8.5,y+1.05,-2.0,M.wood);          // grandma's backyard door leaf (x 8.5 line)
-  // kitchen 3 x 5.5 (x 8.5-11.5): west wall x 8.5 z 0-2.5 with yard door z 0.8-1.7 (same line/orientation as grandma's door)
-  w.wx(8.5,0,0.8);w.wx(8.5,1.7,2.5);box(g,0.08,2.1,0.9,8.5,y+1.05,1.25,M.wood);
-  floor(g,5.5,0,8.5,2.5,0xcfd9b8,y+0.001);   // yard up to the z=2.5 line
-  bed(g,10.6,-2.4,1.4,2.0,y);box(g,1.4,0.6,0.55,9.4,y+0.3,-3.6,M.counter);box(g,0.55,0.6,1.0,8.9,y+0.3,-0.8,M.wood);
-  label(g,"7. Grandmother's Room",'3 × 4',10.0,y+1.7,-1.0,3.0);
+  floor(g,6.7,2.5,9.7,5.5,0xf3e6d8,y+0.001);
+  w.wx(9.7,2.5,5.5);w.wz(2.5,6.7,9.7);
+  box(g,0.08,2.0,0.8,6.7,y+1.0,3.1,M.wood);           // door leaf (corridor -> Salwa)
+  label(g,"17. Salwa's Room",'3 × 3',8.2,y+1.7,4.0,2.6);
+  box(g,0.9,2.1,0.08,11.15,y+1.05,5.5,M.wood);          // kitchen door leaf (living room -> kitchen, x 10.7-11.6)
+  // grandmother's room 3x4 under balcony 2 (x 9.7-12.7, z -4..0)
+  floor(g,9.7,-4,12.7,0,0xe9dfc6,y);w.wz(-4,9.7,12.7);w.wx(12.7,-4,0);
+  w.wz(0,11.8,12.6);                                   // no door to the kitchen: close the shared gap (ground only)
+  w.wx(9.7,-4,-2.45);w.wx(9.7,-1.55,0);                // west wall with 0.9 m door opening to the backyard (z -2.45..-1.55)
+  box(g,0.08,2.1,0.9,9.7,y+1.05,-2.0,M.wood);          // grandma's backyard door leaf (x 9.7 line)
+  // kitchen 3 x 5.5 (x 9.7-12.7): west wall x 9.7 z 0-2.5 with yard door z 0.8-1.7 (same line/orientation as grandma's door)
+  w.wx(9.7,0,0.8);w.wx(9.7,1.7,2.5);box(g,0.08,2.1,0.9,9.7,y+1.05,1.25,M.wood);
+  floor(g,6.7,0,9.7,2.5,0xcfd9b8,y+0.001);   // yard up to the z=2.5 line
+  bed(g,11.8,-2.4,1.4,2.0,y);box(g,1.4,0.6,0.55,10.6,y+0.3,-3.6,M.counter);box(g,0.55,0.6,1.0,10.1,y+0.3,-0.8,M.wood);
+  label(g,"7. Grandmother's Room",'3 × 4',11.2,y+1.7,-1.0,3.0);
   if(SALWA){var fh=Math.min(2.2,wallH);                                                       // SALWA: backyard boundary wall (fence)
-    box(g,8.5,fh,0.2,4.25,y+fh/2,-4,M.stone);                                                  // along z=-4, from x 0 to the grandmother's back-west corner (x 8.5)
+    box(g,9.7,fh,0.2,4.85,y+fh/2,-4,M.stone);                                                  // along z=-4, from x 0 to the grandmother's back-west corner (x 9.7)
     box(g,0.2,fh,6.5,0,y+fh/2,-0.75,M.stone);                                                  // along x=0, from z -4 to the house back line (z 2.5)
     // Eid sheep room (علوش العيد) 2 x 2 in the back-west corner of the yard: x 0-2, z -4..-2; door on the north wall (x 0.55-1.45), facing the house
     floor(g,0.1,-3.9,2.0,-2.0,0xd8cfb8,y+0.002);
@@ -171,19 +171,19 @@ function ground(g,wallH){
   label(g,'8. Garage','3 × 4.5',1.5,y+1.7,11.1,2.4);
   // entrance path, courtyard, fountain, street wall with two gates, private passage, stairwell
   // courtyard now x 4.1-9.1 (tower widened west to 2.4 m: x 9.1-11.5)
-  floor(g,4.1,9.5,9.1,11,0xe4ddcb,y);floor(g,4.1,11,9.1,15.0,0xe3e6d3,y);floor(g,9.1,9.5,10.4,15.0,0xc9c2b2,y);floor(g,10.4,14.4,11.5,15.0,0xc9c2b2,y);floor(g,10.4,9.5,11.5,10.2,0xc9c2b2,y);   // tower floor with the cave-stair opening under flight 1 (x 10.4-11.5, z 10.2-14.4)
-  w.wz(15,3.0,5.3);w.wz(15,6.3,9.1);
+  floor(g,4.1,9.5,10.3,11,0xe4ddcb,y);floor(g,4.1,11,10.3,15.0,0xe3e6d3,y);floor(g,10.3,9.5,11.6,15.0,0xc9c2b2,y);floor(g,11.6,14.4,12.7,15.0,0xc9c2b2,y);floor(g,11.6,9.5,12.7,10.2,0xc9c2b2,y);   // tower floor with the cave-stair opening under flight 1 (x 11.6-12.7, z 10.2-14.4)
+  w.wz(15,3.0,5.3);w.wz(15,6.3,10.3);
   box(g,1.2,0.5,1.2,3.7,y+0.25,14.3,M.stone);box(g,0.9,0.1,0.9,3.7,y+0.5,14.3,M.water);box(g,0.15,0.9,0.15,3.7,y+0.7,14.3,M.stone);   // fountain in the corner: garage wall (x 3.0) x street wall (z 15)
-  [[4.5,14.6],[8.4,14.6]].forEach(function(p){box(g,0.4,0.6,0.4,p[0],y+0.3,p[1],M.plant);});
-  [[4.5,11.1],[8.87,11.1]].forEach(function(p){box(g,0.3,FH-0.25,0.3,p[0],y+(FH-0.25)/2,p[1],M.stone);box(g,0.5,0.15,0.5,p[0],y+0.075,p[1],M.stone);});   // 2 columns (with base) under the 1st-floor external corridor; east one flush against the tower wall (face x 9.02)
-  label(g,'9. Courtyard','',6.6,y+1.7,12.0,2.2);label(g,'10. Fountain','',3.7,y+1.4,14.3,1.5);label(g,'11. Street Door','ground',5.8,y+1.4,15.6,2.8);
-  label(g,'12. Private Door','1st floor',10.95,y+1.4,15.6,2.8);label(g,'13. Stairwell','',10.3,y+1.7,10.6,2.0);
+  [[4.5,14.6],[9.6,14.6]].forEach(function(p){box(g,0.4,0.6,0.4,p[0],y+0.3,p[1],M.plant);});
+  [[4.5,11.1],[10.07,11.1]].forEach(function(p){box(g,0.3,FH-0.25,0.3,p[0],y+(FH-0.25)/2,p[1],M.stone);box(g,0.5,0.15,0.5,p[0],y+0.075,p[1],M.stone);});   // 2 columns (with base) under the 1st-floor external corridor; east one flush against the tower wall (face x 10.22)
+  label(g,'9. Courtyard','',7.2,y+1.7,12.0,2.2);label(g,'10. Fountain','',3.7,y+1.4,14.3,1.5);label(g,'11. Street Door','ground',5.8,y+1.4,15.6,2.8);
+  label(g,'12. Private Door','1st floor',12.15,y+1.4,15.6,2.8);label(g,'13. Stairwell','',11.5,y+1.7,10.6,2.0);
   tower(g);
 }
 
 /* ==== TOWER + APPROVED STAIRS (from stairs-BEST-locked.html, commit 496ec07) ==== */
 // tower x 9.1-11.5 (2.4 m), z 9.5-15 (5.5 m), height 6.13 m; stair tread width 1.1 m
-var TW=2.4, X0=9.1, X1=X0+TW, XC=X0+TW/2, SW=1.1, TH=6.13;
+var TW=2.4, X0=10.3, X1=X0+TW, XC=X0+TW/2, SW=1.1, TH=6.13;
 var wE=X1-SW/2, wW=X0+SW/2;                       // east / west stair lanes
 var roofs1=[];                                    // toggled by the "hide 1st-floor roof" button
 var towerShells=[];                               // toggled by the "hide tower" button (stairs stay visible)
@@ -207,10 +207,10 @@ function tower(g){
   box(sh,T,TH-FH-2.0,0.9,X0,(TH+FH+2.0)/2,ZD1,M.stone);              // west wall above 1st-floor door
   box(sh,TW,TH,T,XC,TH/2,9.5,M.stone);                                // back wall
   // front (street) face z=15: door 1.1 m in front of flight 1 (x 10.4-11.5), slot window in left panel
-  box(sh,1.3,3.2,T,9.75,1.6,15.0,M.stone);                            // left panel below slot (y 0-3.2)
-  box(sh,0.4,1.8,T,9.3,4.1,15.0,M.stone);                             // left of slot
-  box(sh,0.4,1.8,T,10.2,4.1,15.0,M.stone);                            // right of slot
-  box(sh,1.3,TH-5.0,T,9.75,(TH+5.0)/2,15.0,M.stone);                  // above slot
+  box(sh,1.3,3.2,T,10.95,1.6,15.0,M.stone);                            // left panel below slot (y 0-3.2)
+  box(sh,0.4,1.8,T,10.5,4.1,15.0,M.stone);                             // left of slot
+  box(sh,0.4,1.8,T,11.4,4.1,15.0,M.stone);                            // right of slot
+  box(sh,1.3,TH-5.0,T,10.95,(TH+5.0)/2,15.0,M.stone);                  // above slot
   box(sh,SW,TH-2.3,T,wE,(TH+2.3)/2,15.0,M.stone);                     // header above door (y 2.3-6.13)
   box(g,0.10,2.3,0.18,wE-SW/2+0.05,1.15,15.0,M.wood);box(g,0.10,2.3,0.18,X1-0.05,1.15,15.0,M.wood); // door frame (stays visible)
   box(sh,TW+0.2,0.25,ZD+0.2,XC,TH+0.12,ZC,M.stone);                   // parapet cap
@@ -256,36 +256,36 @@ function first(g){
   var FW=3.0;                              // first-floor room height 3 m
   var y=FH,w=interior(g,y,FW);
   if(SALWA){
-    w.wz(0.5,0,0.4);w.wz(0.5,1.4,4.0);w.wz(0,4.0,5.5);   // SALWA: master balcony (z 0-0.5, x 0-4) only; bathroom front wall extended to z 0 (x 4-5.5)
+    w.wz(0.5,0,0.4);w.wz(0.5,1.4,4.0);w.wz(0,4.0,6.7);   // SALWA: master balcony (z 0-0.5, x 0-4) only; bathroom front wall extended to z 0 (x 4-6.7)
     box(g,1.0,FW-2.2,0.16,0.9,y+2.2+(FW-2.2)/2,0.5,M.wall);   // master bedroom french door (porte-fenêtre) x 0.4-1.4, h 2.2, onto the walkway
     box(g,0.48,2.2,0.04,0.65,y+1.1,0.5,M.glass);box(g,0.48,2.2,0.04,1.15,y+1.1,0.5,M.glass);
     box(g,1.0,0.06,0.1,0.9,y+2.2,0.5,M.wood);box(g,0.05,2.2,0.1,0.9,y+1.1,0.5,M.wood);box(g,0.05,2.2,0.1,0.42,y+1.1,0.5,M.wood);box(g,0.05,2.2,0.1,1.38,y+1.1,0.5,M.wood);
     box(g,4.0,0.9,0.05,2.0,y+0.45,0.02,M.rail);box(g,0.05,0.9,0.5,0.02,y+0.45,0.25,M.rail);box(g,0.05,0.9,0.5,4.0,y+0.45,0.25,M.rail);   // master balcony rail (front edge x 0-4 + west end + east end at x 4)
-    // SALWA: kitchen 6 x 4 (z 1.5-5.5): back wall moved to z 1.5 with the wide window 2.0 x 1.2 (x 7.3-9.3, sill 1.0); strip z 0-1.5 joins balcony 2
-    w.wz(1.5,5.5,7.3);w.wz(1.5,9.3,10.1);w.wz(1.5,10.9,11.5);   // + kitchen door x 10.1-10.9 from the strip (east of the window)
-    box(g,0.8,FW-2.0,0.16,10.5,y+2.0+(FW-2.0)/2,1.5,M.wall);box(g,0.8,2.0,0.08,10.5,y+1.0,1.5,M.wood);
-    box(g,2.0,1.0,0.16,8.3,y+0.5,1.5,M.wall);box(g,2.0,FW-2.2,0.16,8.3,y+2.2+(FW-2.2)/2,1.5,M.wall);
-    box(g,2.0,1.2,0.05,8.3,y+1.6,1.5,M.glass);box(g,2.06,0.06,0.2,8.3,y+1.0,1.5,M.rail);box(g,2.06,0.06,0.2,8.3,y+2.2,1.5,M.rail);
-  }else w.wz(0,0,8.5);
-  w.wx(0,SALWA?0.5:0,1.5);w.wx(5.5,SALWA?0:0,1.5);   // SALWA: x 5.5 open at z 0-0.5 -> walkway continues into the strip (kitchen + balcony 2)   // 1st floor: close the ground yard openings
-  if(SALWA){   // SALWA 1st floor: master 4 x 5 (x 0-4, z 0.5-5.5); bedroom 2 3 x 4 (x 0-3, z 6.5-10.5); corridor x 4-5.5 beside the master
-    w.wz(5.5,0,4.0);w.wx(4.0,0,4.5);w.wx(4.0,5.3,5.5);w.wz(6.5,0,3.0);w.wx(3.0,6.3,6.8);w.wx(3.0,7.6,10.5);w.wz(10.5,0,3.0);   // master end z 5.5 + x 4 wall (master door z 4.5-5.3); bedroom 2 front z 6.5 + x 3 wall (door z 6.8-7.6) + end z 10.5
-    box(g,0.08,2.0,0.8,4.0,y+1.0,4.9,M.wood);box(g,0.08,2.0,0.8,3.0,y+1.0,7.2,M.wood);        // door leaves
-    floor(g,0,0.5,4.0,5.5,0xf2e3c4,y+0.002);floor(g,3.0,5.5,4.1,9.5,0xecdfc2,y+0.002);         // master floor (x 0-4) + corridor floor over the freed strip beyond the master
+    // SALWA: kitchen 6 x 4 (x 6.7-12.7, z 1.5-5.5): back wall at z 1.5 with the wide window 2.0 x 1.2 (x 8.5-10.5, sill 1.0); strip z 0-1.5 joins balcony 2
+    w.wz(1.5,6.7,8.5);w.wz(1.5,10.5,11.3);w.wz(1.5,12.1,12.7);   // + kitchen door x 11.3-12.1 from the strip (east of the window)
+    box(g,0.8,FW-2.0,0.16,11.7,y+2.0+(FW-2.0)/2,1.5,M.wall);box(g,0.8,2.0,0.08,11.7,y+1.0,1.5,M.wood);
+    box(g,2.0,1.0,0.16,9.5,y+0.5,1.5,M.wall);box(g,2.0,FW-2.2,0.16,9.5,y+2.2+(FW-2.2)/2,1.5,M.wall);
+    box(g,2.0,1.2,0.05,9.5,y+1.6,1.5,M.glass);box(g,2.06,0.06,0.2,9.5,y+1.0,1.5,M.rail);box(g,2.06,0.06,0.2,9.5,y+2.2,1.5,M.rail);
+  }else w.wz(0,0,9.7);
+  w.wx(0,SALWA?0.5:0,1.5);w.wx(6.7,0,0.5);   // SALWA: bathroom east wall x 6.7 shortened to z 0-0.5 (1 m cut, 2026-10-02)   // 1st floor: close the ground yard openings
+  if(SALWA){   // SALWA 1st floor: master 4 x 5 (x 0-4, z 0.5-5.5); bedroom 2 4 x 4 (x 0-4, z 5.5-9.5); corridor x 4-5.5
+    w.wz(5.5,0,4.0);w.wx(4.0,0,4.5);w.wx(4.0,5.3,6.0);w.wx(4.0,6.8,9.5);w.wz(9.5,0,4.0);   // shared wall z 5.5 + x 4 wall (master door z 4.5-5.3, bedroom 2 door z 6.0-6.8) + bedroom 2 end z 9.5
+    box(g,0.08,2.0,0.8,4.0,y+1.0,4.9,M.wood);box(g,0.08,2.0,0.8,4.0,y+1.0,6.4,M.wood);        // door leaves
+    floor(g,0,0.5,4.0,5.5,0xf2e3c4,y+0.002);floor(g,0,5.5,4.0,9.5,0xf2e3c4,y+0.002);           // master + bedroom 2 floors (x 0-4)
   }else w.wz(5.0,0,4.1);                   // 1st floor: master / bedroom 2 split at z 5.0
   // living-room back wall (z 9.5) with a 1.2 x 1.2 window onto the external corridor, centred x 8.5, sill 1.0 m
-  w.wz(9.5,5.2,6.7);w.wz(9.5,7.9,11.5);
-  box(g,1.2,1.0,0.16,7.3,y+0.5,9.5,M.wall);box(g,1.2,FW-2.2,0.16,7.3,y+2.2+(FW-2.2)/2,9.5,M.wall);
-  box(g,1.2,1.2,0.05,7.3,y+1.6,9.5,M.glass);box(g,1.26,0.06,0.2,7.3,y+1.0,9.5,M.rail);   // glass + sill (centred on the corridor-facing stretch x 5.5-9.1)
+  w.wz(9.5,6.4,7.9);w.wz(9.5,9.1,12.7);
+  box(g,1.2,1.0,0.16,8.5,y+0.5,9.5,M.wall);box(g,1.2,FW-2.2,0.16,8.5,y+2.2+(FW-2.2)/2,9.5,M.wall);
+  box(g,1.2,1.2,0.05,8.5,y+1.6,9.5,M.glass);box(g,1.26,0.06,0.2,8.5,y+1.0,9.5,M.rail);   // glass + sill (centred on the corridor-facing stretch x 6.7-10.3)
   if(!SALWA){w.wx(4.1,6.1,9.5);           // 1st floor: bedroom 2 east wall (door gap z 5.3-6.1)
   w.wx(4.1,0,3.9);w.wx(4.1,4.7,5.3);}      // 1st floor: master bedroom east wall (door gap z 3.9-4.7) + segment to bedroom 2 door gap
-  w.wx(5.5,6.5,9.5);                       // 1st floor: living room west wall (door gap z 5.7-6.5)
+  w.wx(6.7,6.5,9.5);                       // 1st floor: living room west wall (door gap z 5.7-6.5)
   if(!SALWA)w.wx(4.1,1.0,1.8);            // close the ground-floor master-bedroom door gap on the 1st floor
-  if(SALWA){floor(g,4.0,0,5.5,2.2,0xdde8ec,y+0.003);w.wz(2.2,4.0,4.3);w.wz(2.2,5.1,5.5);}   // SALWA: bathroom x 4.0-5.5, z 0-2.2 (master took x 3-4), door z 2.2 x 4.3-5.1
+  if(SALWA){floor(g,4.0,0,6.7,2.2,0xdde8ec,y+0.003);w.wz(2.2,4.0,4.95);w.wz(2.2,5.75,6.7);}   // SALWA: bathroom = full corridor width (x 4.0-6.7, z 0-2.2), door z 2.2 x 4.95-5.75
   else{floor(g,4.1,0,5.5,2.2,0xdde8ec,y+0.001);w.wz(2.2,4.1,4.3);w.wz(2.2,5.1,5.5);}   // 1st-floor bathroom stays at the corridor end
-  w.wz(5.5,9.5,10.4);                      // close the kitchen/living-room door gap on the 1st floor
+  w.wz(5.5,10.7,11.6);                      // close the kitchen/living-room door gap on the 1st floor
   // bedroom 2 extension into balcony 1: 2.5 long (z 9.5-12.0) x 3.5 wide (x 0-3.5); door to balcony at x 1.6-2.4
-  var ZB2=SALWA?10.5:12.0, XB2=SALWA?3.0:3.5;   // SALWA: bedroom 2 ends at z 10.5, 3 m wide
+  var ZB2=SALWA?9.5:12.0, XB2=SALWA?4.0:3.5;   // SALWA: bedroom 2 ends at z 9.5, 4 m wide (no extension)
   floor(g,0,9.5,XB2,ZB2,0xf2e3c4,y);
   w.wx(0,9.5,ZB2);if(!SALWA){w.wx(XB2,9.5,ZB2);w.wz(ZB2,0,1.6);w.wz(ZB2,2.4,XB2);}
   w.wz(9.5,XB2-0.08,4.1+0.08);            // close the gap at the corner (x 3.5-4.1, z 9.5)
@@ -294,42 +294,42 @@ function first(g){
   // slab under the first floor (visible edge) + balconies, gallery, stairwell landing
   box(g,W,0.25,H,W/2,y-0.13,H/2,mat(0xb4b2a9));
   roofs1.push(box(g,W,0.22,H,W/2,y+FW+0.11,H/2,mat(0xcfc7b3)));   // roof cover over first floor (main block z0-9.5; balconies & stairwell open)
-  box(g,5,0.25,4,9.0,y-0.13,-2.0,mat(0xd8d2c2));box(g,4.1,0.25,5.5,2.05,y-0.13,12.25,mat(0xd8d2c2));  // balcony 2 = 5x4 (x 6.5-11.5, z -4..0); balcony 1 = full garage roof
-  box(g,5.0,0.25,SALWA?2.0:3.0,6.6,y-0.13,SALWA?10.5:11.0,mat(0xe4ddcb));   // external corridor 3 m wide (z 9.5-12.5, x 4.1-9.1); SALWA: 2 m (z 9.5-11.5)
+  box(g,5,0.25,4,10.2,y-0.13,-2.0,mat(0xd8d2c2));box(g,4.1,0.25,5.5,2.05,y-0.13,12.25,mat(0xd8d2c2));  // balcony 2 = 5x4 (x 7.7-12.7, z -4..0); balcony 1 = full garage roof
+  box(g,6.2,0.25,SALWA?2.0:3.0,7.2,y-0.13,SALWA?10.5:11.0,mat(0xe4ddcb));   // external corridor (x 4.1-10.3); SALWA: 2 m (z 9.5-11.5)
   function rx(x,z1,z2){box(g,0.06,0.5,z2-z1,x,y+0.25,(z1+z2)/2,M.rail);}
   function rz(z,x1,x2){box(g,x2-x1,0.5,0.06,(x1+x2)/2,y+0.25,z,M.rail);}
-  rz(-4,6.5,11.5);rx(6.5,-4,0);rx(11.5,-4,0);
-  var zCE=SALWA?11.5:12.5;rz(15,0,4.1);rx(0,ZB2,15);rx(4.1,zCE,15);rz(zCE,4.1,9.1);
+  rz(-4,7.7,12.7);rx(7.7,-4,0);rx(12.7,-4,0);
+  var zCE=SALWA?11.5:12.5;rz(15,0,4.1);rx(0,ZB2,15);rx(4.1,zCE,15);rz(zCE,4.1,10.3);
   if(SALWA)box(g,0.08,2.0,0.9,X0,y+1.0,11.0,M.wood);else{box(g,0.08,2.0,0.85,X0,y+1.0,12.05,M.wood);box(g,0.08,2.0,0.9,X0,y+1.0,10.2,M.wood);}   // + stair-exit door (z 9.75-10.65)                                                   // door corridor -> tower, top-right corner of corridor
   var L=y+1.7;
-  label(g,'14. Balcony 2','5 × 4',9.0,L,-2.1,2.6);label(g,'15. Balcony 1','4.1 × 3.0 + 0.6 strip',1.9,L,13.5,2.6);
-  label(g,'16. External Corridor',SALWA?'width 2 m':'width 3 m',6.6,L,SALWA?10.5:11.0,2.2);label(g,'13. Stairwell','from ground',XC,L,11.2,2.0);
+  label(g,'14. Balcony 2','5 × 4',10.2,L,-2.1,2.6);label(g,'15. Balcony 1','4.1 × 3.0 + 0.6 strip',1.9,L,13.5,2.6);
+  label(g,'16. External Corridor',SALWA?'width 2 m':'width 3 m',7.2,L,SALWA?10.5:11.0,2.2);label(g,'13. Stairwell','from ground',XC,L,11.2,2.0);
 }
-var plotM=[mat(0xb4b2a9),mat(0xcfd9b8)];box(scene,15,0.3,24,5.75,-0.15,4.0,plotM[0]);   // plot: x -1.75..13.25, z -8..16 (8 m backyard)
-box(scene,11.5,0.06,8,5.75,0.03,-4.0,plotM[1]);   // backyard ground (z -8..0)
+var plotM=[mat(0xb4b2a9),mat(0xcfd9b8)];box(scene,16.2,0.3,24,6.35,-0.15,4.0,plotM[0]);   // plot: x -1.75..14.45, z -8..16 (8 m backyard)
+box(scene,12.7,0.06,8,6.35,0.03,-4.0,plotM[1]);   // backyard ground (z -8..0)
 ground(gGround,1.1);ground(gTall,FH-0.2);first(gFirst);
 /* ---- underground cave under living room + Salwa's room + kitchen strip: x 5.5-11.5, z 2.5-9.5 (6 x 7), floor -2.8 m (foundation v1) ---- */
 var gCave=new THREE.Group();scene.add(gCave);gCave.visible=false;
 (function(){var g=gCave,CY=-2.8,T=0.2,Mc=mat(0xa89f8c),Hc=-CY;
-  box(g,6.0,0.2,7.0,8.5,CY-0.1,6.0,mat(0xd6cdb8));                                  // cave floor
-  box(g,T,Hc,7.0,5.5,CY+Hc/2,6.0,Mc);box(g,T,Hc,7.0,11.5,CY+Hc/2,6.0,Mc);box(g,6.0+T,Hc,T,8.5,CY+Hc/2,2.5,Mc);   // west, east, front walls
-  box(g,4.9,Hc,T,7.95,CY+Hc/2,9.5,Mc);box(g,1.1,Hc-2.1,T,10.95,CY+2.1+(Hc-2.1)/2,9.5,Mc);   // back wall z 9.5 with opening x 10.4-11.5 to the stair
+  box(g,6.0,0.2,7.0,9.7,CY-0.1,6.0,mat(0xd6cdb8));                                  // cave floor
+  box(g,T,Hc,7.0,6.7,CY+Hc/2,6.0,Mc);box(g,T,Hc,7.0,12.7,CY+Hc/2,6.0,Mc);box(g,6.0+T,Hc,T,9.7,CY+Hc/2,2.5,Mc);   // west, east, front walls
+  box(g,4.9,Hc,T,9.15,CY+Hc/2,9.5,Mc);box(g,1.1,Hc-2.1,T,12.15,CY+2.1+(Hc-2.1)/2,9.5,Mc);   // back wall z 9.5 with opening x 11.6-12.7 to the stair
   // stair shaft under the tower east lane (under the up-flight): 15 steps (rise 0.175, tread 0.28) from the ground at z 14.4 down to a landing at z 9.5-10.2
-  box(g,T,Hc,5.0,10.4,CY+Hc/2,12.0,Mc);box(g,T,Hc,5.0,11.5,CY+Hc/2,12.0,Mc);box(g,1.1+T,Hc,T,10.95,CY+Hc/2,14.5,Mc);
-  box(g,1.0,0.2,0.7,10.95,CY-0.1,9.85,mat(0xd6cdb8));                                // bottom landing
-  for(var s=0;s<15;s++){var top=-(s+1)*0.175;box(g,1.0,top-CY,0.28,10.95,(top+CY)/2,14.4-(s+0.5)*0.28,M.wood);}
-  box(g,1.4,0.5,0.9,6.8,CY+0.25,4.0,M.stone);box(g,0.9,1.8,0.4,11.1,CY+0.9,5.0,M.dark);   // storage bench + shelf
-  label(g,'18. Underground Cave','6 × 7 · −2.8 m',8.0,CY+1.9,6.0,3.2);label(g,'Cave stairs','under the tower',10.95,-0.6,12.4,2.0);
+  box(g,T,Hc,5.0,11.6,CY+Hc/2,12.0,Mc);box(g,T,Hc,5.0,12.7,CY+Hc/2,12.0,Mc);box(g,1.1+T,Hc,T,12.15,CY+Hc/2,14.5,Mc);
+  box(g,1.0,0.2,0.7,12.15,CY-0.1,9.85,mat(0xd6cdb8));                                // bottom landing
+  for(var s=0;s<15;s++){var top=-(s+1)*0.175;box(g,1.0,top-CY,0.28,12.15,(top+CY)/2,14.4-(s+0.5)*0.28,M.wood);}
+  box(g,1.4,0.5,0.9,8.0,CY+0.25,4.0,M.stone);box(g,0.9,1.8,0.4,12.3,CY+0.9,5.0,M.dark);   // storage bench + shelf
+  label(g,'18. Underground Cave','6 × 7 · −2.8 m',9.2,CY+1.9,6.0,3.2);label(g,'Cave stairs','under the tower',12.15,-0.6,12.4,2.0);
 })();
 
 /* ---- 'all' view: foundation (from foundation-3d-v1.html) + cave + house in one scene ---- */
 var gFound=new THREE.Group();scene.add(gFound);
 if(ALL){
   var Mp=mat(0x9a9486),Mcl=mat(0x6f6a60),Mbm=mat(0xc9c2b2),Mbl=mat(0x2f7fd9),BW=0.25,BH=0.4,PT=0.35;
-  var L1=0,L2=3.0,L2b=4.1,L3=5.5,L4=8.5,L5=11.5,A=2.5,B=5.5,C=9.5,D=11.5,E=15,X1=-4,X2=0;
+  var L1=0,L2=4.0,L2b=4.0,L3=6.7,L4=9.7,L5=12.7,A=2.5,B=5.5,C=9.5,D=11.5,E=15,X1=-4,X2=0;   // 2026-10-02: bedrooms 4 m (L2), corridor 2.7 m (L3), east block +1.2 (L4, L5)
   [[L1,A],[L2,A],[L2b,A],[L3,A],[L4,A],[L5,A],[L1,B],[L2,B],[L2b,B],[L3,B],[L4,B,1],[L5,B],[L1,C],[L3,C],[L4,C],[L5,C],
    [L1,D],[L2,D],[L3,D],[L4,D],[L5,D],[L1,E],[L2,E],[L5,E],[L4,X1],[L5,X1],[L4,X2],[L5,X2]].forEach(function(q){
-    var inCave=(q[0]>=5.5&&q[0]<=11.5&&q[1]>=2.5&&q[1]<=9.5)||(q[0]>=10.4&&q[0]<=11.5&&q[1]>=9.5&&q[1]<=14.5);
+    var inCave=(q[0]>=6.7&&q[0]<=12.7&&q[1]>=2.5&&q[1]<=9.5)||(q[0]>=11.6&&q[0]<=12.7&&q[1]>=9.5&&q[1]<=14.5);
     var dp=(q[2]||inCave)?2.8+PT:1.2;                                  // footing depth: -1.2 m, or under the cave floor
     box(gFound,1.0,PT,1.0,q[0],-dp+PT/2,q[1],q[2]?Mbl:Mp);box(gFound,0.25,dp-PT,0.25,q[0],(-dp+PT)/2,q[1],q[2]?Mbl:Mcl);});
   function bX(z,x1,x2){box(gFound,x2-x1+BW,BH,BW,(x1+x2)/2,-BH/2,z,Mbm);}function bZ(x,z1,z2){box(gFound,BW,BH,z2-z1+BW,x,-BH/2,(z1+z2)/2,Mbm);}
@@ -345,7 +345,7 @@ function apply(){gFirst.visible=(mode!=='ground')&&!caveOn;gGround.visible=(mode
 apply();
 document.querySelectorAll('#'+P+'ui button[data-f]').forEach(function(b){b.onclick=function(){mode=b.dataset.f;document.querySelectorAll('#'+P+'ui button[data-f]').forEach(function(x){x.classList.toggle('on',x===b);});apply();};});
 
-var cx=5.75,cz=6.5,theta=0.9,phi=0.95,r=30,auto=true;
+var cx=6.35,cz=6.5,theta=0.9,phi=0.95,r=30,auto=true;
 function place(){camera.position.set(cx+r*Math.sin(phi)*Math.sin(theta),r*Math.cos(phi),cz+r*Math.sin(phi)*Math.cos(theta));camera.lookAt(cx,1.2,cz);}
 var drag=false,px=0,py=0,pd=0;
 el.addEventListener('pointerdown',function(e){drag=true;auto=false;px=e.clientX;py=e.clientY;el.setPointerCapture(e.pointerId);el.style.cursor='grabbing';});
@@ -401,9 +401,9 @@ function label(g,t,x,y,z,sc,col){var cv=document.createElement('canvas');cv.widt
   sp.scale.set(sc||2.4,(sc||2.4)*0.25,1);sp.position.set(x,y,z);g.add(sp);return sp;}
 
 /* ---- grid = hand sketch topology, snapped to the V3 walls (house-3d-v3.html; V3 wins on sizes) ----
-   x: L1 0 west wall | L2 3.0 west-strip wall | L2b 4.1 corridor west | L3 5.5 corridor east / living west | L4 8.5 kitchen+grandma west | L5 11.5 east wall
+   x: L1 0 west wall | L2 4.0 west-strip wall (L2b merged) | L3 6.7 corridor east / living west | L4 9.7 kitchen+grandma west | L5 12.7 east wall
    z: X1 -4 grandma back | X2 0 grandma/kitchen | A 2.5 yard line | B 5.5 living front (sketch 3) | C 9.5 main back (sketch 4) | D 11.5 (sketch 2) | E 15 street line */
-var L1=0,L2=3.0,L2b=4.1,L3=5.5,L4=8.5,L5=11.5;
+var L1=0,L2=4.0,L2b=4.0,L3=6.7,L4=9.7,L5=12.7;   // 2026-10-02: bedrooms 4 m (L2; L2b merged), corridor 2.7 m (L3), east block +1.2 (L4, L5)
 var A=2.5,B=5.5,C=9.5,D=11.5,E=15,X1=-4,X2=0;
 var BW=0.25,BH=0.4;          // ground beam 25 x 40 cm
 var CS=0.25;                 // column 25 x 25 cm
@@ -438,7 +438,7 @@ beamZ(L1,A,E);beamZ(L2,A,E);beamZ(L2b,A,B);beamZ(L3,A,C);beamZ(L4,X1,B);beamZ(L5
 
 // dashed outline (not built) from the sketch — position estimated
 var dash=new THREE.LineDashedMaterial({color:0x3a3a36,dashSize:0.3,gapSize:0.2});
-var pts=[[L1,A],[L1,X2],[7.9,X2],[7.9,X1],[L4,X1]].map(function(p){return new THREE.Vector3(p[0],0.01,p[1]);});
+var pts=[[L1,A],[L1,X2],[9.1,X2],[9.1,X1],[L4,X1]].map(function(p){return new THREE.Vector3(p[0],0.01,p[1]);});
 var ln=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),dash);ln.computeLineDistances();gStruct.add(ln);
 
 // ground (optional)
@@ -446,9 +446,8 @@ var ground=box(scene,16,0.02,20,L5/2,-0.01,(X1+E)/2,new THREE.MeshLambertMateria
 
 // dimensions (from V3)
 var y=0.9;
-label(gDim,'3.0',(L1+L2)/2,y,E+0.9);
-label(gDim,'1.1',(L2+L2b)/2,y,A-0.6,1.6);
-label(gDim,'1.4',(L2b+L3)/2,y,A-0.6,1.6);
+label(gDim,'4.0',(L1+L2)/2,y,E+0.9);
+label(gDim,'2.7',(L2b+L3)/2,y,A-0.6,1.6);
 label(gDim,'3.0',(L3+L4)/2,y,A-0.6);
 label(gDim,'3.0',(L4+L5)/2,y,X1-0.7);
 label(gDim,'4',L5+1.0,y,(X1+X2)/2);
@@ -457,7 +456,7 @@ label(gDim,'3',L5+1.0,y,(A+B)/2);
 label(gDim,'4',L5+1.0,y,(B+C)/2);
 label(gDim,'2',L5+1.0,y,(C+D)/2);
 label(gDim,'3.5',L5+1.0,y,(D+E)/2);
-label(gDim,'11.5',(L1+L5)/2,y,E+1.8,2.4,'#3a3a36');
+label(gDim,'12.7',(L1+L5)/2,y,E+1.8,2.4,'#3a3a36');
 label(gDim,'19',L5+2.4,y,(X1+E)/2,2.4,'#3a3a36');
 
 // camera
@@ -512,9 +511,9 @@ function label(g,t,x,y,z,sc,col){var cv=document.createElement('canvas');cv.widt
   sp.scale.set(sc||2.4,(sc||2.4)*0.25,1);sp.position.set(x,y,z);g.add(sp);return sp;}
 
 /* ---- grid = hand sketch topology, snapped to the V3 walls (house-3d-v3.html; V3 wins on sizes) ----
-   x: L1 0 west wall | L2 3.0 west-strip wall | L2b 4.1 corridor west | L3 5.5 corridor east / living west | L4 8.5 kitchen+grandma west | L5 11.5 east wall
+   x: L1 0 west wall | L2 4.0 west-strip wall (L2b merged) | L3 6.7 corridor east / living west | L4 9.7 kitchen+grandma west | L5 12.7 east wall
    z: X1 -4 grandma back | X2 0 grandma/kitchen | A 2.5 yard line | B 5.5 living front (sketch 3) | C 9.5 main back (sketch 4) | D 11.5 (sketch 2) | E 15 street line */
-var L1=0,L2=3.0,L2b=4.1,L3=5.5,L4=8.5,L5=11.5;
+var L1=0,L2=4.0,L2b=4.0,L3=6.7,L4=9.7,L5=12.7;   // 2026-10-02: bedrooms 4 m (L2; L2b merged), corridor 2.7 m (L3), east block +1.2 (L4, L5)
 var A=2.5,B=5.5,C=9.5,D=11.5,E=15,X1=-4,X2=0;
 var BW=0.25,BH=0.4;          // ground beam 25 x 40 cm
 var CS=0.25;                 // column 25 x 25 cm
@@ -532,7 +531,7 @@ var cols=[
 ];
 cols.forEach(function(p){
   var m=p[2]?M[p[2]]:M.col;
-  var inCave=(p[0]>=5.5&&p[0]<=11.5&&p[1]>=2.5&&p[1]<=9.5)||(p[0]>=10.4&&p[0]<=11.5&&p[1]>=9.5&&p[1]<=14.5);
+  var inCave=(p[0]>=6.7&&p[0]<=12.7&&p[1]>=2.5&&p[1]<=9.5)||(p[0]>=11.6&&p[0]<=12.7&&p[1]>=9.5&&p[1]<=14.5);
   var dp=(p[2]==='blue'||inCave)?2.8+PT:DEPTH;                         // blue + cave-outline columns: footing under the cave floor (-2.8 m)                                   // blue = base of the underground floor (floor at -2.8 m)
   box(gStruct,PD,PT,PD,p[0],-dp+PT/2,p[1],p[2]?m:M.pad);               // pad footing
   box(gStruct,CS,dp-PT+0.6,CS,p[0],(-dp+PT+0.6)/2,p[1],m);             // column starter (0.6 m above ground beam)
@@ -550,7 +549,7 @@ beamZ(L1,A,E);beamZ(L2,A,E);beamZ(L2b,A,B);beamZ(L3,A,C);beamZ(L4,X1,B);beamZ(L5
 
 // dashed outline (not built) from the sketch — position estimated
 var dash=new THREE.LineDashedMaterial({color:0x3a3a36,dashSize:0.3,gapSize:0.2});
-var pts=[[L1,A],[L1,X2],[7.9,X2],[7.9,X1],[L4,X1]].map(function(p){return new THREE.Vector3(p[0],0.01,p[1]);});
+var pts=[[L1,A],[L1,X2],[9.1,X2],[9.1,X1],[L4,X1]].map(function(p){return new THREE.Vector3(p[0],0.01,p[1]);});
 var ln=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),dash);ln.computeLineDistances();gStruct.add(ln);
 
 // ground (optional)
@@ -558,9 +557,8 @@ var ground=box(scene,16,0.02,20,L5/2,-0.01,(X1+E)/2,new THREE.MeshLambertMateria
 
 // dimensions (from V3)
 var y=0.9;
-label(gDim,'3.0',(L1+L2)/2,y,E+0.9);
-label(gDim,'1.1',(L2+L2b)/2,y,A-0.6,1.6);
-label(gDim,'1.4',(L2b+L3)/2,y,A-0.6,1.6);
+label(gDim,'4.0',(L1+L2)/2,y,E+0.9);
+label(gDim,'2.7',(L2b+L3)/2,y,A-0.6,1.6);
 label(gDim,'3.0',(L3+L4)/2,y,A-0.6);
 label(gDim,'3.0',(L4+L5)/2,y,X1-0.7);
 label(gDim,'4',L5+1.0,y,(X1+X2)/2);
@@ -569,19 +567,19 @@ label(gDim,'3',L5+1.0,y,(A+B)/2);
 label(gDim,'4',L5+1.0,y,(B+C)/2);
 label(gDim,'2',L5+1.0,y,(C+D)/2);
 label(gDim,'3.5',L5+1.0,y,(D+E)/2);
-label(gDim,'11.5',(L1+L5)/2,y,E+1.8,2.4,'#3a3a36');
+label(gDim,'12.7',(L1+L5)/2,y,E+1.8,2.4,'#3a3a36');
 label(gDim,'19',L5+2.4,y,(X1+E)/2,2.4,'#3a3a36');
 
 // ---- underground cave (same as the house view): x 5.5-11.5, z 2.5-9.5, floor -2.8 m; stair shaft under the tower east lane x 10.4-11.5, z 9.5-14.5 ----
 (function(){var g=gStruct,CY=-2.8,T=0.2,Hc=2.8-BH,Mc=new THREE.MeshLambertMaterial({color:0xa89f8c,transparent:true,opacity:0.45,depthWrite:false});
   var Mf=mat(0xd6cdb8),Mw=mat(0xc9a06b);
-  box(g,6.0,0.2,7.0,8.5,CY-0.1,6.0,Mf);                                                    // cave floor slab
-  box(g,T,Hc,7.0,5.5,CY+Hc/2,6.0,Mc);box(g,T,Hc,7.0,11.5,CY+Hc/2,6.0,Mc);box(g,6.0+T,Hc,T,8.5,CY+Hc/2,2.5,Mc);   // retaining walls (see-through)
-  box(g,4.9,Hc,T,7.95,CY+Hc/2,9.5,Mc);box(g,1.1,Hc-2.1,T,10.95,CY+2.1+(Hc-2.1)/2,9.5,Mc);                       // back wall with door x 10.4-11.5
-  box(g,T,Hc,5.0,10.4,CY+Hc/2,12.0,Mc);box(g,T,Hc,5.0,11.5,CY+Hc/2,12.0,Mc);box(g,1.1+T,Hc,T,10.95,CY+Hc/2,14.5,Mc);   // stair shaft walls
-  box(g,1.0,0.2,0.7,10.95,CY-0.1,9.85,Mf);                                                  // bottom landing
-  for(var s=0;s<15;s++){var top=-(s+1)*0.175;box(g,1.0,top-CY,0.28,10.95,(top+CY)/2,14.4-(s+0.5)*0.28,Mw);}
-  label(gDim,'الكهف 6 × 7 · −2.8 م',8.0,CY+1.2,6.0,3.0,'#6b5a3a');label(gDim,'درج الكهف',10.95,-1.0,12.4,2.0,'#6b5a3a');
+  box(g,6.0,0.2,7.0,9.7,CY-0.1,6.0,Mf);                                                    // cave floor slab
+  box(g,T,Hc,7.0,6.7,CY+Hc/2,6.0,Mc);box(g,T,Hc,7.0,12.7,CY+Hc/2,6.0,Mc);box(g,6.0+T,Hc,T,9.7,CY+Hc/2,2.5,Mc);   // retaining walls (see-through)
+  box(g,4.9,Hc,T,9.15,CY+Hc/2,9.5,Mc);box(g,1.1,Hc-2.1,T,12.15,CY+2.1+(Hc-2.1)/2,9.5,Mc);                       // back wall with door x 11.6-12.7
+  box(g,T,Hc,5.0,11.6,CY+Hc/2,12.0,Mc);box(g,T,Hc,5.0,12.7,CY+Hc/2,12.0,Mc);box(g,1.1+T,Hc,T,12.15,CY+Hc/2,14.5,Mc);   // stair shaft walls
+  box(g,1.0,0.2,0.7,12.15,CY-0.1,9.85,Mf);                                                  // bottom landing
+  for(var s=0;s<15;s++){var top=-(s+1)*0.175;box(g,1.0,top-CY,0.28,12.15,(top+CY)/2,14.4-(s+0.5)*0.28,Mw);}
+  label(gDim,'الكهف 6 × 7 · −2.8 م',9.2,CY+1.2,6.0,3.0,'#6b5a3a');label(gDim,'درج الكهف',12.15,-1.0,12.4,2.0,'#6b5a3a');
 })();
 // camera
 var cx=L5/2,cz=(X1+E)/2,theta=0.9,phi=0.75,r=30,auto=true;
