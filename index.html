@@ -81,7 +81,7 @@ function furniture(g,y,gnd){
   if(gnd||SALWA)box(g,2.2,0.9,0.6,1.5,y+0.45,10.1,M.dark);else box(g,0.6,0.9,2.2,3.6,y+0.45,zb+0.1,M.dark);
   if(gnd){box(g,0.55,0.15,0.55,3.35,y+0.1,2.95,M.blue);box(g,0.4,0.35,0.5,4.15,y+0.2,3.0,M.white);box(g,0.45,0.5,0.3,3.4,y+0.3,4.7,M.white);}
   else{var dz=SALWA?0.45:0,dx=SALWA?-1.1:0;box(g,0.55,0.15,0.55,4.4+dx,y+0.1,0.4+dz,M.blue);box(g,0.4,0.35,0.5,5.2+dx,y+0.2,0.5+dz,M.white);box(g,0.45,0.5,0.3,5.15+dx,y+0.3,1.85,M.white);}
-  var kb=(SALWA&&!gnd)?2.5:0,ks=SALWA&&!gnd;   // SALWA 1st floor: kitchen 6 x 3 starts at z 2.5
+  var kb=(SALWA&&!gnd)?1.5:0,ks=SALWA&&!gnd;   // SALWA 1st floor: kitchen 6 x 4 starts at z 1.5
   box(g,2.0,0.6,0.55,9.5,y+0.3,0.38+kb,M.counter);box(g,0.55,0.6,ks?2.2:3.1,11.2,y+0.3,ks?4.3:2.55,M.counter);box(g,0.7,1.3,gnd?0.9:1.0,gnd?8.95:5.9,y+0.65,ks?4.6:(gnd?1.6:0.75),mat(0xcfd4d6));
   if(gnd){box(g,1.9,0.1,1.35,9.7,y+0.5,3.0,M.wood);box(g,1.7,0.42,1.2,9.7,y+0.25,3.0,M.dark);   // ground: table in the 3 m kitchen east part
     for(var k=0;k<2;k++){box(g,0.45,0.5,0.28,9.35+k*0.75,y+0.25,2.1,M.dark);box(g,0.45,0.5,0.28,9.35+k*0.75,y+0.25,3.9,M.dark);}}
@@ -90,10 +90,10 @@ function furniture(g,y,gnd){
   var lx=0;
   box(g,0.7,0.55,2.6,6.55+lx,y+0.28,7.6,M.cush);box(g,3.3,0.55,0.7,7.85+lx,y+0.28,6.55,M.cush);box(g,1.35,0.3,0.85,8.9+lx,y+0.15,7.9,M.wood);box(g,0.32,1.2,2.5,5.8+lx,y+0.6,7.95,M.tyre);   // living furniture (room z 5.5-9.5)
   var L=y+1.7;
-  label(g,gnd?"1. Girls' Bedroom":'1. Master Bedroom',gnd?'3 × 4':(SALWA?'3 × 6':'4.1 × 5.0'),gnd||SALWA?1.5:2.0,L,gnd?4.1:4.3,gnd?2.8:3.6);label(g,'2. Bedroom 2',gnd?'3 × 4':(SALWA?'3 × 4':'4.1 × 4.5'),gnd||SALWA?1.5:2.05,L,gnd?8.5:8.5);
-  if(gnd)label(g,'3. Bathroom','1.5 × 2.5',3.75,L,3.75,1.8);else label(g,'3. Bathroom',SALWA?'2.5 × 1.7':'',SALWA?4.25:4.8,L,1.3,1.8);
+  label(g,gnd?"1. Girls' Bedroom":'1. Master Bedroom',gnd?'3 × 4':(SALWA?'4 × 5':'4.1 × 5.0'),gnd?1.5:2.0,L,gnd?4.1:(SALWA?3.0:4.3),gnd?2.8:3.6);label(g,'2. Bedroom 2',gnd?'3 × 4':(SALWA?'3 × 4':'4.1 × 4.5'),gnd||SALWA?1.5:2.05,L,gnd?8.5:8.5);
+  if(gnd)label(g,'3. Bathroom','1.5 × 2.5',3.75,L,3.75,1.8);else label(g,'3. Bathroom',SALWA?'1.5 × 2.2':'',SALWA?4.75:4.8,L,1.1,1.8);
   label(g,'4. Corridor',gnd?'1.4 / 2.5':(SALWA?'2.5':'1.4'),gnd?4.3:4.8,L,gnd?7.5:4.6,1.6);
-  label(g,'5. Kitchen',gnd?'3 × 5.5':(SALWA?'6 × 3':'6 × 4.5'),gnd?10.0:8.5,L,gnd?1.2:(SALWA?4.0:1.6));label(g,'6. Living Room','6 × 4',8.6,L,8.6);
+  label(g,'5. Kitchen',gnd?'3 × 5.5':(SALWA?'6 × 4':'6 × 4.5'),gnd?10.0:8.5,L,gnd?1.2:(SALWA?3.5:1.6));label(g,'6. Living Room','6 × 4',8.6,L,8.6);
 }
 
 /* ---- ground floor ---- */
@@ -256,22 +256,22 @@ function first(g){
   var FW=3.0;                              // first-floor room height 3 m
   var y=FH,w=interior(g,y,FW);
   if(SALWA){
-    w.wz(0.5,0,0.4);w.wz(0.5,1.4,5.5);   // SALWA: master bedroom + bathroom back wall set back to z 0.5 -> 50 cm open walkway (z 0-0.5, x 0-5.5)
+    w.wz(0.5,0,0.4);w.wz(0.5,1.4,4.0);w.wz(0,4.0,5.5);   // SALWA: master balcony (z 0-0.5, x 0-4) only; bathroom front wall extended to z 0 (x 4-5.5)
     box(g,1.0,FW-2.2,0.16,0.9,y+2.2+(FW-2.2)/2,0.5,M.wall);   // master bedroom french door (porte-fenêtre) x 0.4-1.4, h 2.2, onto the walkway
     box(g,0.48,2.2,0.04,0.65,y+1.1,0.5,M.glass);box(g,0.48,2.2,0.04,1.15,y+1.1,0.5,M.glass);
     box(g,1.0,0.06,0.1,0.9,y+2.2,0.5,M.wood);box(g,0.05,2.2,0.1,0.9,y+1.1,0.5,M.wood);box(g,0.05,2.2,0.1,0.42,y+1.1,0.5,M.wood);box(g,0.05,2.2,0.1,1.38,y+1.1,0.5,M.wood);
-    box(g,5.5,0.9,0.05,2.75,y+0.45,0.02,M.rail);box(g,0.05,0.9,0.5,0.02,y+0.45,0.25,M.rail);   // walkway rail (back edge + west end)
-    // SALWA: kitchen 6 x 3 (z 2.5-5.5): back wall moved to z 2.5 with the wide window 2.0 x 1.2 (x 7.3-9.3, sill 1.0); strip z 0-2.5 joins balcony 2
-    w.wz(2.5,5.5,7.3);w.wz(2.5,9.3,10.1);w.wz(2.5,10.9,11.5);   // + kitchen door x 10.1-10.9 from the strip (east of the window)
-    box(g,0.8,FW-2.0,0.16,10.5,y+2.0+(FW-2.0)/2,2.5,M.wall);box(g,0.8,2.0,0.08,10.5,y+1.0,2.5,M.wood);
-    box(g,2.0,1.0,0.16,8.3,y+0.5,2.5,M.wall);box(g,2.0,FW-2.2,0.16,8.3,y+2.2+(FW-2.2)/2,2.5,M.wall);
-    box(g,2.0,1.2,0.05,8.3,y+1.6,2.5,M.glass);box(g,2.06,0.06,0.2,8.3,y+1.0,2.5,M.rail);box(g,2.06,0.06,0.2,8.3,y+2.2,2.5,M.rail);
+    box(g,4.0,0.9,0.05,2.0,y+0.45,0.02,M.rail);box(g,0.05,0.9,0.5,0.02,y+0.45,0.25,M.rail);box(g,0.05,0.9,0.5,4.0,y+0.45,0.25,M.rail);   // master balcony rail (front edge x 0-4 + west end + east end at x 4)
+    // SALWA: kitchen 6 x 4 (z 1.5-5.5): back wall moved to z 1.5 with the wide window 2.0 x 1.2 (x 7.3-9.3, sill 1.0); strip z 0-1.5 joins balcony 2
+    w.wz(1.5,5.5,7.3);w.wz(1.5,9.3,10.1);w.wz(1.5,10.9,11.5);   // + kitchen door x 10.1-10.9 from the strip (east of the window)
+    box(g,0.8,FW-2.0,0.16,10.5,y+2.0+(FW-2.0)/2,1.5,M.wall);box(g,0.8,2.0,0.08,10.5,y+1.0,1.5,M.wood);
+    box(g,2.0,1.0,0.16,8.3,y+0.5,1.5,M.wall);box(g,2.0,FW-2.2,0.16,8.3,y+2.2+(FW-2.2)/2,1.5,M.wall);
+    box(g,2.0,1.2,0.05,8.3,y+1.6,1.5,M.glass);box(g,2.06,0.06,0.2,8.3,y+1.0,1.5,M.rail);box(g,2.06,0.06,0.2,8.3,y+2.2,1.5,M.rail);
   }else w.wz(0,0,8.5);
-  w.wx(0,SALWA?0.5:0,2.5);w.wx(5.5,SALWA?0.5:0,2.5);   // SALWA: x 5.5 open at z 0-0.5 -> walkway continues into the strip (kitchen + balcony 2)   // 1st floor: close the ground yard openings
-  if(SALWA){   // SALWA 1st floor: bedrooms 3 m wide (x 0-3); master 3 x 6 (z 0.5-6.5), bedroom 2 3 x 4 (z 6.5-10.5); corridor widened to 2.5 m (x 3-5.5)
-    w.wz(6.5,0,3.0);w.wx(3.0,0.5,5.5);w.wx(3.0,6.3,6.8);w.wx(3.0,7.6,10.5);w.wz(10.5,0,3.0);   // split + x 3 wall (master door z 5.5-6.3, bedroom 2 door z 6.8-7.6) + bedroom 2 end
-    box(g,0.08,2.0,0.8,3.0,y+1.0,5.9,M.wood);box(g,0.08,2.0,0.8,3.0,y+1.0,7.2,M.wood);        // door leaves
-    floor(g,3.0,0.5,4.1,9.5,0xecdfc2,y+0.002);                                                // corridor floor over the freed strip
+  w.wx(0,SALWA?0.5:0,1.5);w.wx(5.5,SALWA?0:0,1.5);   // SALWA: x 5.5 open at z 0-0.5 -> walkway continues into the strip (kitchen + balcony 2)   // 1st floor: close the ground yard openings
+  if(SALWA){   // SALWA 1st floor: master 4 x 5 (x 0-4, z 0.5-5.5); bedroom 2 3 x 4 (x 0-3, z 6.5-10.5); corridor x 4-5.5 beside the master
+    w.wz(5.5,0,4.0);w.wx(4.0,0,4.5);w.wx(4.0,5.3,5.5);w.wz(6.5,0,3.0);w.wx(3.0,6.3,6.8);w.wx(3.0,7.6,10.5);w.wz(10.5,0,3.0);   // master end z 5.5 + x 4 wall (master door z 4.5-5.3); bedroom 2 front z 6.5 + x 3 wall (door z 6.8-7.6) + end z 10.5
+    box(g,0.08,2.0,0.8,4.0,y+1.0,4.9,M.wood);box(g,0.08,2.0,0.8,3.0,y+1.0,7.2,M.wood);        // door leaves
+    floor(g,0,0.5,4.0,5.5,0xf2e3c4,y+0.002);floor(g,3.0,5.5,4.1,9.5,0xecdfc2,y+0.002);         // master floor (x 0-4) + corridor floor over the freed strip beyond the master
   }else w.wz(5.0,0,4.1);                   // 1st floor: master / bedroom 2 split at z 5.0
   // living-room back wall (z 9.5) with a 1.2 x 1.2 window onto the external corridor, centred x 8.5, sill 1.0 m
   w.wz(9.5,5.2,6.7);w.wz(9.5,7.9,11.5);
@@ -281,7 +281,7 @@ function first(g){
   w.wx(4.1,0,3.9);w.wx(4.1,4.7,5.3);}      // 1st floor: master bedroom east wall (door gap z 3.9-4.7) + segment to bedroom 2 door gap
   w.wx(5.5,6.5,9.5);                       // 1st floor: living room west wall (door gap z 5.7-6.5)
   if(!SALWA)w.wx(4.1,1.0,1.8);            // close the ground-floor master-bedroom door gap on the 1st floor
-  if(SALWA){floor(g,3.0,0.5,5.5,2.2,0xdde8ec,y+0.003);w.wz(2.2,3.0,3.3);w.wz(2.2,4.1,5.5);}   // SALWA: bathroom = full corridor width (x 3.0-5.5, z 0.5-2.2), door z 2.2 x 3.3-4.1
+  if(SALWA){floor(g,4.0,0,5.5,2.2,0xdde8ec,y+0.003);w.wz(2.2,4.0,4.3);w.wz(2.2,5.1,5.5);}   // SALWA: bathroom x 4.0-5.5, z 0-2.2 (master took x 3-4), door z 2.2 x 4.3-5.1
   else{floor(g,4.1,0,5.5,2.2,0xdde8ec,y+0.001);w.wz(2.2,4.1,4.3);w.wz(2.2,5.1,5.5);}   // 1st-floor bathroom stays at the corridor end
   w.wz(5.5,9.5,10.4);                      // close the kitchen/living-room door gap on the 1st floor
   // bedroom 2 extension into balcony 1: 2.5 long (z 9.5-12.0) x 3.5 wide (x 0-3.5); door to balcony at x 1.6-2.4
