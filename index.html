@@ -91,7 +91,7 @@ function furniture(g,y,gnd){
   box(g,0.7,0.55,2.6,6.55+lx,y+0.28,7.6,M.cush);box(g,3.3,0.55,0.7,7.85+lx,y+0.28,6.55,M.cush);box(g,1.35,0.3,0.85,8.9+lx,y+0.15,7.9,M.wood);box(g,0.32,1.2,2.5,5.8+lx,y+0.6,7.95,M.tyre);   // living furniture (room z 5.5-9.5)
   var L=y+1.7;
   label(g,gnd?"1. Girls' Bedroom":'1. Master Bedroom',gnd?'3 × 4':(SALWA?'4 × 5':'4.1 × 5.0'),gnd?1.5:2.0,L,gnd?4.1:(SALWA?3.0:4.3),gnd?2.8:3.6);label(g,'2. Bedroom 2',gnd?'3 × 4':(SALWA?'4 × 4':'4.1 × 4.5'),gnd?1.5:(SALWA?2.0:2.05),L,gnd?8.5:(SALWA?7.5:8.5));
-  if(gnd)label(g,'3. Bathroom','1.5 × 2.5',3.75,L,3.75,1.8);else label(g,'3. Bathroom',SALWA?'2.7 × 2.2':'',SALWA?5.35:4.8,L,1.1,1.8);
+  if(gnd)label(g,'3. Bathroom','1.5 × 2.5',3.75,L,3.75,1.8);else label(g,'3. Bathroom',SALWA?'2.7 × 2':'',SALWA?5.35:4.8,L,1.0,1.8);
   label(g,'4. Corridor',gnd?'1.4 / 2.5':(SALWA?'2.7':'1.4'),gnd?4.3:5.35,L,gnd?7.5:4.6,1.6);
   label(g,'5. Kitchen',gnd?'3 × 5.5':(SALWA?'6 × 4':'6 × 4.5'),gnd?11.2:9.7,L,gnd?1.2:(SALWA?3.5:1.6));label(g,'6. Living Room','6 × 4',9.8,L,8.6);
 }
@@ -281,7 +281,7 @@ function first(g){
   w.wx(4.1,0,3.9);w.wx(4.1,4.7,5.3);}      // 1st floor: master bedroom east wall (door gap z 3.9-4.7) + segment to bedroom 2 door gap
   w.wx(6.7,6.5,9.5);                       // 1st floor: living room west wall (door gap z 5.7-6.5)
   if(!SALWA)w.wx(4.1,1.0,1.8);            // close the ground-floor master-bedroom door gap on the 1st floor
-  if(SALWA){floor(g,4.0,0,6.7,2.2,0xdde8ec,y+0.003);w.wz(2.2,4.0,4.95);w.wz(2.2,5.75,6.7);}   // SALWA: bathroom = full corridor width (x 4.0-6.7, z 0-2.2), door z 2.2 x 4.95-5.75
+  if(SALWA){floor(g,4.0,0,6.7,2.0,0xdde8ec,y+0.003);w.wz(2.0,4.0,4.95);w.wz(2.0,5.75,6.7);}   // SALWA: bathroom 2.7 x 2 (x 4.0-6.7, z 0-2.0), door z 2.0 x 4.95-5.75
   else{floor(g,4.1,0,5.5,2.2,0xdde8ec,y+0.001);w.wz(2.2,4.1,4.3);w.wz(2.2,5.1,5.5);}   // 1st-floor bathroom stays at the corridor end
   w.wz(5.5,10.7,11.6);                      // close the kitchen/living-room door gap on the 1st floor
   // bedroom 2 extension into balcony 1: 2.5 long (z 9.5-12.0) x 3.5 wide (x 0-3.5); door to balcony at x 1.6-2.4
