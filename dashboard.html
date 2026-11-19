@@ -1,239 +1,635 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>لوحة البيت</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>كرّاس مسكن مدنين</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Noto+Kufi+Arabic:wght@600;800&display=swap">
 <style>
 :root{
-  --bg:#f6f3ee;--surface:#ffffff;--surface2:#f0ebe3;--ink:#2a2622;--muted:#7a7068;--line:#e3dcd2;
-  --accent:#b5652b;--accent-ink:#ffffff;--accent-soft:#f6e6d8;--good:#2f7d5b;--shadow:0 1px 2px rgba(40,30,20,.06),0 4px 16px rgba(40,30,20,.06);
+  --bg:#f3f1ec; --surface:#ffffff; --surface2:#ebe7de; --ink:#22231f; --muted:#62645c; --line:#d9d4c8;
+  --accent:#9a5b1e; --accent-soft:#f3e3cf; --blue:#2f6fb8; --good:#2c7a57; --warn:#b4471f;
+  --f-display:"Noto Kufi Arabic","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --f-body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#1b1916;--surface:#25221e;--surface2:#2e2a25;--ink:#f1ece5;--muted:#a89e93;--line:#3a352f;
-  --accent:#e08a4c;--accent-ink:#1b1916;--accent-soft:#3a2c20;--good:#5cc196;--shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+  --bg:#14151a; --surface:#1c1e25; --surface2:#262934; --ink:#ebe9e3; --muted:#a3a39b; --line:#353845;
+  --accent:#e0a35e; --accent-soft:#3a2b1b; --blue:#8bb6ea; --good:#5cc497; --warn:#f08a5d; color-scheme:dark;
 }}
 :root[data-theme="dark"]{
-  --bg:#1b1916;--surface:#25221e;--surface2:#2e2a25;--ink:#f1ece5;--muted:#a89e93;--line:#3a352f;
-  --accent:#e08a4c;--accent-ink:#1b1916;--accent-soft:#3a2c20;--good:#5cc196;--shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+  --bg:#14151a; --surface:#1c1e25; --surface2:#262934; --ink:#ebe9e3; --muted:#a3a39b; --line:#353845;
+  --accent:#e0a35e; --accent-soft:#3a2b1b; --blue:#8bb6ea; --good:#5cc497; --warn:#f08a5d; color-scheme:dark;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Tajawal",system-ui,sans-serif;font-size:16px;line-height:1.6}
-.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
-header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:20px}
-h1{font-size:28px;font-weight:800;margin:0}
-.sub{color:var(--muted);margin:2px 0 0}
-nav{display:flex;gap:8px;flex-wrap:wrap}
-nav a{color:var(--ink);text-decoration:none;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:14px}
-nav a:hover{border-color:var(--accent)}
-section{margin-top:36px}
-h2{font-size:21px;margin:0 0 4px}
-.lead{color:var(--muted);margin:0 0 14px;font-size:15px}
-.hero{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
-.hero .tag{display:inline-block;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:13px;padding:2px 10px;border-radius:999px}
-.hero h3{font-size:24px;margin:8px 0 4px}
-.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;align-content:start}
-.fact{background:var(--surface2);border-radius:12px;padding:10px 12px}
-.fact b{display:block;font-size:20px;direction:ltr;text-align:right}
-.fact span{color:var(--muted);font-size:13px}
-.btn{display:inline-flex;align-items:center;gap:6px;border:0;cursor:pointer;font:inherit;font-weight:700;font-size:15px;padding:9px 16px;border-radius:10px;text-decoration:none;background:var(--accent);color:var(--accent-ink)}
-.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
-.btn.ghost:hover{border-color:var(--accent)}
-.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow)}
-.card h4{margin:0;font-size:17px}
-.meta{display:flex;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
-.chip{background:var(--surface2);border-radius:999px;padding:1px 9px}
-.chip.hot{background:var(--accent-soft);color:var(--accent);font-weight:700}
-.card p{margin:0;color:var(--muted);font-size:14px;flex:1}
-.card .btns{margin-top:8px}
-.card .btn{font-size:14px;padding:7px 12px}
-.plans{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.plan{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;text-decoration:none;color:var(--ink);display:flex;flex-direction:column}
-.plan img{width:100%;aspect-ratio:4/3;object-fit:contain;background:#fff;display:block}
-.plan span{padding:8px 10px;font-size:14px}
-.plan small{display:block;color:var(--muted)}
-.group-title{font-weight:700;margin:18px 0 8px;font-size:16px}
-/* cost */
-.cost{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
-.cost-top{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:12px}
-.field label{display:block;font-size:13px;color:var(--muted)}
-input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 8px;min-width:0}
-input:focus{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
-.tbl{width:100%;overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:640px}
-th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right;vertical-align:middle}
-th{font-size:13px;color:var(--muted);font-weight:500}
-td input{width:100%}
-td.num{direction:ltr;text-align:left;font-variant-numeric:tabular-nums;white-space:nowrap}
-td .src{display:block;font-size:12px;color:var(--muted)}
-.x{background:none;border:0;color:var(--muted);cursor:pointer;font-size:18px;line-height:1}
-.x:hover{color:var(--accent)}
-.totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:14px}
-.total{background:var(--surface2);border-radius:12px;padding:12px}
-.total span{color:var(--muted);font-size:13px}
-.total b{display:block;font-size:22px;direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
-.total.big{background:var(--accent);color:var(--accent-ink)}
-.total.big span{color:inherit;opacity:.85}
-.note{font-size:13px;color:var(--muted);margin-top:10px}
-/* modal */
-dialog{border:0;padding:0;border-radius:14px;width:min(1100px,96vw);height:min(760px,90vh);background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
-dialog::backdrop{background:rgba(20,15,10,.55)}
-.dlg-head{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line);gap:8px}
-.dlg-head b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-dialog iframe{width:100%;height:calc(100% - 50px);border:0;display:block;background:#fff}
-footer{margin-top:40px;color:var(--muted);font-size:13px;text-align:center}
-input[type=number]{direction:ltr;text-align:right}
-@media (max-width:760px){.hero{grid-template-columns:1fr}h1{font-size:23px}
-  table{min-width:0}thead{display:none}
-  tbody tr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px 8px;padding:10px 0;border-bottom:1px solid var(--line);position:relative}
-  tbody td{border:0;padding:0}
-  tbody td:first-child{grid-column:1/-1;padding-left:28px}
-  tbody td.num{grid-column:1/-1;text-align:right;font-weight:700}
-  tbody td:last-child{position:absolute;left:0;top:14px}
-  tbody td:nth-child(2)::before{content:"الكمية";display:block;font-size:12px;color:var(--muted)}
-  tbody td:nth-child(3)::before{content:"الوحدة";display:block;font-size:12px;color:var(--muted)}
-  tbody td:nth-child(4)::before{content:"سعر الوحدة";display:block;font-size:12px;color:var(--muted)}
+html{scroll-behavior:smooth;scroll-padding-top:16px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.75}
+.num{font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
+h1,h2,h3{font-family:var(--f-display);line-height:1.4;margin:0}
+a{color:var(--blue)}
+.shell{display:grid;grid-template-columns:250px minmax(0,1fr);gap:0;max-width:1320px;margin:0 auto}
+/* sidebar (right side in RTL) */
+aside{position:sticky;top:0;height:100vh;overflow:auto;padding:24px 18px;border-inline-end:1px solid var(--line);background:var(--surface)}
+aside .brand{font-family:var(--f-display);font-weight:800;font-size:18px;margin-bottom:2px}
+aside .sub{color:var(--muted);font-size:13px;margin-bottom:18px}
+aside ol{list-style:none;margin:0;padding:0;display:grid;gap:2px;counter-reset:ch}
+aside li a{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:15px}
+aside li a::before{counter-increment:ch;content:counter(ch);display:inline-grid;place-items:center;min-width:24px;height:24px;border-radius:50%;background:var(--surface2);font-size:12px;font-weight:700;color:var(--muted)}
+aside li a:hover{background:var(--surface2)}
+aside li a.on{background:var(--accent-soft);color:var(--accent);font-weight:700}
+aside li a.on::before{background:var(--accent);color:var(--surface)}
+aside .tools{margin-top:18px;display:grid;gap:8px}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:7px 12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:hover{background:var(--surface2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+main{padding:28px 32px 80px;min-width:0}
+.chapter{padding:28px 0 36px;border-bottom:1px solid var(--line)}
+.chapter:last-child{border-bottom:0}
+.eyebrow{color:var(--accent);font-weight:700;font-size:13px;letter-spacing:0}
+.chapter>h2{font-size:26px;margin:2px 0 6px}
+.lede{color:var(--muted);max-width:75ch;margin:0 0 18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.grid{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.stat .k{color:var(--muted);font-size:13px}
+.stat .v{font-family:var(--f-display);font-size:24px;font-weight:800}
+.stat .v small{font-size:14px;font-weight:600;color:var(--muted)}
+.cover{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px}
+.cover h1{font-size:34px;font-weight:800}
+.cover .meta{color:var(--muted);margin:6px 0 20px}
+.note{background:var(--accent-soft);border-radius:10px;padding:10px 14px;font-size:14px}
+.frame{width:100%;border:1px solid var(--line);border-radius:12px;background:var(--surface);display:block}
+.frame3d{height:78vh;min-height:460px}
+.frame-study{height:1600px;border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:start;vertical-align:middle}
+th{background:var(--surface2);font-weight:700;font-size:13.5px;color:var(--muted)}
+td.n,th.n{text-align:left}
+tfoot td{font-weight:700;background:var(--surface2)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.tbl table tr:last-child td{border-bottom:0}
+h3{font-size:18px;margin:22px 0 10px}
+.plan{width:100%;height:auto;display:block}
+.plan text{font-family:var(--f-body);fill:var(--ink)}
+input.in{width:92px;font:inherit;font-size:14px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);text-align:left;direction:ltr}
+input.in:focus{outline:2px solid var(--accent);outline-offset:1px}
+.unit{color:var(--muted);font-size:13px}
+.total-card{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:end}
+.total-card .big{font-family:var(--f-display);font-size:34px;font-weight:800;color:var(--accent)}
+.switch{display:inline-flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
+.switch input{accent-color:var(--accent);width:18px;height:18px}
+.est{color:var(--warn);font-size:12px;font-weight:700}
+details.more{margin-top:12px}
+details.more summary{cursor:pointer;color:var(--blue);font-weight:600}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:middle;margin-inline-end:6px}
+ul.plain{margin:0;padding-inline-start:20px}
+ul.plain li{margin:4px 0}
+@media (max-width:980px){
+  .shell{grid-template-columns:1fr}
+  aside{position:sticky;top:0;height:auto;z-index:5;padding:8px 10px;border:0;border-bottom:1px solid var(--line)}
+  aside .brand,aside .sub,aside .tools{display:none}
+  aside ol{display:flex;overflow-x:auto;gap:4px;scrollbar-width:none}
+  aside li a{white-space:nowrap;padding:6px 10px;font-size:14px}
+  main{padding:16px 16px 60px}
+  .g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g3,.g2{grid-template-columns:1fr}
+  html{scroll-padding-top:64px}
 }
+@media print{
+  aside,.noprint,.frame{display:none!important}
+  .shell{display:block}
+  main{padding:0}
+  .chapter{break-inside:auto;page-break-before:always}
+  .print-only{display:block!important}
+  input.in{border:0;background:none}
+}
+.print-only{display:none}
 </style>
 </head>
 <body>
-<div class="wrap">
-<header>
-  <div>
-    <h1>لوحة البيت</h1>
-    <p class="sub">النموذج النهائي وحساب التكلفة</p>
-  </div>
-  <nav>
-    <a href="#final">النموذج النهائي</a>
-    <a href="#cost">حساب التكلفة</a>
+<div class="shell">
+<aside>
+  <div class="brand">كرّاس مسكن مدنين</div>
+  <div class="sub">النموذج النهائي · ملف واحد فيه الكل</div>
+  <nav aria-label="فصول الكرّاس">
+  <ol id="toc">
+    <li><a href="#c-summary">الملخّص</a></li>
+    <li><a href="#c-model">النموذج النهائي 3D</a></li>
+    <li><a href="#c-dims">مقاسات الدار</a></li>
+    <li><a href="#c-found">الأساسات</a></li>
+    <li><a href="#c-climate">الدراسة المناخية</a></li>
+    <li><a href="#c-cost">مواد الطابق الأول والتكلفة</a></li>
+    <li><a href="#c-notes">الفرضيات والمصادر</a></li>
+  </ol>
   </nav>
-</header>
+  <div class="tools">
+    <button class="btn" onclick="window.print()">طباعة / PDF</button>
+    <button class="btn" id="csvSide">تحميل جدول المواد (CSV)</button>
+  </div>
+</aside>
 
-<section id="final" style="margin-top:0">
-  <div class="hero">
+<main>
+
+<!-- 1 -->
+<section class="chapter" id="c-summary">
+  <div class="cover">
+    <span class="eyebrow">الفصل 1 · الملخّص</span>
+    <h1>كرّاس مسكن مدنين: النموذج النهائي</h1>
+    <div class="meta">مدنين، الجنوب التونسي · نسخة <span class="num">2026-11-19</span> · كل المقاسات بالمتر ومأخوذة من النموذج ثلاثي الأبعاد</div>
+    <div class="grid g4">
+      <div class="card stat"><div class="k">عرض الدار (شرق ← غرب)</div><div class="v num">12.7 <small>م</small></div></div>
+      <div class="card stat"><div class="k">طول البناء (شمال ← الشارع)</div><div class="v num">19 <small>م</small></div></div>
+      <div class="card stat"><div class="k">الطوابق</div><div class="v">أرضي + أوّل <small>+ كهف</small></div></div>
+      <div class="card stat"><div class="k">مجموع مواد الطابق الأول</div><div class="v"><span class="num" id="sumTotal">0</span> <small id="sumCur">د.ت</small></div></div>
+    </div>
+    <p class="lede" style="margin-top:18px">الكرّاس هذا يلمّ كل شيء في بلاصة وحدة: النموذج النهائي ثلاثي الأبعاد، مقاسات الدار الكل والبيوت، الأساسات بمقاساتها، الدراسة المناخية كاملة (الشمس والريح)، وفي الآخر قائمة المواد الأولية للطابق الأول (حديد 6 و 12، إسمنت، رمل، حصى، آجر، هوردي، بوترال) بجدول تكتب فيه الأسوام وتطلعلك التكلفة. الحساب للطابق الأول برك، خاطر هو اللي باش تصير فيه الأشغال؛ الأساسات والطابق الأرضي موجودين للمعلومة.</p>
+    <div class="note">الكميات محسوبة من النموذج والنسب تقديرية. قبل الشراء، خلّي المهندس ولا المقاول يثبّت عدد السواري، الحديد، وسمك السقف.</div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="chapter" id="c-model">
+  <span class="eyebrow">الفصل 2</span>
+  <h2>النموذج النهائي ثلاثي الأبعاد</h2>
+  <p class="lede">اسحب باش تدوّر، والعجلة ولا زوز صوابع للتقريب. الأزرار الفوق: الطابقان، الأرضي فقط، الأول فقط، منظور علوي، إخفاء البرج باش تشوف الدرج، إخفاء السقف، وإظهار الكهف.</p>
+  <iframe class="frame frame3d" src="final-3d.html" title="النموذج النهائي ثلاثي الأبعاد" loading="lazy"></iframe>
+  <p class="print-only">النموذج ثلاثي الأبعاد موجود في النسخة على الإنترنت: hamzamansouri7.github.io/house-3d/final-3d.html</p>
+</section>
+
+<!-- 3 -->
+<section class="chapter" id="c-dims">
+  <span class="eyebrow">الفصل 3</span>
+  <h2>مقاسات الدار الكل</h2>
+  <p class="lede">الشمال للفوق، الشارع للجنوب (لوطة). المقاسات مأخوذة من النموذج <span class="num">house-3d-v3.html</span>. البيوت مرسومة بالمقياس.</p>
+
+  <div class="grid g4">
+    <div class="card stat"><div class="k">الكتلة الرئيسية</div><div class="v num">12.7 × 9.5</div></div>
+    <div class="card stat"><div class="k">ارتفاع الطابق</div><div class="v num">3.2 <small>م</small></div></div>
+    <div class="card stat"><div class="k">برج الدرج</div><div class="v num">2.4 × 5.5</div></div>
+    <div class="card stat"><div class="k">الكهف (أرضيته −2.8 م)</div><div class="v num">6 × 7</div></div>
+  </div>
+
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card"><h3 style="margin-top:0">الطابق الأرضي</h3><svg class="plan" id="planG" role="img" aria-label="مخطط الطابق الأرضي"></svg></div>
+    <div class="card"><h3 style="margin-top:0">الطابق الأول</h3><svg class="plan" id="planF" role="img" aria-label="مخطط الطابق الأول"></svg></div>
+  </div>
+
+  <div class="grid g2">
+    <div><h3>بيوت الطابق الأرضي</h3><div class="tbl"><table id="tG"></table></div></div>
+    <div><h3>بيوت الطابق الأول</h3><div class="tbl"><table id="tF"></table></div></div>
+  </div>
+
+  <h3>الارتفاعات والمقاسات العامة</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>العنصر</th><th class="n">القيمة</th><th>ملاحظة</th></tr></thead>
+    <tbody>
+      <tr><td>عرض الدار</td><td class="n num">12.7 م</td><td>من الحيط الغربي للحيط الشرقي، الجيران لاصقين من الزوز جهات</td></tr>
+      <tr><td>طول البناء</td><td class="n num">19 م</td><td>من غرفة الجدّة (−4) لين الشارع (15)</td></tr>
+      <tr><td>الكتلة الرئيسية (الأرضي والأول)</td><td class="n num">12.7 × 9.5 م</td><td>مساحة سقف الأول <span class="num">120.65 م²</span></td></tr>
+      <tr><td>ارتفاع الطابق الأرضي</td><td class="n num">3.2 م</td><td>من الأرض لأرضية الأول</td></tr>
+      <tr><td>ارتفاع حيوط الطابق الأول</td><td class="n num">3.0 م</td><td>من <span class="num">3.2</span> لين <span class="num">6.2</span>، السقف فوقها (<span class="num">6.2–6.42</span>)</td></tr>
+      <tr><td>برج الدرج</td><td class="n num">2.4 × 5.5 م</td><td>يطلع لين <span class="num">6.13</span> م، الغطاء لين <span class="num">6.38</span>؛ 16 درجة من الأول للسطح</td></tr>
+      <tr><td>عرض الدرج</td><td class="n num">1.1 م</td><td>داخل البرج</td></tr>
+      <tr><td>الكوريدور الخارجي (الأول)</td><td class="n num">6.2 × 2 م</td><td>بين البالكون 1 والبرج</td></tr>
+      <tr><td>الكهف تحت الأرض</td><td class="n num">6 × 7 م</td><td>تحت الصالون وغرفة سلوى، أرضيته <span class="num">−2.8</span> م، درجو تحت درج البرج</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 4 -->
+<section class="chapter" id="c-found">
+  <span class="eyebrow">الفصل 4 · للمعلومة</span>
+  <h2>الأساسات ومقاساتها</h2>
+  <p class="lede">الشبكة متاع السواري والجسور الأرضية كيما هي في النموذج. القاعدة الزرقاء هي القاعدة القوية اللي تنزل لين أرضية الكهف. الأساسات موش داخلة في حساب التكلفة.</p>
+
+  <div class="card"><svg class="plan" id="planFound" style="max-width:600px;margin:0 auto" role="img" aria-label="مخطط الأساسات"></svg>
+    <div class="legend"><span><i style="background:var(--muted)"></i>قاعدة + سارية</span><span><i style="background:var(--blue)"></i>القاعدة القوية (−2.8 م)</span><span><i style="background:var(--accent)"></i>جسر أرضي 25 × 40</span></div>
+  </div>
+
+  <div class="grid g3" style="margin-top:14px">
+    <div class="card stat"><div class="k">عدد القواعد والسواري</div><div class="v num">26</div></div>
+    <div class="card stat"><div class="k">طول الجسور الأرضية</div><div class="v num" id="fBeamLen">126 <small>م</small></div></div>
+    <div class="card stat"><div class="k">خرسانة القواعد (معلومة)</div><div class="v num">9.1 <small>م³</small></div></div>
+  </div>
+
+  <div class="grid g2">
     <div>
-      <span class="tag">المعتمد</span>
-      <h3>النموذج النهائي</h3>
-      <p class="lead" style="margin:0">النموذج اللي نخدمو عليه: البيت بالطابقين، درج البرج، والكهف. آخر تعديل: حمّام الطابق الأول 2.7 × 1.7 م.</p>
-      <div class="btns">
-        <a class="btn" href="./#sSalwa">افتح النموذج النهائي</a>
-        <button class="btn ghost" data-preview="./#sSalwa" data-title="النموذج النهائي">معاينة هنا</button>
-      </div>
+      <h3>المقاسات</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>العنصر</th><th class="n">المقاس</th></tr></thead>
+        <tbody>
+          <tr><td>القاعدة (سمل)</td><td class="n num">1.0 × 1.0 × 0.35 م</td></tr>
+          <tr><td>عمق القاعدة العادية</td><td class="n num">−1.2 م</td></tr>
+          <tr><td>القاعدة القوية (L4، B)</td><td class="n num">−2.8 م (أسفلها −3.15)</td></tr>
+          <tr><td>السارية</td><td class="n num">25 × 25 سم</td></tr>
+          <tr><td>الجسر الأرضي</td><td class="n num">25 × 40 سم</td></tr>
+        </tbody>
+      </table></div>
+      <p class="unit">مقاس القاعدة وعمقها مكتوبين في الملف كـ"فرضية"؛ يثبّتهم المهندس حسب الأرض.</p>
     </div>
-    <div class="facts">
-      <div class="fact"><b>12.7 × 9.5 م</b><span>مساحة البيت</span></div>
-      <div class="fact"><b>2</b><span>طابقان: الأرضي والأول</span></div>
-      <div class="fact"><b>6 × 7 م</b><span>الكهف تحت الأرض (−2.8 م)</span></div>
-      <div class="fact"><b>3.2 م</b><span>ارتفاع الطابق</span></div>
+    <div>
+      <h3>محاور الشبكة</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>المحور</th><th class="n">المكان</th><th class="n">المسافة للّي قبلو</th></tr></thead>
+        <tbody id="axes"></tbody>
+      </table></div>
     </div>
+  </div>
+
+  <h3>الجسور الأرضية</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>الجسر</th><th>من ← إلى</th><th class="n">الطول</th></tr></thead>
+    <tbody id="fBeams"></tbody>
+    <tfoot><tr><td colspan="2">المجموع</td><td class="n num" id="fBeamSum"></td></tr></tfoot>
+  </table></div>
+
+  <h3>القواعد (26)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>#</th><th>المحور</th><th class="n">x (م)</th><th class="n">z (م)</th><th class="n">العمق</th></tr></thead>
+    <tbody id="fCols"></tbody>
+  </table></div>
+
+  <h3>الأساسات ثلاثية الأبعاد</h3>
+  <iframe class="frame frame3d" src="foundations-3d.html" title="الأساسات ثلاثية الأبعاد" loading="lazy"></iframe>
+</section>
+
+<!-- 5 -->
+<section class="chapter" id="c-climate">
+  <span class="eyebrow">الفصل 5</span>
+  <h2>الدراسة المناخية للمسكن</h2>
+  <p class="lede">الدراسة كاملة: الشمس على الدار في كل ساعة وكل فصل، فرضية رفع البرج، الريح (البحري)، الحرارة والرطوبة، والنصائح.</p>
+  <iframe class="frame frame-study" id="study" src="climate-study.html" title="الدراسة المناخية لمسكن مدنين" scrolling="no"></iframe>
+  <p class="print-only">الدراسة المناخية التفاعلية موجودة في النسخة على الإنترنت: hamzamansouri7.github.io/house-3d/climate-study.html</p>
+</section>
+
+<!-- 6 -->
+<section class="chapter" id="c-cost">
+  <span class="eyebrow">الفصل 6 · الطابق الأول فقط</span>
+  <h2>المواد الأولية والتكلفة</h2>
+  <p class="lede">الجدول الأوّل هو المهم: كل مادة بكمّيتها، اكتب سوم الوحدة وتطلعلك التكلفة. الحديد 6 و 12 فقط. الكميات محسوبة من مقاسات النموذج، وتنجم تبدّل أي رقم تحت (الكميات والنسب) والحساب يتعاود وحدو. الأرقام تتسجّل في المتصفّح متاعك.</p>
+
+  <div class="card total-card">
+    <div><div class="unit">مجموع المواد</div><div class="big"><span class="num" id="tSub">0</span> <span class="cur">د.ت</span></div></div>
+    <div><div class="unit">احتياط (<span class="num" id="tContP">10</span>%)</div><div class="stat"><div class="v num" id="tCont">0</div></div></div>
+    <div><div class="unit">المجموع مع الاحتياط</div><div class="stat"><div class="v"><span class="num" id="tAll">0</span> <span class="cur">د.ت</span></div></div></div>
+    <div style="margin-inline-start:auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center" class="noprint">
+      <label class="unit">العملة <input class="in" id="cur" style="width:70px" value="د.ت"></label>
+      <label class="unit">الاحتياط % <input class="in" id="cont" type="number" step="1" min="0" style="width:64px" value="10"></label>
+      <button class="btn" id="csv">CSV</button>
+      <button class="btn" id="reset">رجّع الأرقام الأصلية</button>
+    </div>
+  </div>
+
+  <h3>1. قائمة المواد والأسوام</h3>
+  <div class="tbl"><table id="boq">
+    <thead><tr><th>المادة</th><th class="n">الكمية</th><th>الوحدة</th><th class="n">سوم الوحدة</th><th class="n">المجموع</th></tr></thead>
+    <tbody></tbody>
+    <tfoot><tr><td colspan="4">المجموع</td><td class="n num" id="boqSum"></td></tr></tfoot>
+  </table></div>
+
+  <h3>2. منين جات الكميات (حسب العنصر)</h3>
+  <div class="tbl"><table id="byEl">
+    <thead><tr><th>العنصر</th><th>المقاس</th><th class="n">خرسانة م³</th><th class="n">حديد 12 كغ</th><th class="n">حديد 6 كغ</th><th class="n">آجر (حبة)</th><th class="n">ملاط م³</th></tr></thead>
+    <tbody></tbody>
+    <tfoot></tfoot>
+  </table></div>
+
+  <h3>3. الكميات من النموذج <span class="unit">(تنجم تبدّلها)</span></h3>
+  <div class="grid g2">
+    <div class="tbl"><table id="qStruct"><thead><tr><th>الهيكل</th><th class="n">القيمة</th><th>الوحدة</th></tr></thead><tbody></tbody></table></div>
+    <div class="tbl"><table id="qWalls"><thead><tr><th>الحيوط والطلي</th><th class="n">القيمة</th><th>الوحدة</th></tr></thead><tbody></tbody></table></div>
+  </div>
+  <div class="card" style="margin-top:14px;display:flex;flex-wrap:wrap;gap:10px 28px">
+    <label class="switch"><input type="checkbox" id="onCorr" checked> الكوريدور الخارجي (بلاكة + جسر)</label>
+    <label class="switch"><input type="checkbox" id="onPar" checked> حيوط البالكونات والكوريدور (garde-corps)</label>
+  </div>
+
+  <h3>4. النسب المستعملة <span class="est">تقديرية · يثبّتها المهندس</span></h3>
+  <div class="grid g2">
+    <div class="tbl"><table id="rConc"><thead><tr><th>الخرسانة والحديد</th><th class="n">القيمة</th><th>الوحدة</th></tr></thead><tbody></tbody></table></div>
+    <div class="tbl"><table id="rMas"><thead><tr><th>البني والطلي والسقف</th><th class="n">القيمة</th><th>الوحدة</th></tr></thead><tbody></tbody></table></div>
+  </div>
+  <p class="unit" id="ratioCheck"></p>
+</section>
+
+<!-- 7 -->
+<section class="chapter" id="c-notes">
+  <span class="eyebrow">الفصل 7</span>
+  <h2>الفرضيات والمصادر</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-top:0">شنوّة داخل في الحساب</h3>
+      <ul class="plain">
+        <li>السواري، جسور السقف، السقف (هوردي 16 + بلاكة 5 سم)، غطاء البرج، درج البرج من الأول للسطح.</li>
+        <li>الحيوط بالآجر: الواجهات، الحيوط اللاصقة للجيران، الحيوط الداخلية، وحيوط البرج فوق الأول. المساحات بعد ما نقصنا الأبواب والشبابيك.</li>
+        <li>الطلي (اللياجة) من داخل ومن برّا، والسقف من تحت.</li>
+        <li>الكوريدور الخارجي وحيوط البالكونات (تنجم تطفيهم).</li>
+      </ul>
+      <h3>شنوّة موش داخل</h3>
+      <ul class="plain">
+        <li>اليد العاملة، الكوفراج (اللوح والكراء)، النقل.</li>
+        <li>الجليز، الدهن، الكهرباء، الماء، الأبواب والشبابيك، العزل (étanchéité) متاع السطح.</li>
+        <li>الأساسات والطابق الأرضي (معروضين للمعلومة).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">المصادر</h3>
+      <ul class="plain">
+        <li>المقاسات: النموذج النهائي <span class="num">house-3d-v3.html</span>، مقيسة بسكريبت من الأشكال ثلاثية الأبعاد (الحيوط، السقف، البرج).</li>
+        <li>خرسانة 350 كغ/م³: 350 كغ إسمنت، حوالي 0.5 م³ رمل، 0.8 م³ حصى، 175 لتر ماء (جداول الدوزاج الفرنسية، forumconstruire و Leroy Merlin/Adeo).</li>
+        <li>السقف بالهوردي: بوترال كل 60 سم = حوالي 1.67 م.ط في المتر المربع، بلاكة 5 سم = 0.05 م³/م² (Samse).</li>
+        <li>وزن الحديد: <span class="num">0.00617 × d²</span> كغ/م، يعني حديد 6 = <span class="num">0.222</span> كغ/م، حديد 12 = <span class="num">0.888</span> كغ/م (قضيب 12 م = <span class="num">10.66</span> كغ).</li>
+        <li>نسبة الحديد للمقارنة: حوالي 30 كغ/م² للبناية الكل مع الأساسات (دروس IUT Strasbourg).</li>
+        <li>الآجر: 15 حبة في المتر المربع لوجه 30 × 20 مع فاصل 1 سم (حساب؛ بدّلها حسب الآجر اللي تشريه).</li>
+        <li>الشمس: معادلات NOAA، مدنين <span class="num">33.35°N 10.50°E</span>.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3 style="margin-top:0">صفحات أخرى في الموقع</h3>
+    <ul class="plain">
+      <li><a href="final-3d.html">النموذج النهائي في صفحة كاملة</a> · <a href="foundations-3d.html">الأساسات في صفحة كاملة</a> · <a href="climate-study.html">الدراسة المناخية في صفحة كاملة</a></li>
+      <li><a href="./">ملف التصميم الكامل (كل المراحل)</a>. النسخ القديمة محفوظة في <span class="num">versions/</span> و <span class="num">plans/</span>.</li>
+    </ul>
   </div>
 </section>
 
-
-
-<section id="cost">
-  <h2>حساب التكلفة</h2>
-  <p class="lead">المساحات مأخوذة من تصميم v3، والأسعار تكتبها أنت. كل شيء قابل للتعديل، ويتحفظ في هذا المتصفح.</p>
-  <div class="cost">
-    <div class="cost-top">
-      <div class="field"><label for="cur">العملة</label><input id="cur" value="د.ت" style="width:90px"></div>
-      <div class="field"><label for="cont">احتياط للطوارئ (%)</label><input id="cont" type="number" min="0" step="1" value="10" style="width:110px"></div>
-      <button class="btn ghost" id="addRow">+ أضف بند</button>
-      <button class="btn ghost" id="resetCost">إرجاع القيم الأصلية</button>
-    </div>
-    <div class="tbl">
-      <table>
-        <thead><tr><th style="width:31%">البند</th><th style="width:15%">الكمية</th><th style="width:10%">الوحدة</th><th style="width:18%">سعر الوحدة</th><th style="width:20%">المجموع</th><th style="width:6%"></th></tr></thead>
-        <tbody id="rows"></tbody>
-      </table>
-    </div>
-    <div class="totals">
-      <div class="total"><span>مجموع البنود</span><b id="tSub">0</b></div>
-      <div class="total"><span>الاحتياط</span><b id="tCont">0</b></div>
-      <div class="total"><span>سعر المتر المربع (للطابقين)</span><b id="tM2">0</b></div>
-      <div class="total big"><span>التكلفة الإجمالية</span><b id="tAll">0</b></div>
-    </div>
-    <p class="note">الكميات الافتراضية من ملف v3: البيت 12.7 × 9.5 م لكل طابق، الكهف 6 × 7 م، البلكون 1 مساحته 4.1 × 3 م، والبلكون 2 مساحته 5 × 4 م. راجعها مع المقاول قبل الاعتماد.</p>
-  </div>
-</section>
-
-<footer>النسخ والمخططات القديمة ما تفسختش: محفوظة في مجلدي <span dir="ltr">versions/</span> و<span dir="ltr">plans/</span></footer>
+</main>
 </div>
 
-<dialog id="dlg">
-  <div class="dlg-head"><b id="dlgTitle"></b><div style="display:flex;gap:6px"><a class="btn ghost" id="dlgOpen" target="_blank" rel="noopener">افتح في صفحة</a><button class="btn ghost" id="dlgClose">إغلاق</button></div></div>
-  <iframe id="dlgFrame" title="معاينة"></iframe>
-</dialog>
-
 <script>
-function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
-function fmtDate(d){var p=d.split('-'),m=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];return (+p[2])+' '+m[+p[1]-1]+' '+p[0];}
+(function(){
+'use strict';
+function $(i){return document.getElementById(i);}
+function fmt(v,d){if(!isFinite(v))return '0';return v.toLocaleString('en-US',{minimumFractionDigits:d||0,maximumFractionDigits:d||0});}
+function store(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function load(k){try{var s=localStorage.getItem(k);return s?JSON.parse(s):null;}catch(e){return null;}}
 
+/* ---------------- plans ---------------- */
+var NS='http://www.w3.org/2000/svg';
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function plan(svg,items,opt){
+  var S=28,x0=-1,z0=-5,W=14.7,H=21.5;
+  svg.setAttribute('viewBox','0 0 '+(W*S)+' '+(H*S));
+  var h='';
+  function X(x){return (x-x0)*S;} function Z(z){return (z-z0)*S;}
+  items.forEach(function(r){
+    var dash=r.dash?' stroke-dasharray="6 4"':'';
+    h+='<rect x="'+X(r.x0)+'" y="'+Z(r.z0)+'" width="'+(r.x1-r.x0)*S+'" height="'+(r.z1-r.z0)*S+'" fill="'+(r.fill||'none')+'" fill-opacity="'+(r.op==null?0.55:r.op)+'" stroke="'+css('--ink')+'" stroke-opacity="'+(r.dash?0.7:0.5)+'" stroke-width="1.2"'+dash+'/>';
+    if(r.n){var cx=X((r.x0+r.x1)/2),cy=Z((r.z0+r.z1)/2)+(r.dy||0)*S;
+      h+='<text x="'+cx+'" y="'+(cy-2)+'" text-anchor="middle" font-size="'+(r.fs||12)+'" font-weight="700">'+r.n+'</text>';
+      if(r.s)h+='<text x="'+cx+'" y="'+(cy+13)+'" text-anchor="middle" font-size="11" opacity=".75" direction="ltr">'+r.s+'</text>';}
+  });
+  /* north arrow + street */
+  h+='<g transform="translate('+(W*S-26)+',26)"><path d="M0,-14 L7,8 L0,3 L-7,8 Z" fill="'+css('--accent')+'"/><text y="22" text-anchor="middle" font-size="12" font-weight="700">ش</text></g>';
+  h+='<text x="'+X(6.35)+'" y="'+(Z(15)+22)+'" text-anchor="middle" font-size="12" opacity=".8">الشارع (جنوب)</text>';
+  if(opt&&opt.dims){h+='<text x="'+X(6.35)+'" y="'+(Z(-4)-8)+'" text-anchor="middle" font-size="12" direction="ltr">12.7 m</text>';}
+  svg.innerHTML=h;
+}
+var C={room:'#e8d6b5',wet:'#bcd6e3',circ:'#e4ddcb',out:'#cfdcb8',tower:'#b9b1a2',bal:'#d9cfe6'};
+var ground=[
+  {x0:0,x1:9.7,z0:0,z1:2.5,fill:C.out,n:'الفناء الخلفي',dy:0.5},
+  {x0:0.1,x1:1.5,z0:0,z1:2.42,fill:C.wet,n:'حمّام',s:'1.5 × 2.5',fs:9},
+  {x0:0.1,x1:2,z0:-3.9,z1:-2,fill:C.out,n:'علوش العيد',s:'2 × 2',fs:10},
+  {x0:0,x1:3,z0:2.5,z1:6.5,fill:C.room,n:'غرفة البنات',s:'3 × 4'},
+  {x0:3,x1:4.5,z0:2.5,z1:5,fill:C.wet,n:'حمّام',s:'1.5 × 2.5',fs:10},
+  {x0:0,x1:3,z0:6.5,z1:10.5,fill:C.room,n:'غرفة نوم 2',s:'3 × 4'},
+  {x0:4.1,x1:6.7,z0:2.5,z1:9.5,fill:C.circ,n:'كوريدور',s:'1.4 / 2.5',fs:11},
+  {x0:6.7,x1:9.7,z0:2.5,z1:5.5,fill:C.room,n:'غرفة سلوى',s:'3 × 3'},
+  {x0:9.7,x1:12.7,z0:0,z1:5.5,fill:C.room,n:'كوجينة',s:'3 × 5.5'},
+  {x0:6.7,x1:12.7,z0:5.5,z1:9.5,fill:C.room,n:'صالون',s:'6 × 4'},
+  {x0:9.7,x1:12.7,z0:-4,z1:0,fill:C.room,n:'غرفة الجدّة',s:'3 × 4'},
+  {x0:0,x1:3,z0:10.5,z1:15,fill:C.circ,n:'قاراج',s:'3 × 4.5'},
+  {x0:4.1,x1:10.3,z0:9.5,z1:15,fill:C.out,n:'الحوش',s:'باب الشارع'},
+  {x0:10.3,x1:12.7,z0:9.5,z1:15,fill:C.tower,n:'برج الدرج',s:'2.4 × 5.5',fs:11},
+  {x0:6.7,x1:12.7,z0:2.5,z1:9.5,dash:true,op:0,n:'',s:''}
+];
+var first=[
+  {x0:0,x1:4,z0:0.5,z1:5.5,fill:C.room,n:'غرفة النوم الكبيرة',s:'4 × 5',fs:11},
+  {x0:0,x1:4,z0:5.5,z1:9.5,fill:C.room,n:'غرفة نوم 2',s:'4 × 4'},
+  {x0:4,x1:6.7,z0:0,z1:1.7,fill:C.wet,n:'حمّام',s:'2.7 × 1.7',fs:11},
+  {x0:4,x1:6.7,z0:1.7,z1:9.5,fill:C.circ,n:'كوريدور',s:'عرض 2.7',fs:11},
+  {x0:6.7,x1:12.7,z0:1.5,z1:5.5,fill:C.room,n:'كوجينة',s:'6 × 4'},
+  {x0:6.7,x1:12.7,z0:5.5,z1:9.5,fill:C.room,n:'صالون',s:'6 × 4'},
+  {x0:7.7,x1:12.7,z0:-4,z1:0,fill:C.bal,n:'بالكون 2',s:'5 × 4'},
+  {x0:0,x1:4.1,z0:9.5,z1:15,fill:C.bal,n:'بالكون 1',s:'فوق القاراج',fs:11},
+  {x0:4.1,x1:10.3,z0:9.5,z1:11.5,fill:C.circ,n:'كوريدور خارجي',s:'6.2 × 2',fs:11},
+  {x0:10.3,x1:12.7,z0:9.5,z1:15,fill:C.tower,n:'برج الدرج',s:'16 درجة',fs:11}
+];
+function drawPlans(){plan($('planG'),ground,{dims:1});plan($('planF'),first,{dims:1});}
+function roomTable(id,rows){
+  var h='<thead><tr><th>البيت</th><th class="n">المقاس (م)</th><th class="n">المساحة م²</th></tr></thead><tbody>';
+  var tot=0;rows.forEach(function(r){var a=r[2]*r[3];tot+=a;h+='<tr><td>'+r[0]+'</td><td class="n num">'+r[1]+'</td><td class="n num">'+fmt(a,1)+'</td></tr>';});
+  $(id).innerHTML=h+'</tbody><tfoot><tr><td colspan="2">المجموع (البيوت المغطّاة)</td><td class="n num">'+fmt(tot,1)+'</td></tr></tfoot>';
+}
+roomTable('tG',[['غرفة البنات','3 × 4',3,4],['غرفة نوم 2','3 × 4',3,4],['حمّام','1.5 × 2.5',1.5,2.5],['غرفة سلوى','3 × 3',3,3],['كوجينة','3 × 5.5',3,5.5],['صالون','6 × 4',6,4],['غرفة الجدّة','3 × 4',3,4],['قاراج','3 × 4.5',3,4.5],['حمّام خارجي','1.5 × 2.5',1.5,2.5],['علوش العيد','2 × 2',2,2]]);
+roomTable('tF',[['غرفة النوم الكبيرة','4 × 5',4,5],['غرفة نوم 2','4 × 4',4,4],['حمّام','2.7 × 1.7',2.7,1.7],['كوريدور','2.7 × 7.8',2.7,7.8],['كوجينة','6 × 4',6,4],['صالون','6 × 4',6,4],['بالكون 1 (فوق القاراج)','4.1 × 5.5',4.1,5.5],['بالكون 2','5 × 4',5,4],['كوريدور خارجي','6.2 × 2',6.2,2]]);
 
-/* preview dialog */
-var dlg=document.getElementById('dlg'),frame=document.getElementById('dlgFrame');
-document.addEventListener('click',function(e){
-  var b=e.target.closest('[data-preview]');if(!b)return;
-  frame.src=b.getAttribute('data-preview');document.getElementById('dlgTitle').textContent=b.getAttribute('data-title');
-  document.getElementById('dlgOpen').href=b.getAttribute('data-preview');dlg.showModal();
-});
-function closeDlg(){dlg.close();}
-document.getElementById('dlgClose').onclick=closeDlg;
-dlg.addEventListener('close',function(){frame.src='about:blank';});
+/* ---------------- foundations ---------------- */
+var AX={L1:0,L2:4.0,L3:6.7,L4:9.7,L5:12.7},AZ={X1:-4,X2:0,A:2.5,B:5.5,C:9.5,D:11.5,E:15};
+var fcols=[['L1','A'],['L2','A'],['L3','A'],['L4','A'],['L5','A'],['L1','B'],['L2','B'],['L3','B'],['L4','B',1],['L5','B'],['L1','C'],['L3','C'],['L4','C'],['L5','C'],['L1','D'],['L2','D'],['L3','D'],['L4','D'],['L5','D'],['L1','E'],['L2','E'],['L5','E'],['L4','X1'],['L5','X1'],['L4','X2'],['L5','X2']];
+var fbeams=[['صف A','A','L1','L5'],['صف B','B','L1','L5'],['صف C','C','L1','L5'],['صف D','D','L2','L5'],['صف E','E','L1','L5'],['صف X1','X1','L4','L5'],['صف X2','X2','L4','L5'],
+  ['محور L1','L1','A','E'],['محور L2','L2','A','E'],['محور L3','L3','A','C'],['محور L4','L4','X1','B'],['محور L5','L5','X1','E']];
+(function(){
+  var h='',prev=null;
+  Object.keys(AX).forEach(function(k){h+='<tr><td>'+k+' (شرق–غرب)</td><td class="n num">x = '+AX[k]+'</td><td class="n num">'+(prev==null?'—':fmt(AX[k]-prev,1))+'</td></tr>';prev=AX[k];});
+  prev=null;Object.keys(AZ).forEach(function(k){h+='<tr><td>'+k+' (شمال–جنوب)</td><td class="n num">z = '+AZ[k]+'</td><td class="n num">'+(prev==null?'—':fmt(AZ[k]-prev,1))+'</td></tr>';prev=AZ[k];});
+  $('axes').innerHTML=h;
+  var s=0;h='';
+  fbeams.forEach(function(b){var row=b[1] in AZ,len=row?AX[b[3]]-AX[b[2]]:AZ[b[3]]-AZ[b[2]];s+=len;
+    h+='<tr><td>'+b[0]+'</td><td class="num">'+b[2]+' → '+b[3]+'</td><td class="n num">'+fmt(len,1)+' م</td></tr>';});
+  $('fBeams').innerHTML=h;$('fBeamSum').textContent=fmt(s,1)+' م';$('fBeamLen').innerHTML=fmt(s,1)+' <small>م</small>';
+  h='';fcols.forEach(function(c,i){h+='<tr><td class="num">'+(i+1)+'</td><td class="num">'+c[0]+' / '+c[1]+'</td><td class="n num">'+AX[c[0]]+'</td><td class="n num">'+AZ[c[1]]+'</td><td class="n num">'+(c[2]?'<b style="color:var(--blue)">−2.8 م</b>':'−1.2 م')+'</td></tr>';});
+  $('fCols').innerHTML=h;
+})();
+function drawFound(){
+  var svg=$('planFound'),S=34,x0=-1.6,z0=-5.6,W=17.2,H=22.6,h='';
+  svg.setAttribute('viewBox','0 0 '+(W*S)+' '+(H*S));
+  function X(x){return (x-x0)*S;} function Z(z){return (z-z0)*S;}
+  var ink=css('--ink'),mut=css('--muted'),acc=css('--accent'),blue=css('--blue');
+  Object.keys(AX).forEach(function(k){h+='<line x1="'+X(AX[k])+'" y1="'+Z(-4.6)+'" x2="'+X(AX[k])+'" y2="'+Z(15.6)+'" stroke="'+mut+'" stroke-dasharray="3 5" stroke-width="1"/><text x="'+X(AX[k])+'" y="'+(Z(-4.6)-6)+'" text-anchor="middle" font-size="13" font-weight="700" direction="ltr">'+k+'</text>';});
+  Object.keys(AZ).forEach(function(k){h+='<line x1="'+X(-0.6)+'" y1="'+Z(AZ[k])+'" x2="'+X(13.3)+'" y2="'+Z(AZ[k])+'" stroke="'+mut+'" stroke-dasharray="3 5" stroke-width="1"/><text x="'+(X(-0.6)-4)+'" y="'+(Z(AZ[k])+4)+'" text-anchor="end" font-size="13" font-weight="700" direction="ltr">'+k+'</text>';});
+  fbeams.forEach(function(b){var row=b[1] in AZ;
+    if(row)h+='<line x1="'+X(AX[b[2]])+'" y1="'+Z(AZ[b[1]])+'" x2="'+X(AX[b[3]])+'" y2="'+Z(AZ[b[1]])+'" stroke="'+acc+'" stroke-width="6" stroke-opacity=".75"/>';
+    else h+='<line x1="'+X(AX[b[1]])+'" y1="'+Z(AZ[b[2]])+'" x2="'+X(AX[b[1]])+'" y2="'+Z(AZ[b[3]])+'" stroke="'+acc+'" stroke-width="6" stroke-opacity=".75"/>';});
+  fcols.forEach(function(c){var x=X(AX[c[0]]),z=Z(AZ[c[1]]),p=0.5*S;
+    h+='<rect x="'+(x-p)+'" y="'+(z-p)+'" width="'+2*p+'" height="'+2*p+'" fill="'+(c[2]?blue:mut)+'" fill-opacity="'+(c[2]?0.55:0.3)+'" stroke="'+(c[2]?blue:ink)+'" stroke-opacity=".6"/>';
+    h+='<rect x="'+(x-0.125*S)+'" y="'+(z-0.125*S)+'" width="'+0.25*S+'" height="'+0.25*S+'" fill="'+ink+'"/>';});
+  var dims=[[0,4,'4.0'],[4,6.7,'2.7'],[6.7,9.7,'3.0'],[9.7,12.7,'3.0']];
+  dims.forEach(function(d){h+='<text x="'+X((d[0]+d[1])/2)+'" y="'+(Z(15)+40)+'" text-anchor="middle" font-size="13" direction="ltr">'+d[2]+'</text>';});
+  var dz=[[-4,0,'4'],[0,2.5,'2.5'],[2.5,5.5,'3'],[5.5,9.5,'4'],[9.5,11.5,'2'],[11.5,15,'3.5']];
+  dz.forEach(function(d){h+='<text x="'+(X(12.7)+30)+'" y="'+(Z((d[0]+d[1])/2)+4)+'" text-anchor="middle" font-size="13" direction="ltr">'+d[2]+'</text>';});
+  h+='<text x="'+X(6.35)+'" y="'+(Z(15)+60)+'" text-anchor="middle" font-size="14" font-weight="700" direction="ltr">12.7 m</text>';
+  h+='<text x="'+(X(12.7)+58)+'" y="'+Z(5.5)+'" text-anchor="middle" font-size="14" font-weight="700" direction="ltr" transform="rotate(90 '+(X(12.7)+58)+' '+Z(5.5)+')">19 m</text>';
+  svg.innerHTML=h;
+}
 
-/* cost calculator */
-var FLOOR=12.7*9.5;
-var DEFAULT={cur:'د.ت',cont:10,rows:[
-  {n:'بناء الطابق الأرضي (العظم)',q:+FLOOR.toFixed(2),u:'م²',p:0,s:'12.7 × 9.5 م'},
-  {n:'بناء الطابق الأول (العظم)',q:+FLOOR.toFixed(2),u:'م²',p:0,s:'12.7 × 9.5 م'},
-  {n:'الكهف تحت الأرض',q:42,u:'م²',p:0,s:'6 × 7 م'},
-  {n:'الأساسات',q:1,u:'مقطوعة',p:0,s:''},
-  {n:'البلكون 1',q:12.3,u:'م²',p:0,s:'4.1 × 3 م'},
-  {n:'البلكون 2',q:20,u:'م²',p:0,s:'5 × 4 م'},
-  {n:'التشطيب (الطابقان)',q:+(FLOOR*2).toFixed(2),u:'م²',p:0,s:'الطابقان'},
-  {n:'الكهرباء',q:1,u:'مقطوعة',p:0,s:''},
-  {n:'السباكة (الماء والصرف)',q:1,u:'مقطوعة',p:0,s:''},
-  {n:'الأبواب والشبابيك',q:1,u:'مقطوعة',p:0,s:''}
-]};
-var KEY='house3d-cost-v1',state;
-function load(){try{var s=JSON.parse(localStorage.getItem(KEY));if(s&&s.rows)return s;}catch(e){}return JSON.parse(JSON.stringify(DEFAULT));}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
-function money(x){return Math.round(x).toLocaleString('en-US')+' '+state.cur;}
+/* ---------------- climate study: auto height ---------------- */
+(function(){
+  var f=$('study');
+  function fit(){try{var d=f.contentDocument;if(!d||!d.body)return;var hh=Math.max(d.body.scrollHeight,d.documentElement.scrollHeight);if(hh>200)f.style.height=(hh+4)+'px';}catch(e){}}
+  f.addEventListener('load',function(){fit();try{new ResizeObserver(fit).observe(f.contentDocument.body);}catch(e){setInterval(fit,1500);}setTimeout(fit,800);setTimeout(fit,2500);});
+})();
+
+/* ---------------- materials (first floor) ---------------- */
+var Q0={ /* quantities measured from the final model */
+  nCol:18, hCol:3.0, sCol:0.25,
+  beamLen:98.3, beamB:0.25, beamH:0.40,
+  roof:120.65, towRoof:13.2, towBeam:15.8,
+  stairs:1.65,
+  corr:12.4, corrBeam:6.2,
+  wExt:66.64, wNeigh:52.5, wInt:75.6, wTowExt:22.16, wTowNeigh:16.11,
+  parLen:37.3, parH:1.0
+};
+var QL={
+  nCol:['عدد السواري (الأول + البرج)','حبة'], hCol:['طول السارية','م'], sCol:['مقاس السارية','م'],
+  beamLen:['طول جسور السقف','م'], beamB:['عرض الجسر','م'], beamH:['علو الجسر','م'],
+  roof:['مساحة سقف الأول','م²'], towRoof:['مساحة غطاء البرج','م²'], towBeam:['جسور غطاء البرج','م'],
+  stairs:['خرسانة الدرج (الأول ← السطح)','م³'],
+  corr:['بلاكة الكوريدور الخارجي','م²'], corrBeam:['جسر الكوريدور','م'],
+  wExt:['حيوط الواجهات','م²'], wNeigh:['حيوط لاصقة للجيران','م²'], wInt:['حيوط داخلية','م²'],
+  wTowExt:['حيوط البرج (واجهات) فوق الأول','م²'], wTowNeigh:['حيط البرج اللاصق للجار','م²'],
+  parLen:['طول حيوط البالكونات والكوريدور','م'], parH:['علوها','م']
+};
+var STRUCT=['nCol','hCol','sCol','beamLen','beamB','beamH','roof','towRoof','towBeam','stairs','corr','corrBeam'];
+var WALLS=['wExt','wNeigh','wInt','wTowExt','wTowNeigh','parLen','parH'];
+var R0={
+  cem:350, sandC:0.5, grav:0.8, water:175, wasteC:5,
+  colBars:4, lap:0.6, colStSp:0.15, colStL:0.9,
+  beamBars:6, beamLapPct:10, beamStPm:5, beamStL:1.2,
+  slabConc:0.05, slabMesh:11, hourdis:8.33, pout:1.67,
+  stH12:80, stH6:25, wasteS:5, wire:1,
+  brick:15, layExt:2, layNeigh:1, layInt:1, wasteB:5,
+  mortM2:0.025, mortCem:350, mortSand:1.1, plast:0.02, wasteP:10
+};
+var RL={
+  cem:['إسمنت في م³ خرسانة','كغ'], sandC:['رمل في م³ خرسانة','م³'], grav:['حصى في م³ خرسانة','م³'], water:['ماء في م³ خرسانة','لتر'], wasteC:['ضياع الخرسانة','%'],
+  colBars:['حديد 12 في كل سارية','قضيب'], lap:['زيادة التركيب (recouvrement)','م'], colStSp:['المسافة بين الكادرات (حديد 6) في السارية','م'], colStL:['طول الكادر في السارية','م'],
+  beamBars:['حديد 12 في الجسر (فوق + تحت)','قضيب'], beamLapPct:['زيادة التركيب في الجسر','%'], beamStPm:['كادرات حديد 6 في المتر','حبة/م'], beamStL:['طول الكادر في الجسر','م'],
+  slabConc:['خرسانة البلاكة (5 سم)','م³/م²'], slabMesh:['شبكة حديد 6 في البلاكة','م/م²'], hourdis:['هوردي 16','حبة/م²'], pout:['بوترال','م.ط/م²'],
+  stH12:['حديد 12 في الدرج','كغ/م³'], stH6:['حديد 6 في الدرج','كغ/م³'], wasteS:['ضياع الحديد','%'], wire:['سلك الربط','% من الحديد'],
+  brick:['آجر في م² لكل طبقة','حبة'], layExt:['طبقات الواجهة','طبقة'], layNeigh:['طبقات الحيط اللاصق للجار','طبقة'], layInt:['طبقات الحيط الداخلي','طبقة'], wasteB:['ضياع الآجر','%'],
+  mortM2:['ملاط البني لكل م² وطبقة','م³'], mortCem:['إسمنت في م³ ملاط','كغ'], mortSand:['رمل في م³ ملاط','م³'], plast:['سمك الطلي','م'], wasteP:['ضياع الطلي','%']
+};
+var CONC=['cem','sandC','grav','water','wasteC','colBars','lap','colStSp','colStL','beamBars','beamLapPct','beamStPm','beamStL','stH12','stH6','wasteS','wire'];
+var MAS=['brick','layExt','layNeigh','layInt','wasteB','mortM2','mortCem','mortSand','plast','wasteP','slabConc','slabMesh','hourdis','pout'];
+var MATS=[
+  ['cement','إسمنت (شكارة 50 كغ)','شكارة'],
+  ['sandC','رمل للخرسانة','م³'],
+  ['sandM','رمل للبني والطلي','م³'],
+  ['grav','حصى (قرافيا)','م³'],
+  ['water','ماء','م³'],
+  ['h12','حديد 12 (قضيب 12 م)','قضيب'],
+  ['h6','حديد 6 (قضيب 12 م)','قضيب'],
+  ['wire','سلك الربط','كغ'],
+  ['brExt','آجر الواجهات والبرج','حبة'],
+  ['brInt','آجر الحيوط الداخلية واللاصقة','حبة'],
+  ['hourdis','هوردي 16','حبة'],
+  ['pout','بوترال','م.ط']
+];
+var KEY='house3d-boq-v2';
+var st=load(KEY)||{};
+var Q=Object.assign({},Q0,st.Q||{}),R=Object.assign({},R0,st.R||{}),P=st.P||{},ON=Object.assign({corr:true,par:true},st.ON||{});
+$('cur').value=st.cur||'د.ت';$('cont').value=st.cont==null?10:st.cont;
+$('onCorr').checked=ON.corr;$('onPar').checked=ON.par;
+var W12=0.888,W6=0.222,BAR12=12*W12,BAR6=12*W6;
+
+function compute(){
+  var c=1+R.wasteC/100,s=1+R.wasteS/100,b=1+R.wasteB/100,p=1+R.wasteP/100;
+  var els=[];
+  function beam(len){return {v:len*Q.beamB*Q.beamH,h12:len*R.beamBars*(1+R.beamLapPct/100)*W12,h6:len*R.beamStPm*R.beamStL*W6};}
+  function slab(a){return {v:a*R.slabConc,h6:a*R.slabMesh*W6,hd:a*R.hourdis,pt:a*R.pout};}
+  var col={v:Q.nCol*Q.sCol*Q.sCol*Q.hCol,h12:Q.nCol*R.colBars*(Q.hCol+R.lap)*W12,h6:Q.nCol*(Math.floor(Q.hCol/R.colStSp)+1)*R.colStL*W6};
+  els.push({n:'السواري',d:fmt(Q.nCol)+' × '+fmt(Q.sCol*100)+'×'+fmt(Q.sCol*100)+' سم × '+fmt(Q.hCol,1)+' م',v:col.v,h12:col.h12,h6:col.h6});
+  var bm=beam(Q.beamLen);els.push({n:'جسور السقف',d:fmt(Q.beamLen,1)+' م · '+fmt(Q.beamB*100)+'×'+fmt(Q.beamH*100)+' سم',v:bm.v,h12:bm.h12,h6:bm.h6});
+  var sl=slab(Q.roof);els.push({n:'سقف الأول (هوردي 16+5)',d:fmt(Q.roof,2)+' م²',v:sl.v,h6:sl.h6,hd:sl.hd,pt:sl.pt});
+  var ts=slab(Q.towRoof),tb=beam(Q.towBeam);els.push({n:'غطاء البرج + جسورو',d:fmt(Q.towRoof,1)+' م² · '+fmt(Q.towBeam,1)+' م',v:ts.v+tb.v,h12:tb.h12,h6:ts.h6+tb.h6,hd:ts.hd,pt:ts.pt});
+  els.push({n:'درج البرج (الأول ← السطح)',d:'16 درجة · '+fmt(Q.stairs,2)+' م³',v:Q.stairs,h12:Q.stairs*R.stH12,h6:Q.stairs*R.stH6});
+  if(ON.corr){var cs=slab(Q.corr),cb=beam(Q.corrBeam);els.push({n:'الكوريدور الخارجي',d:fmt(Q.corr,1)+' م² · جسر '+fmt(Q.corrBeam,1)+' م',v:cs.v+cb.v,h12:cb.h12,h6:cs.h6+cb.h6,hd:cs.hd,pt:cs.pt});}
+  function wall(n,a,lay,ext){var br=a*lay*R.brick*b;els.push({n:n,d:fmt(a,1)+' م² × '+fmt(lay)+' طبقة',brE:ext?br:0,brI:ext?0:br,br:br,m:a*lay*R.mortM2});}
+  wall('حيوط الواجهات',Q.wExt,R.layExt,1);
+  wall('حيوط لاصقة للجيران',Q.wNeigh,R.layNeigh,0);
+  wall('حيوط داخلية',Q.wInt,R.layInt,0);
+  wall('حيوط البرج (واجهات)',Q.wTowExt,R.layExt,1);
+  wall('حيط البرج اللاصق',Q.wTowNeigh,R.layNeigh,0);
+  var parA=ON.par?Q.parLen*Q.parH:0;
+  if(ON.par)wall('حيوط البالكونات والكوريدور',parA,1,1);
+  var inA=2*Q.wInt+Q.wExt+Q.wNeigh+Q.wTowExt+Q.wTowNeigh+Q.roof+Q.towRoof+parA;
+  var outA=Q.wExt+Q.wTowExt+parA;
+  var plM=(inA+outA)*R.plast*p;
+  els.push({n:'الطلي (داخل + السقف + برّا)',d:fmt(inA,0)+' + '+fmt(outA,0)+' م² · '+fmt(R.plast*100,0)+' سم',m:plM});
+  var T={v:0,h12:0,h6:0,brE:0,brI:0,m:0,hd:0,pt:0};
+  els.forEach(function(e){for(var k in T)T[k]+=(e[k]||0);});
+  var vc=T.v*c,vm=T.m;
+  var h12=T.h12*s,h6=T.h6*s;
+  var M={
+    cement:(vc*R.cem+vm*R.mortCem)/50,
+    sandC:vc*R.sandC, sandM:vm*R.mortSand, grav:vc*R.grav, water:vc*R.water/1000,
+    h12:h12/BAR12, h6:h6/BAR6, wire:(h12+h6)*R.wire/100,
+    brExt:T.brE, brInt:T.brI, hourdis:T.hd, pout:T.pt
+  };
+  return {els:els,T:T,M:M,kg12:h12,kg6:h6,vc:vc,vm:vm};
+}
+function inputRow(obj,key,lab,group){
+  return '<tr><td>'+lab[0]+'</td><td class="n"><input class="in" type="number" step="any" data-g="'+group+'" data-k="'+key+'" value="'+obj[key]+'"></td><td class="unit">'+lab[1]+'</td></tr>';
+}
+function buildInputs(){
+  $('qStruct').tBodies[0].innerHTML=STRUCT.map(function(k){return inputRow(Q,k,QL[k],'Q');}).join('');
+  $('qWalls').tBodies[0].innerHTML=WALLS.map(function(k){return inputRow(Q,k,QL[k],'Q');}).join('');
+  $('rConc').tBodies[0].innerHTML=CONC.map(function(k){return inputRow(R,k,RL[k],'R');}).join('');
+  $('rMas').tBodies[0].innerHTML=MAS.map(function(k){return inputRow(R,k,RL[k],'R');}).join('');
+  $('boq').tBodies[0].innerHTML=MATS.map(function(m){return '<tr><td>'+m[1]+'<div class="unit" id="x_'+m[0]+'"></div></td><td class="n num" id="q_'+m[0]+'"></td><td>'+m[2]+'</td><td class="n"><input class="in" type="number" step="any" min="0" data-g="P" data-k="'+m[0]+'" value="'+(P[m[0]]==null?'':P[m[0]])+'" placeholder="0"></td><td class="n num" id="s_'+m[0]+'"></td></tr>';}).join('');
+}
+var last=null;
 function render(){
-  document.getElementById('cur').value=state.cur;document.getElementById('cont').value=state.cont;
-  document.getElementById('rows').innerHTML=state.rows.map(function(r,i){
-    return '<tr data-i="'+i+'"><td><input data-k="n" value="'+esc(r.n)+'" aria-label="البند">'+(r.s?'<span class="src">من التصميم: '+esc(r.s)+'</span>':'')+'</td>'+
-      '<td><input data-k="q" type="number" min="0" step="any" value="'+r.q+'" aria-label="الكمية"></td>'+
-      '<td><input data-k="u" value="'+esc(r.u)+'" aria-label="الوحدة"></td>'+
-      '<td><input data-k="p" type="number" min="0" step="any" value="'+(r.p||'')+'" placeholder="اكتب السعر" aria-label="سعر الوحدة"></td>'+
-      '<td class="num" data-tot></td><td><button class="x" title="احذف البند" aria-label="احذف البند">×</button></td></tr>';
-  }).join('');
-  calc();
-}
-function calc(){
+  var r=compute();last=r;var cur=$('cur').value||'';
+  document.querySelectorAll('.cur').forEach(function(e){e.textContent=cur;});$('sumCur').textContent=cur;
   var sub=0;
-  [].forEach.call(document.querySelectorAll('#rows tr'),function(tr){var r=state.rows[+tr.dataset.i],t=(+r.q||0)*(+r.p||0);sub+=t;tr.querySelector('[data-tot]').textContent=money(t);});
-  var cont=sub*(+state.cont||0)/100,all=sub+cont;
-  document.getElementById('tSub').textContent=money(sub);document.getElementById('tCont').textContent=money(cont);
-  document.getElementById('tAll').textContent=money(all);document.getElementById('tM2').textContent=money(all/(FLOOR*2));
+  MATS.forEach(function(m){var q=r.M[m[0]],qq=(m[2]==='م³')?Math.round(q*100)/100:Math.ceil(q);
+    $('q_'+m[0]).textContent=fmt(qq,m[2]==='م³'?2:0);
+    var pr=parseFloat(P[m[0]])||0,t=qq*pr;sub+=t;$('s_'+m[0]).textContent=pr?fmt(t,2):'—';});
+  $('x_h12').textContent=fmt(r.kg12,0)+' كغ';$('x_h6').textContent=fmt(r.kg6,0)+' كغ';
+  $('x_cement').textContent=fmt(r.M.cement*50,0)+' كغ';
+  var cp=parseFloat($('cont').value)||0,cont=sub*cp/100;
+  $('boqSum').textContent=fmt(sub,2);$('tSub').textContent=fmt(sub,2);$('tCont').textContent=fmt(cont,2);$('tAll').textContent=fmt(sub+cont,2);$('tContP').textContent=fmt(cp);$('sumTotal').textContent=fmt(sub+cont,0);
+  var h='';r.els.forEach(function(e){h+='<tr><td>'+e.n+'</td><td class="unit">'+e.d+'</td><td class="n num">'+(e.v?fmt(e.v,2):'—')+'</td><td class="n num">'+(e.h12?fmt(e.h12,0):'—')+'</td><td class="n num">'+(e.h6?fmt(e.h6,0):'—')+'</td><td class="n num">'+(e.br?fmt(e.br,0):'—')+'</td><td class="n num">'+(e.m?fmt(e.m,2):'—')+'</td></tr>';});
+  $('byEl').tBodies[0].innerHTML=h;
+  $('byEl').tFoot.innerHTML='<tr><td colspan="2">المجموع (قبل ضياع الخرسانة والحديد)</td><td class="n num">'+fmt(r.T.v,2)+'</td><td class="n num">'+fmt(r.T.h12,0)+'</td><td class="n num">'+fmt(r.T.h6,0)+'</td><td class="n num">'+fmt(r.T.brE+r.T.brI,0)+'</td><td class="n num">'+fmt(r.T.m,2)+'</td></tr>';
+  var area=Q.roof+Q.towRoof+(ON.corr?Q.corr:0);
+  $('ratioCheck').textContent='للمقارنة: الحديد هنا حوالي '+fmt((r.kg12+r.kg6)/area,1)+' كغ في المتر المربع من السقف (بلا أساسات، والبوترال جاهز فيه حديدو). المرجع للبناية الكل بالأساسات حوالي 30 كغ/م².';
+  store(KEY,{Q:Q,R:R,P:P,ON:ON,cur:$('cur').value,cont:$('cont').value});
 }
-document.getElementById('rows').addEventListener('input',function(e){
-  var k=e.target.dataset.k;if(!k)return;var r=state.rows[+e.target.closest('tr').dataset.i];
-  r[k]=(k==='q'||k==='p')?parseFloat(e.target.value)||0:e.target.value;save();calc();
-});
-document.getElementById('rows').addEventListener('click',function(e){
-  if(!e.target.classList.contains('x'))return;state.rows.splice(+e.target.closest('tr').dataset.i,1);save();render();
-});
-document.getElementById('cur').addEventListener('input',function(e){state.cur=e.target.value;save();calc();});
-document.getElementById('cont').addEventListener('input',function(e){state.cont=parseFloat(e.target.value)||0;save();calc();});
-document.getElementById('addRow').onclick=function(){state.rows.push({n:'بند جديد',q:1,u:'مقطوعة',p:0,s:''});save();render();};
-document.getElementById('resetCost').onclick=function(){if(confirm('ترجع كل الكميات والأسعار للقيم الأصلية؟')){state=JSON.parse(JSON.stringify(DEFAULT));save();render();}};
-state=load();render();
+document.addEventListener('input',function(e){var t=e.target;if(!t.dataset||!t.dataset.g)return;var g=t.dataset.g,k=t.dataset.k;
+  if(g==='P')P[k]=t.value;else{var v=parseFloat(t.value);if(isFinite(v))(g==='Q'?Q:R)[k]=v;}render();});
+$('cur').addEventListener('input',render);$('cont').addEventListener('input',render);
+$('onCorr').addEventListener('change',function(){ON.corr=this.checked;render();});
+$('onPar').addEventListener('change',function(){ON.par=this.checked;render();});
+$('reset').addEventListener('click',function(){Q=Object.assign({},Q0);R=Object.assign({},R0);ON={corr:true,par:true};$('onCorr').checked=true;$('onPar').checked=true;buildInputs();render();});
+function csv(){
+  var r=last,cur=$('cur').value,rows=[['المادة','الكمية','الوحدة','سوم الوحدة ('+cur+')','المجموع ('+cur+')']],sub=0;
+  MATS.forEach(function(m){var q=$('q_'+m[0]).textContent.replace(/,/g,''),pr=parseFloat(P[m[0]])||0,t=(parseFloat(q)||0)*pr;sub+=t;rows.push([m[1],q,m[2],pr||'',pr?t.toFixed(2):'']);});
+  var cp=parseFloat($('cont').value)||0;rows.push(['المجموع','','','',sub.toFixed(2)]);rows.push(['احتياط '+cp+'%','','','',(sub*cp/100).toFixed(2)]);rows.push(['المجموع مع الاحتياط','','','',(sub*(1+cp/100)).toFixed(2)]);
+  var txt='﻿'+rows.map(function(r){return r.map(function(v){v=String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}).join(',');}).join('\n');
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/csv;charset=utf-8'}));a.download='mawad-tabe9-awel.csv';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);
+}
+$('csv').addEventListener('click',csv);$('csvSide').addEventListener('click',csv);
+buildInputs();render();
+
+/* ---------------- draw + theme + scrollspy ---------------- */
+function drawAll(){drawPlans();drawFound();}
+drawAll();
+try{var mq=matchMedia('(prefers-color-scheme: dark)');if(mq.addEventListener)mq.addEventListener('change',drawAll);}catch(e){}
+var links=[].slice.call(document.querySelectorAll('#toc a'));
+var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'));});
+function spy(){var y=window.scrollY+120,cur=0;secs.forEach(function(s,i){if(s&&s.offsetTop<=y)cur=i;});
+  if(window.innerHeight+window.scrollY>=document.body.scrollHeight-4)cur=secs.length-1;
+  links.forEach(function(a,i){var on=i===cur;if(a.classList.contains('on')!==on){a.classList.toggle('on',on);if(on&&window.innerWidth<=980)a.scrollIntoView({block:'nearest',inline:'center'});}});}
+addEventListener('scroll',spy,{passive:true});spy();
+})();
 </script>
 </body>
 </html>

@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body style="margin:0">
+<title>الدراسة المناخية لمسكن مدنين</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Noto+Kufi+Arabic:wght@600;800&display=swap">
+<style>
+/* Layout: an observatory sheet. Live 3D sun study of the Salwa proposal up top, then the whole-house sun map, the tower and neighbours test, wind, sun times, climate, advice. */
+:root{
+  --bg:#edf0f4; --surface:#ffffff; --surface2:#e3e8ef; --ink:#1b2231; --muted:#586174; --line:#d3d9e2;
+  --sun:#d98e04; --sun-soft:#fbe7b5; --sun-ink:#1b2231; --shade:#3d4f7a; --shade-soft:#cfd8ea; --good:#2c7a57; --warn:#b4471f; --wind:#0f8a8a;
+  --f-display:"Noto Kufi Arabic","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --f-body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e131b; --surface:#161d29; --surface2:#1e2736; --ink:#e7ebf2; --muted:#9ba5b7; --line:#2b3546;
+  --sun:#f4b53a; --sun-soft:#3d3015; --sun-ink:#0e131b; --shade:#9db0de; --shade-soft:#27324a; --good:#5cc497; --warn:#f08a5d; --wind:#4fd1d1; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0e131b; --surface:#161d29; --surface2:#1e2736; --ink:#e7ebf2; --muted:#9ba5b7; --line:#2b3546;
+  --sun:#f4b53a; --sun-soft:#3d3015; --sun-ink:#0e131b; --shade:#9db0de; --shade-soft:#27324a; --good:#5cc497; --warn:#f08a5d; --wind:#4fd1d1; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.75;direction:rtl}
+.wrap{max-width:1180px;margin:0 auto;padding-block:20px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.35}
+h1{font-size:clamp(26px,4vw,38px);font-weight:800}
+h2{font-size:clamp(21px,2.6vw,26px);font-weight:800}
+h3{font-size:17px;font-weight:600}
+p{margin:0}
+.eyebrow{font-size:13px;color:var(--muted);letter-spacing:.02em}
+.lede{font-size:17px;max-width:72ch}
+.num{font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate;display:inline-block}
+header.top{display:grid;gap:10px;margin-bottom:18px}
+.verdict{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-top:6px}
+.vcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:2px;min-width:0}
+.vcard b{font-size:22px;font-family:var(--f-display)}
+.vcard.sun{border-color:var(--sun);background:var(--sun-soft)}
+.vcard small{color:var(--muted);font-size:13px}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px;margin-top:18px}
+.viewport{position:relative;border-radius:14px;overflow:hidden;background:#9fc3e6;min-height:440px;aspect-ratio:16/11;max-width:100%}
+.viewport canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.hud{position:absolute;top:10px;right:10px;left:10px;display:flex;justify-content:space-between;gap:8px;pointer-events:none;flex-wrap:wrap}
+.chip{direction:rtl;pointer-events:auto;background:rgba(15,20,30,.74);color:#fff;border-radius:999px;padding:4px 12px;font-size:14px}
+.views{position:absolute;bottom:10px;left:10px;right:10px;display:flex;gap:6px;flex-wrap:wrap}
+.views button{background:rgba(15,20,30,.74);color:#fff;border:0;border-radius:8px;padding:5px 10px;font:inherit;font-size:13px;cursor:pointer}
+.views button[aria-pressed="true"]{background:var(--sun);color:#1b2231;font-weight:700}
+.views button:focus-visible{outline:2px solid var(--sun)}
+.heatlegend{position:absolute;bottom:52px;left:10px;background:rgba(15,20,30,.74);color:#fff;border-radius:8px;padding:6px 10px;font-size:12px;display:grid;gap:4px;min-width:200px}
+.heatlegend i{display:block;height:8px;border-radius:4px;background:linear-gradient(90deg,#26335e,#3f74a8,#8cc7b5,#f5d76e,#e8590c)}
+.heatlegend div{display:flex;justify-content:space-between}
+.busy{position:absolute;top:48px;left:10px;background:rgba(15,20,30,.74);color:#fff;border-radius:8px;padding:3px 10px;font-size:12px}
+.dock{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:12px;align-content:start;min-width:0}
+.ctl{display:grid;gap:4px}
+.ctl label{display:flex;justify-content:space-between;gap:8px;font-size:14px;color:var(--muted)}
+.ctl label b{color:var(--ink);font-weight:700}
+input[type=range]{width:100%;accent-color:var(--sun)}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.seg.three{grid-template-columns:repeat(3,1fr)}
+.seg button,.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:8px;padding:6px 4px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--sun);color:var(--sun-ink);border-color:var(--sun);font-weight:700}
+.btn.play{background:var(--ink);color:var(--surface);border-color:var(--ink);font-weight:700;padding:8px}
+button:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
+.reads{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.read{background:var(--surface2);border-radius:10px;padding:8px 10px;min-width:0}
+.read small{display:block;color:var(--muted);font-size:12px}
+.read b{font-size:18px}
+.meter{height:6px;border-radius:3px;background:var(--shade-soft);overflow:hidden;margin-top:4px}
+.meter i{display:block;height:100%;background:var(--sun);width:0}
+.note{font-size:13px;color:var(--muted)}
+section{margin-top:44px;display:grid;gap:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.chart{width:100%;overflow-x:auto}
+.chart svg{display:block;width:100%;height:auto;direction:ltr;font-family:var(--f-body)}
+.chart svg text.m{font-size:10px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-left:5px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{color:var(--muted);font-weight:500}
+td.n{font-variant-numeric:tabular-nums;direction:ltr;text-align:right}
+td.h{position:relative}
+td.h span{position:relative;z-index:1;font-variant-numeric:tabular-nums}
+td.h i{position:absolute;right:8px;bottom:3px;height:4px;border-radius:2px;max-width:calc(100% - 16px)}
+.tblwrap{overflow-x:auto}
+.tips{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.tip{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:6px;align-content:start}
+.tip .tag{justify-self:start;font-size:12px;border-radius:999px;padding:1px 10px;background:var(--surface2);color:var(--muted)}
+.tip .tag.calc{background:var(--sun-soft);color:var(--ink)}
+.tip .tag.src{background:var(--shade-soft);color:var(--ink)}
+.tip .tag.you{background:var(--wind);color:#fff}
+.tip p{font-size:15px}
+.forgot{display:grid;gap:10px;padding:0;margin:0}
+.forgot li{list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.forgot li b{font-family:var(--f-display);font-weight:600}
+.sources{font-size:14px;display:grid;gap:4px}
+.sources a{color:var(--shade)}
+details summary{cursor:pointer;color:var(--shade);font-size:14px}
+@media (max-width:900px){.stage{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.viewport{aspect-ratio:4/3;min-height:340px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap" dir="rtl">
+<header class="top">
+  <span class="eyebrow">دراسة الشمس والريح · النموذج النهائي · مدنين، الجنوب التونسي · <span class="num">33.35°N 10.50°E</span> · توقيت تونس <span class="num">UTC+1</span> طول العام</span>
+  <h1>الدراسة المناخية لمسكن مدنين</h1>
+  <p class="lede">النموذج الكامل متاع النموذج النهائي، بالجيران اللاصقين على اليمين واليسار (3 طوابق). تشوف وين تضرب الشمس في الدار الكل، في كل بيت وكل فصل، وقدّاش البرج والجيران يحجبوا، ومن وين يجي البحري.</p>
+  <div class="verdict" id="verdict"></div>
+</header>
+
+<div class="stage">
+  <div class="viewport" id="vp">
+    <canvas id="cv" aria-label="نموذج ثلاثي الأبعاد للنموذج النهائي مع حركة الشمس"></canvas>
+    <div class="hud">
+      <span class="chip">الساعة <span class="num" id="hTime">--</span></span>
+      <span class="chip" id="hSun">--</span>
+    </div>
+    <div class="busy" id="busy" hidden>نحسب الشمس...</div>
+    <div class="heatlegend" id="heatLeg" hidden><span>ساعات الشمس في <b id="heatDay"></b></span><i></i><div><span class="num">0</span><span class="num">3</span><span class="num">6</span><span class="num">9</span><span class="num">12+</span></div></div>
+    <div class="views">
+      <button data-view="south">من الشارع</button>
+      <button data-view="east">من الشرق</button>
+      <button data-view="top">من فوق</button>
+      <button data-view="corr">على الكوريدور</button>
+    </div>
+  </div>
+  <aside class="dock" aria-label="التحكم">
+    <div class="ctl"><label>الفصل</label>
+      <div class="seg" id="seasons"><button data-d="355">شتاء</button><button data-d="79">ربيع</button><button data-d="172" aria-pressed="true">صيف</button><button data-d="265">خريف</button></div></div>
+    <div class="ctl"><label for="day">التاريخ <b id="dayLbl"></b></label><input id="day" type="range" min="1" max="365" step="1" value="172"></div>
+    <div class="ctl"><label for="time">الساعة <b class="num" id="timeLbl"></b></label><input id="time" type="range" min="0" max="1439" step="5" value="540"></div>
+    <button class="btn play" id="play">▶ شغّل نهار كامل</button>
+    <div class="ctl"><label>العرض</label>
+      <div class="seg three" id="layer"><button data-l="all" aria-pressed="true">الدار كاملة</button><button data-l="noroof">بلا سقف</button><button data-l="ground">الأرضي</button></div>
+      <span class="note">"بلا سقف" و"الأرضي" يخبّيو السقف ولا الطابق الأول من العين برك، والظل يتحسب كأنهم موجودين.</span></div>
+    <div class="ctl"><label>زيد على الرسم</label>
+      <div class="seg three" id="toggles"><button data-t="heat">خريطة الشمس</button><button data-t="nb" aria-pressed="true">الجيران</button><button data-t="wind" aria-pressed="true">البحري</button></div></div>
+    <div class="ctl"><label for="nbh">علو الجيران <b id="nbhLbl"></b></label><input id="nbh" type="range" min="6" max="14" step="0.5" value="10"><span class="note">أرضي + أول + ثاني ≈ <span class="num">10</span> م (تقدير، بدّلو كان تعرف العلو).</span></div>
+    <div class="ctl"><label for="ext">تعلية البرج <b id="extLbl"></b></label><input id="ext" type="range" min="0" max="6" step="0.5" value="0"><span class="note">البرج في التصميم يوصل لـ<span class="num">6.4</span> م. زيد عليه باش تشوف أثرو على الشمس والريح.</span></div>
+    <div class="ctl"><label for="north">تصحيح الشمال <b class="num" id="northLbl">0°</b></label><input id="north" type="range" min="-30" max="30" step="1" value="0"><span class="note">من صورة الساتل: الأرض طويلة شمال–جنوب، والشارع في الجنوب، والبرج في الركن الجنوبي الشرقي.</span></div>
+    <div class="reads">
+      <div class="read"><small>الشروق</small><b class="num" id="rRise">--</b></div>
+      <div class="read"><small>الغروب</small><b class="num" id="rSet">--</b></div>
+      <div class="read"><small>شمس على الكوريدور</small><b class="num" id="rCorr">--</b><div class="meter"><i id="mCorr"></i></div></div>
+      <div class="read"><small>شمس على الفناء</small><b class="num" id="rCourt">--</b><div class="meter"><i id="mCourt"></i></div></div>
+    </div>
+  </aside>
+</div>
+
+<section id="house">
+  <div><span class="eyebrow">الدار الكل</span><h2>وين تضرب الشمس في كل فضاء</h2></div>
+  <p class="lede">معدّل ساعات الشمس المباشرة على كل فضاء في نهار من كل فصل، بالجيران والبرج كيما في الإختيارات فوق. اختار "خريطة الشمس" في الرسم باش تشوفها ملوّنة على الدار.</p>
+  <div class="grid2">
+    <div class="panel tblwrap"><h3>البرّا: الدالة، الواجهات، الفناء، البلكونات</h3><table id="tZones"></table></div>
+    <div class="panel tblwrap"><h3>البيوت: الشمس اللي توصل للأرضية</h3><table id="tRooms"></table>
+      <p class="note">الشمس تدخل من الشبابيك والأبواب المحلولة اللي في ملف التصميم برك. بيت ما عندهاش شباك في التصميم تطلع صفر.</p></div>
+  </div>
+</section>
+
+<section id="hyp">
+  <div><span class="eyebrow">الفرضية</span><h2>شكون يحجب الشمس على الكوريدور: البرج ولا الجيران؟</h2></div>
+  <p class="lede" id="hypText">نحسب...</p>
+  <div class="grid2">
+    <div class="panel">
+      <h3>شمس الصباح على أرضية الكوريدور (ساعات)</h3>
+      <p class="note">من الشروق حتى منتصف النهار الشمسي، على كامل الكوريدور (<span class="num">6.2 × 2</span> م).</p>
+      <div class="chart" id="cBars"></div><div class="legend" id="lBars"></div>
+    </div>
+    <div class="panel">
+      <h3>الكوريدور ساعة بساعة في <span id="hourDay"></span></h3>
+      <p class="note">نسبة أرضية الكوريدور اللي فيها شمس. المساحة الزرقاء هي اللي يحجبوها البرج والجيران.</p>
+      <div class="chart" id="cHours"></div>
+      <div class="legend"><span><i style="background:var(--muted)"></i>لا برج لا جيران</span><span><i style="background:var(--sun)"></i>حسب الاختيارات</span><span><i style="background:var(--shade-soft)"></i>محجوب</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="wind">
+  <div><span class="eyebrow">الريح</span><h2>البحري: الريح الباردة في الصيف</h2></div>
+  <div class="grid2">
+    <div class="panel"><div class="chart" id="cWind"></div>
+      <div class="legend"><span><i style="background:var(--wind)"></i>البحري (من جهة البرج، حسب كلامك)</span><span><i style="background:var(--muted)"></i>الجيران</span><span><i style="background:var(--warn)"></i>البرج</span></div></div>
+    <div class="panel" style="display:grid;gap:10px;align-content:start">
+      <p id="windText"></p>
+      <p class="note">الشرقي والغربي: قلتلي اللي الشرقي ما يجيش من الشرق بالضبط، والغربي جاف ويجي من الغرب. ما رسمتهمش باش ما نغلطش في الاتجاه. ابعثلي من وين يجيو بالضبط ونزيدهم.</p>
+    </div>
+  </div>
+</section>
+
+<section id="times">
+  <div><span class="eyebrow">مواعيد الشمس</span><h2>الشروق والغروب في الفصول الأربعة</h2></div>
+  <p class="lede">الشمس ما تطلعش ديما من الشرق بالضبط: في الصيف تطلع من الشمال الشرقي وفي الشتاء من الجنوب الشرقي، والفرق بينهم قريب من <span class="num" id="swing">57°</span>. محسوبة بمعادلات NOAA، والفرق مع المواقع المختصة دقيقة على الأكثر.</p>
+  <div class="panel tblwrap"><table id="tSeasons"></table></div>
+  <div class="grid2">
+    <div class="panel">
+      <h3>مسار الشمس في السماء</h3>
+      <p class="note">كل خط هو طريق الشمس في نهار. المركز فوق الراس، والدائرة الخارجية هي الأفق. الأشكال المظلّلة هي اللي تخبّي السماء على وسط الكوريدور.</p>
+      <div class="chart" id="cPolar"></div>
+      <div class="legend"><span><i style="background:var(--warn)"></i>21 جوان</span><span><i style="background:var(--good)"></i>20 مارس / 22 سبتمبر</span><span><i style="background:var(--shade)"></i>21 ديسمبر</span><span><i style="background:var(--sun)"></i>النهار المختار</span><span><i style="background:#8b93a3"></i>الجيران</span><span><i style="background:var(--warn);opacity:.6"></i>البرج</span><span><i style="background:var(--shade-soft)"></i>الدار</span></div>
+    </div>
+    <div class="panel">
+      <h3>الشروق والغروب على طول العام <span class="num">2026</span></h3>
+      <p class="note">المساحة الصفراء هي النهار. حرّك الماوس على الرسم، واضغط باش تختار النهار.</p>
+      <div class="chart" id="cYear"></div>
+      <p class="note" id="yearHover">&nbsp;</p>
+    </div>
+  </div>
+</section>
+
+<section id="climate">
+  <div><span class="eyebrow">المناخ</span><h2>الحرارة والرطوبة والمطر في مدنين</h2></div>
+  <p class="lede">معدّلات 1991–2020 من المعهد الوطني للرصد الجوي. أوت هو أسخن شهر (معدّل الأقصى <span class="num">37.2°</span>)، وجانفي أبرد شهر (معدّل الأدنى <span class="num">7.6°</span>). أعلى حرارة تسجّلت <span class="num">48.5°</span>. الفصل الحار تقريباً من 11 جوان حتى 20 سبتمبر.</p>
+  <div class="grid2">
+    <div class="panel"><h3>الحرارة الشهرية (°م)</h3><div class="chart" id="cTemp"></div>
+      <div class="legend"><span><i style="background:var(--sun-soft);border:1px solid var(--sun)"></i>من الأدنى إلى الأقصى</span><span><i style="background:var(--sun)"></i>المعدّل</span><span><i style="background:var(--warn)"></i>الرقم القياسي</span></div></div>
+    <div class="panel"><h3>الرطوبة والمطر</h3><div class="chart" id="cHum"></div>
+      <div class="legend"><span><i style="background:var(--shade)"></i>الرطوبة النسبية %</span><span><i style="background:var(--good)"></i>المطر (مم)</span></div></div>
+  </div>
+  <details class="panel"><summary>الجدول الكامل</summary><div class="tblwrap"><table id="tClim"></table></div></details>
+</section>
+
+<section id="tips">
+  <div><span class="eyebrow">نصائح</span><h2>حاجات تنفعك وما تعرفهاش</h2></div>
+  <div class="tips" id="tipList"></div>
+</section>
+
+<section id="forgot">
+  <div><span class="eyebrow">ما ذكرتهاش</span><h2>حاجات نسيت تسألني عليها</h2></div>
+  <ol class="forgot" id="forgotList"></ol>
+</section>
+
+<section id="sources">
+  <h2>المصادر وطريقة الحساب</h2>
+  <div class="panel sources">
+    <span>النموذج ثلاثي الأبعاد منقول كما هو من ملف التصميم <span class="num">house-3d-v3.html</span>، قسم النموذج النهائي (الحيوط، البيوت، الدرج، الشبابيك). البيت <span class="num">12.7 × 9.5</span> م، الطابق <span class="num">3.2</span> م، البرج <span class="num">2.4</span> م عرض.</span>
+    <span>الجيران (3 طوابق لاصقين يمين ويسار) والبحري (من جهة البرج): من كلامك. اتجاه الأرض: من صورة الساتل اللي بعثتها (Google Maps)، بالعين، يعني فيه غلطة ممكنة ببعض الدرجات.</span>
+    <span>مكان الشمس: معادلات NOAA (<a href="https://gml.noaa.gov/grad/solcalc/solareqns.PDF" target="_blank" rel="noopener">NOAA General Solar Position Calculations</a>)، ومقارنة مع <a href="https://weatherspark.com/y/65619/Average-Weather-in-Medenine-Tunisia-Year-Round" target="_blank" rel="noopener">WeatherSpark</a> و<a href="https://sunrisesunset.io/tn/medenine/ben-gardane/" target="_blank" rel="noopener">sunrisesunset.io</a>. الحساب بإحداثيات مدنين؛ الفرق مع إحداثيات أرضك أقل من <span class="num">10</span> ثواني.</span>
+    <span>المناخ: <a href="https://en.wikipedia.org/wiki/Medenine" target="_blank" rel="noopener">ويكيبيديا، مدنين</a> (المعهد الوطني للرصد الجوي 1991–2020، الرطوبة 1961–1990، الشمس 1981–2010). التوقيت: <a href="https://www.timeanddate.com/news/time/tunisia-cancels-dst-2009.html" target="_blank" rel="noopener">timeanddate</a>. بروسول: <a href="https://www.lapresse.tn/2026/08/04/programme-prosol-400-000-menages-ont-acces-a-leau-chaude-grace-a-lenergie-solaire/" target="_blank" rel="noopener">La Presse، أوت 2026</a>.</span>
+    <span>حساب الظل: نحط نقاط كل نص متر على كل سطح وكل أرضية، ومن كل نقطة نرمي شعاع للشمس كل 10 دقائق، ونشوف واش يضرب في حيط ولا سقف ولا برج ولا جار. الأثاث ما يحجبش، والأبواب المسكّرة تحجب، والبلّار يعدّي الشمس.</span>
+  </div>
+</section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+"use strict";
+var LAT=33.35472, LON=10.50528, TZ=1, YEAR=2026, RAD=Math.PI/180, TOWER_TOP=6.375;
+var MONTHS=['جانفي','فيفري','مارس','أفريل','ماي','جوان','جويلية','أوت','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+var SEASONS=[{n:'الشتاء',d:355,lbl:'21 ديسمبر'},{n:'الربيع',d:79,lbl:'20 مارس'},{n:'الصيف',d:172,lbl:'21 جوان'},{n:'الخريف',d:265,lbl:'22 سبتمبر'}];
+var CLIM={hi:[17.9,19.2,22.6,26.2,30.1,33.9,36.8,37.2,33.8,29.7,23.7,18.9],mean:[12.8,13.7,16.8,20.0,23.8,27.4,30.0,30.7,28.1,24.1,18.4,14.0],
+  lo:[7.6,8.3,11.1,13.9,17.4,20.8,23.3,24.1,22.4,18.5,13.1,9.1],rec:[33.8,36.3,39.1,40.5,43.9,47.2,48.1,47.7,48.5,44.3,36.4,31.4],
+  recLo:[-0.5,-1.0,-0.5,3.1,7.0,10.5,13.2,14.2,12.0,4.5,1.3,-2.0],rain:[18.2,16.6,25.7,10.0,5.8,4.7,0.3,2.2,19.6,26.4,22.7,22.5],
+  rdays:[2.7,2.5,2.9,1.9,1.2,0.3,0.0,0.3,1.9,2.4,2.0,3.2],hum:[59,56,57,56,55,55,54,57,63,64,62,61],sunh:[203.7,213.6,239.9,247.8,289.2,313.8,319.2,324.4,266.8,236.8,211.0,203.7]};
+
+/* ---------- sun maths (NOAA) ---------- */
+function ymd(doy){var d=new Date(Date.UTC(YEAR,0,doy));return{m:d.getUTCMonth()+1,d:d.getUTCDate()};}
+function params(doy,hUTC){var g=2*Math.PI/365*(doy-1+(hUTC-12)/24);
+  return{eqt:229.18*(0.000075+0.001868*Math.cos(g)-0.032077*Math.sin(g)-0.014615*Math.cos(2*g)-0.040849*Math.sin(2*g)),
+    decl:0.006918-0.399912*Math.cos(g)+0.070257*Math.sin(g)-0.006758*Math.cos(2*g)+0.000907*Math.sin(2*g)-0.002697*Math.cos(3*g)+0.00148*Math.sin(3*g)};}
+function sunPos(doy,hLocal){var hU=hLocal-TZ,p=params(doy,hU),tst=hU*60+p.eqt+4*LON,ha=(tst/4-180)*RAD,phi=LAT*RAD;
+  var cz=Math.sin(phi)*Math.sin(p.decl)+Math.cos(phi)*Math.cos(p.decl)*Math.cos(ha);cz=Math.max(-1,Math.min(1,cz));
+  var az=Math.atan2(Math.sin(ha),Math.cos(ha)*Math.sin(phi)-Math.tan(p.decl)*Math.cos(phi))/RAD+180;
+  return{alt:90-Math.acos(cz)/RAD,az:(az+360)%360};}
+function sunTimes(doy){var p=params(doy,12-TZ),phi=LAT*RAD;
+  var c=Math.cos(90.833*RAD)/(Math.cos(phi)*Math.cos(p.decl))-Math.tan(phi)*Math.tan(p.decl),ha=Math.acos(Math.max(-1,Math.min(1,c)))/RAD;
+  var n=720-4*LON-p.eqt,rise=(n-4*ha)/60+TZ,set=(n+4*ha)/60+TZ,noon=n/60+TZ;
+  return{rise:rise,set:set,noon:noon,day:set-rise,riseAz:sunPos(doy,rise).az,setAz:sunPos(doy,set).az,noonAlt:sunPos(doy,noon).alt};}
+function dir(alt,az,north){var a=(az-north)*RAD,h=alt*RAD;return{x:Math.sin(a)*Math.cos(h),y:Math.sin(h),z:-Math.cos(a)*Math.cos(h)};}
+function hm(h){var m=Math.round(((h%24)+24)%24*60);if(m===1440)m=0;return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');}
+function dur(h){var m=Math.round(h*60);return Math.floor(m/60)+' س '+String(m%60).padStart(2,'0')+' د';}
+function compass(az){var n=['شمال','شمال شرقي','شرق','جنوب شرقي','جنوب','جنوب غربي','غرب','شمال غربي'];return n[Math.round(az/45)%8];}
+function dateLbl(doy){var t=ymd(doy);return t.d+' '+MONTHS[t.m-1];}
+
+/* ---------- Salwa proposal model: verbatim from house-3d-v3.html (lines 49-310, houseView with SALWA=true) ---------- */
+function buildSalwa(scene){var SALWA=true;
+function mat(c){return new THREE.MeshLambertMaterial({color:c});}
+var M={wall:mat(0xdcd6c8),rail:mat(0x8a8272),wood:mat(0xc9a06b),dark:mat(0xb58a55),cush:mat(0xe6ded0),white:mat(0xffffff),blue:mat(0xc8d6dc),counter:mat(0xd9cbaa),car:mat(0xc9ccd0),glass:mat(0xdfe3e7),tyre:mat(0x4a4438),water:mat(0x9fc3d6),plant:mat(0x8fae6a),stone:mat(0xb9b3a6)};
+var W=12.7,H=9.5,FH=3.2;  // floor-to-floor height
+var gGround=new THREE.Group(),gFirst=new THREE.Group(),gTall=new THREE.Group();scene.add(gGround);scene.add(gFirst);scene.add(gTall);
+
+function box(g,w,h,d,x,y,z,m){var o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);g.add(o);return o;}
+var gndFloors=[];                                  // ground-level floors, made see-through by the cave button
+function floor(g,x1,z1,x2,z2,c,y){var o=box(g,x2-x1,0.06,z2-z1,(x1+x2)/2,y+0.03,(z1+z2)/2,mat(c));if(y<0.01)gndFloors.push(o);}
+function label(g,t,sub,x,y,z,sc){var cv=document.createElement('canvas');cv.width=512;cv.height=200;var c=cv.getContext('2d');
+  c.font='500 60px sans-serif';c.textAlign='center';c.fillStyle='#3a3a36';c.fillText(t,256,84);
+  if(sub){c.font='400 44px sans-serif';c.fillStyle='#6b6a64';c.fillText(sub,256,150);}
+  var tx=new THREE.CanvasTexture(cv);tx.minFilter=THREE.LinearFilter;var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,depthTest:false}));
+  sp.scale.set(sc||3.2,(sc||3.2)*0.39,1);sp.position.set(x,y,z);g.add(sp);}
+function bed(g,x,z,w,d,y){box(g,w,0.35,d,x,y+0.18,z,M.wood);box(g,w-0.15,0.1,d-0.4,x,y+0.4,z+0.15,M.cush);box(g,w-0.3,0.12,0.4,x,y+0.42,z-d/2+0.3,M.white);}
+
+/* ---- shared interior (same on both floors) ---- */
+function interior(g,y,wallH){
+  var T=0.16;
+  function wx(x,z1,z2){box(g,T,wallH,z2-z1,x,y+wallH/2,(z1+z2)/2,M.wall);}
+  function wz(z,x1,x2){box(g,x2-x1,wallH,T,(x1+x2)/2,y+wallH/2,z,M.wall);}
+  floor(g,0,0,4.1,5.0,0xf2e3c4,y);floor(g,4.1,0,6.7,9.5,0xecdfc2,y);   // corridor full length (bathroom drawn per floor)
+  floor(g,0,5.0,4.1,9.5,0xf2e3c4,y);floor(g,6.7,0,12.7,5.5,0xf0e9d8,y);floor(g,6.7,5.5,12.7,9.5,0xedeae0,y);   // living room 6x4 (z 5.5-9.5)
+  if(!(SALWA&&y>0)){wz(0,9.7,11.8);wz(0,12.6,12.7);}wx(12.7,0,9.5);wx(0,2.5,9.5);   // SALWA 1st floor: no wall on z 0 (x 5.5-11.5), see first(); ground: x 0-8.5 at z 0 and west wall z 0-2.5 are open yard (1st floor closes them)
+  // wz(9.5,5.2,11.5) living-room back wall drawn per floor (1st floor has a window)
+  wx(6.7,2.5,2.7);wx(6.7,3.5,5.7);wz(5.5,6.7,10.7);wz(5.5,11.6,12.7);   // x=5.5 z 0-2.5 open yard on ground (1st floor closes); x=5.5 z 5.7-9.5 (living west wall) drawn per floor; gap x 9.5-10.4 = kitchen door from living (closed on 1st floor)
+  // x=4.1 wall drawn per floor (ground: rooms end at x 3)
+  // wz(5.0,0,4.1) bedroom split is drawn per floor (ground z 5.5, first z 5.0)
+  return {wx:wx,wz:wz};
+}
+function furniture(g,y,gnd){
+  bed(g,gnd?1.2:1.35,gnd?4.25:1.75,1.9,2.5,y);if(gnd){box(g,0.6,0.9,1.6,2.6,y+0.45,5.5,M.dark);}else{box(g,0.6,0.9,2.6,SALWA?2.65:3.7,y+0.45,SALWA?4.6:3.3,M.dark);box(g,0.4,0.6,1.0,0.4,y+0.3,3.9,M.wood);}
+  var zb=gnd?7.9:(SALWA?8.0:6.4);bed(g,0.85,zb,1.1,2.0,y);bed(g,gnd?2.15:2.25,zb,1.1,2.0,y);
+  if(gnd||SALWA)box(g,2.2,0.9,0.6,1.5,y+0.45,gnd?10.1:5.9,M.dark);else box(g,0.6,0.9,2.2,3.6,y+0.45,zb+0.1,M.dark);
+  if(gnd){box(g,0.55,0.15,0.55,3.35,y+0.1,2.95,M.blue);box(g,0.4,0.35,0.5,4.15,y+0.2,3.0,M.white);box(g,0.45,0.5,0.3,3.4,y+0.3,4.7,M.white);}
+  else{var dz=SALWA?0.45:0,dx=SALWA?0.3:0;box(g,0.55,0.15,0.55,4.4+dx,y+0.1,0.4+dz,M.blue);box(g,0.4,0.35,0.5,5.2+dx,y+0.2,0.5+dz,M.white);box(g,0.45,0.5,0.3,5.15+dx,y+0.3,SALWA?1.5:1.85,M.white);}
+  var kb=(SALWA&&!gnd)?1.5:0,ks=SALWA&&!gnd;   // SALWA 1st floor: kitchen 6 x 4 starts at z 1.5
+  box(g,2.0,0.6,0.55,10.7,y+0.3,0.38+kb,M.counter);box(g,0.55,0.6,ks?2.2:3.1,12.4,y+0.3,ks?4.3:2.55,M.counter);box(g,0.7,1.3,gnd?0.9:1.0,gnd?10.15:7.1,y+0.65,ks?4.6:(gnd?1.6:0.75),mat(0xcfd4d6));
+  if(gnd){box(g,1.9,0.1,1.35,10.9,y+0.5,3.0,M.wood);box(g,1.7,0.42,1.2,10.9,y+0.25,3.0,M.dark);   // ground: table in the 3 m kitchen east part
+    for(var k=0;k<2;k++){box(g,0.45,0.5,0.28,10.55+k*0.75,y+0.25,2.1,M.dark);box(g,0.45,0.5,0.28,10.55+k*0.75,y+0.25,3.9,M.dark);}}
+  else{var tz=SALWA?1.0:0;box(g,2.6,0.1,1.35,9.5,y+0.5,3.3+tz,M.wood);box(g,2.4,0.42,1.2,9.5,y+0.25,3.3+tz,M.dark);
+    for(var k=0;k<3;k++){box(g,0.45,0.5,0.28,8.6+k*0.75,y+0.25,2.4+tz,M.dark);box(g,0.45,0.5,0.28,8.6+k*0.75,y+0.25,4.2+tz,M.dark);}}
+  var lx=1.2;
+  box(g,0.7,0.55,2.6,6.55+lx,y+0.28,7.6,M.cush);box(g,3.3,0.55,0.7,7.85+lx,y+0.28,6.55,M.cush);box(g,1.35,0.3,0.85,8.9+lx,y+0.15,7.9,M.wood);box(g,0.32,1.2,2.5,5.8+lx,y+0.6,7.95,M.tyre);   // living furniture (room z 5.5-9.5)
+  var L=y+1.7;
+  label(g,gnd?"1. Girls' Bedroom":'1. Master Bedroom',gnd?'3 × 4':(SALWA?'4 × 5':'4.1 × 5.0'),gnd?1.5:2.0,L,gnd?4.1:(SALWA?3.0:4.3),gnd?2.8:3.6);label(g,'2. Bedroom 2',gnd?'3 × 4':(SALWA?'4 × 4':'4.1 × 4.5'),gnd?1.5:(SALWA?2.0:2.05),L,gnd?8.5:(SALWA?7.5:8.5));
+  if(gnd)label(g,'3. Bathroom','1.5 × 2.5',3.75,L,3.75,1.8);else label(g,'3. Bathroom',SALWA?'2.7 × 1.7':'',SALWA?5.35:4.8,L,0.85,1.8);
+  label(g,'4. Corridor',gnd?'1.4 / 2.5':(SALWA?'2.7':'1.4'),gnd?4.3:5.35,L,gnd?7.5:4.6,1.6);
+  label(g,'5. Kitchen',gnd?'3 × 5.5':(SALWA?'6 × 4':'6 × 4.5'),gnd?11.2:9.7,L,gnd?1.2:(SALWA?3.5:1.6));label(g,'6. Living Room','6 × 4',9.8,L,8.6);
+}
+
+/* ---- ground floor ---- */
+function ground(g,wallH){
+  var y=0,w=interior(g,y,wallH);
+  w.wz(9.5,3.0,4.4);w.wz(9.5,5.2,7.2);w.wz(9.5,8.1,8.8);w.wz(9.5,10.0,12.7);   // corridor strip ends at z 9.5; corridor door to courtyard 4.4-5.2; living back wall with door x 7.2-8.1 + window x 8.8-10.0
+  (function(){var T=0.16;if(wallH>2.1)box(g,0.9,wallH-2.1,T,7.65,y+(wallH+2.1)/2,9.5,M.wall);   // living -> courtyard door header
+    box(g,0.9,2.1,0.08,7.65,y+1.05,9.5,M.wood);                                                 // door leaf (in the wall line, like the other doors)
+    box(g,1.2,Math.min(1.0,wallH),T,9.4,y+Math.min(1.0,wallH)/2,9.5,M.wall);                    // wall under the window (sill 1.0)
+    if(wallH>2.2)box(g,1.2,wallH-2.2,T,9.4,y+(wallH+2.2)/2,9.5,M.wall);                        // header above the window
+    box(g,1.2,1.2,0.05,9.4,y+1.6,9.5,M.glass);box(g,1.26,0.06,0.2,9.4,y+1.0,9.5,M.rail);box(g,1.26,0.06,0.2,9.4,y+2.2,9.5,M.rail);   // glass + sill + head (shown full height even with low walls, like the door leaves)
+  })();
+  // ground west strip: girls' bedroom 3x4 (z 0-4), bathroom (z 4-5.5), bedroom 2 3x4 (z 5.5-9.5)
+  w.wz(10.5,0,3.0);                                    // bedroom 2 back wall z 10.5 (room z 6.5-10.5)
+  // backyard notch x 0-3, z 0-3 (outside); girls' bedroom 3x4 (x 0-3, z 3-7): east wall x 3 with door z 3.3-4.1
+  floor(g,0,0,6.7,2.5,0xcfd9b8,y+0.001);w.wz(2.5,0,3.0);w.wz(2.5,3.0,4.5);w.wz(2.5,5.4,6.7);   // yard x 0-5.5 z 0-2.5; covered area ends on the z=2.5 line; corridor yard door x 4.5-5.4
+  box(g,0.9,2.1,0.08,4.95,y+1.05,2.5,M.wood);        // corridor -> yard door leaf
+  if(SALWA&&wallH>2.1)box(g,0.9,wallH-2.1,0.16,4.95,y+(wallH+2.1)/2,2.5,M.wall);   // SALWA: header above the corridor -> yard door (fills the gap)
+  w.wx(3.0,2.5,5.3);w.wx(3.0,6.1,6.5);w.wz(6.5,0,3.0);floor(g,3.0,5.0,4.1,6.5,0xecdfc2,y+0.001);
+  // bathroom 1.5 x 2.5 BESIDE the girls' room (parallel): x 3.0-4.5, z 3.0-5.5; door on its east wall z 3.9-4.7 (corridor 1.0 m here)
+  floor(g,3.0,2.5,4.5,5.0,0xdde8ec,y+0.002);w.wz(5.0,3.0,4.5);w.wx(4.5,2.5,3.4);w.wx(4.5,4.2,5.0);
+  box(g,0.08,2.0,0.8,4.5,y+1.0,3.8,M.wood);           // bathroom door leaf
+  // bedroom 2 = 3 wide x 4 deep (x 0-3, z 7-11); east wall at x 3 with door z 7.5-8.3; strip x 3-4.1 z 7-9.5 joins the corridor
+  w.wx(3.0,6.5,7.0);w.wx(3.0,7.8,10.5);
+  box(g,0.08,2.0,0.8,3.0,y+1.0,7.4,M.wood);           // bedroom 2 door leaf
+  floor(g,3.0,6.5,4.1,9.5,0xecdfc2,y+0.001);   // corridor widening (west)
+  // living room 6x4 (x 5.5-11.5, z 5.5-9.5): west wall at x 5.5 with door z 5.7-6.5
+  w.wx(6.7,6.5,9.5);
+  box(g,0.08,2.0,0.8,6.7,y+1.0,6.1,M.wood);           // living room door leaf
+  box(g,0.08,2.0,0.8,3.0,y+1.0,5.7,M.wood);                                                   // girls' bedroom door leaf (x 3, z 5.3-6.1)
+  furniture(g,y,true);
+  // Salwa's room 3x3 next to the living room: x 5.5-8.5, z 2.5-5.5 (back wall on the z=2.5 line); door on x 5.5, z 2.7-3.5
+  floor(g,6.7,2.5,9.7,5.5,0xf3e6d8,y+0.001);
+  w.wx(9.7,2.5,5.5);w.wz(2.5,6.7,9.7);
+  box(g,0.08,2.0,0.8,6.7,y+1.0,3.1,M.wood);           // door leaf (corridor -> Salwa)
+  label(g,"17. Salwa's Room",'3 × 3',8.2,y+1.7,4.0,2.6);
+  box(g,0.9,2.1,0.08,11.15,y+1.05,5.5,M.wood);          // kitchen door leaf (living room -> kitchen, x 10.7-11.6)
+  // grandmother's room 3x4 under balcony 2 (x 9.7-12.7, z -4..0)
+  floor(g,9.7,-4,12.7,0,0xe9dfc6,y);w.wz(-4,9.7,12.7);w.wx(12.7,-4,0);
+  w.wz(0,11.8,12.6);                                   // no door to the kitchen: close the shared gap (ground only)
+  w.wx(9.7,-4,-2.45);w.wx(9.7,-1.55,0);                // west wall with 0.9 m door opening to the backyard (z -2.45..-1.55)
+  box(g,0.08,2.1,0.9,9.7,y+1.05,-2.0,M.wood);          // grandma's backyard door leaf (x 9.7 line)
+  // kitchen 3 x 5.5 (x 9.7-12.7): west wall x 9.7 z 0-2.5 with yard door z 0.8-1.7 (same line/orientation as grandma's door)
+  w.wx(9.7,0,0.8);w.wx(9.7,1.7,2.5);box(g,0.08,2.1,0.9,9.7,y+1.05,1.25,M.wood);
+  floor(g,6.7,0,9.7,2.5,0xcfd9b8,y+0.001);   // yard up to the z=2.5 line
+  bed(g,11.8,-2.4,1.4,2.0,y);box(g,1.4,0.6,0.55,10.6,y+0.3,-3.6,M.counter);box(g,0.55,0.6,1.0,10.1,y+0.3,-0.8,M.wood);
+  label(g,"7. Grandmother's Room",'3 × 4',11.2,y+1.7,-1.0,3.0);
+  if(SALWA){var fh=Math.min(2.2,wallH);                                                       // SALWA: backyard boundary wall (fence)
+    box(g,9.7,fh,0.2,4.85,y+fh/2,-4,M.stone);                                                  // along z=-4, from x 0 to the grandmother's back-west corner (x 9.7)
+    box(g,0.2,fh,6.5,0,y+fh/2,-0.75,M.stone);                                                  // along x=0, from z -4 to the house back line (z 2.5)
+    // Eid sheep room (علوش العيد) 2 x 2 in the back-west corner of the yard: x 0-2, z -4..-2; door on the north wall (x 0.55-1.45), facing the house
+    floor(g,0.1,-3.9,2.0,-2.0,0xd8cfb8,y+0.002);
+    box(g,0.55,fh,0.16,0.275,y+fh/2,-2.0,M.stone);box(g,0.55,fh,0.16,1.725,y+fh/2,-2.0,M.stone);   // north wall z=-2 with a 0.9 m door
+    if(fh>2.0)box(g,0.9,fh-2.0,0.16,1.0,y+2.0+(fh-2.0)/2,-2.0,M.stone);                          // header above the door
+    box(g,0.9,2.0,0.08,1.0,y+1.0,-2.0,M.wood);                                                  // door leaf
+    box(g,0.16,fh,2.0,2.0,y+fh/2,-3.0,M.stone);                                                 // east wall x=2
+    box(g,2.2,0.12,2.2,1.05,y+fh+0.06,-3.0,mat(0xcfc7b3));                                     // roof
+    // external bathroom 1.5 x 2.5 in the corner of the west fence (x 0) and the house back line (z 2.5): x 0-1.5, z 0-2.5; door on its east wall (z 1.1-1.9)
+    floor(g,0.1,0.0,1.5,2.42,0xdde8ec,y+0.002);
+    box(g,1.5,fh,0.16,0.75,y+fh/2,0.0,M.stone);                                                 // south wall z=0 (yard side)
+    box(g,0.16,fh,1.1,1.5,y+fh/2,0.55,M.stone);box(g,0.16,fh,0.6,1.5,y+fh/2,2.2,M.stone);       // east wall x=1.5 with a 0.8 m door
+    if(fh>2.0)box(g,0.16,fh-2.0,0.8,1.5,y+2.0+(fh-2.0)/2,1.5,M.stone);
+    box(g,0.08,2.0,0.8,1.5,y+1.0,1.5,M.wood);                                                   // door leaf
+    box(g,1.6,0.12,2.6,0.75,y+fh+0.06,1.25,mat(0xcfc7b3));                                     // roof
+    box(g,0.6,0.4,0.45,0.45,y+0.2,2.1,M.white);box(g,0.5,0.1,0.5,0.45,y+0.05,0.5,M.blue);       // wc + shower tray
+    label(g,'20. External Bathroom','1.5 × 2.5',0.75,y+fh+0.6,1.25,2.2);
+    label(g,'19. علوش العيد','2 × 2',1.0,y+fh+0.6,-3.0,2.2);}
+  // garage 4.1 x 5.5
+  // garage 3x4 directly behind bedroom 2: x 0-3, z 11-15, roll-up front on the street; door to courtyard on x=3 at z 11.5-12.3
+  floor(g,0,10.5,3.0,15.0,0xdcd8d0,y);floor(g,3.0,9.5,4.1,15,0xe3e6d3,y);
+  w.wx(0,9.5,15);w.wx(3.0,10.5,11.0);w.wx(3.0,11.8,15);
+  box(g,2.4,0.05,0.08,1.6,y+2.2,15,M.rail);  // roll-up door top rail on the street line (garage 3 x 4.5, z 10.5-15)
+  box(g,2.0,0.7,3.9,1.5,y+0.4,12.4,M.car);box(g,1.5,0.6,1.4,1.5,y+1.05,11.8,M.glass);box(g,1.5,0.35,0.9,1.5,y+0.9,13.45,M.glass);
+  [[0.5,11.0],[2.5,11.0],[0.5,13.6],[2.5,13.6]].forEach(function(p){box(g,0.2,0.6,0.6,p[0],y+0.3,p[1],M.tyre);});
+  label(g,'8. Garage','3 × 4.5',1.5,y+1.7,11.1,2.4);
+  // entrance path, courtyard, fountain, street wall with two gates, private passage, stairwell
+  // courtyard now x 4.1-9.1 (tower widened west to 2.4 m: x 9.1-11.5)
+  floor(g,4.1,9.5,10.3,11,0xe4ddcb,y);floor(g,4.1,11,10.3,15.0,0xe3e6d3,y);floor(g,10.3,9.5,11.6,15.0,0xc9c2b2,y);floor(g,11.6,14.4,12.7,15.0,0xc9c2b2,y);floor(g,11.6,9.5,12.7,10.2,0xc9c2b2,y);   // tower floor with the cave-stair opening under flight 1 (x 11.6-12.7, z 10.2-14.4)
+  w.wz(15,3.0,5.3);w.wz(15,6.3,10.3);
+  box(g,1.2,0.5,1.2,3.7,y+0.25,14.3,M.stone);box(g,0.9,0.1,0.9,3.7,y+0.5,14.3,M.water);box(g,0.15,0.9,0.15,3.7,y+0.7,14.3,M.stone);   // fountain in the corner: garage wall (x 3.0) x street wall (z 15)
+  [[4.5,14.6],[9.6,14.6]].forEach(function(p){box(g,0.4,0.6,0.4,p[0],y+0.3,p[1],M.plant);});
+  [[4.5,11.1],[10.07,11.1]].forEach(function(p){box(g,0.3,FH-0.25,0.3,p[0],y+(FH-0.25)/2,p[1],M.stone);box(g,0.5,0.15,0.5,p[0],y+0.075,p[1],M.stone);});   // 2 columns (with base) under the 1st-floor external corridor; east one flush against the tower wall (face x 10.22)
+  label(g,'9. Courtyard','',7.2,y+1.7,12.0,2.2);label(g,'10. Fountain','',3.7,y+1.4,14.3,1.5);label(g,'11. Street Door','ground',5.8,y+1.4,15.6,2.8);
+  label(g,'12. Private Door','1st floor',12.15,y+1.4,15.6,2.8);label(g,'13. Stairwell','',11.5,y+1.7,10.6,2.0);
+  tower(g);
+}
+
+/* ==== TOWER + APPROVED STAIRS (from stairs-BEST-locked.html, commit 496ec07) ==== */
+// tower x 9.1-11.5 (2.4 m), z 9.5-15 (5.5 m), height 6.13 m; stair tread width 1.1 m
+var TW=2.4, X0=10.3, X1=X0+TW, XC=X0+TW/2, SW=1.1, TH=6.13;
+var wE=X1-SW/2, wW=X0+SW/2;                       // east / west stair lanes
+var roofs1=[];                                    // toggled by the "hide 1st-floor roof" button
+var towerShells=[];                               // toggled by the "hide tower" button (stairs stay visible)
+function tower(g){
+  var T=0.16, ZC=12.25, ZD=5.5;
+  var sh=new THREE.Group();g.add(sh);towerShells.push(sh);
+  // --- shell (in its own sub-group so it can be hidden) ---
+  box(sh,T,TH,ZD,X1,TH/2,ZC,M.stone);                                 // east wall (house east line)
+  var ZD1=12.05;                                                      // 1st-floor door centre — top-right corner of the 3 m corridor (z 9.5-12.5)
+  // ground-floor door from the courtyard to the cave stairs: west wall x 9.1, z 11.3-12.2, h 2.1 (under the 1st-floor door)
+  box(sh,T,FH,1.8,X0,FH/2,10.4,M.stone);
+  if(SALWA){   // SALWA: 2 m corridor -> ONE 1st-floor door on the west wall, z 10.55-11.45 (h 2.0); the stair-exit (10.2) and the old z 12.05 doors are walled
+    box(sh,T,TH-FH,1.05,X0,FH+(TH-FH)/2,10.025,M.stone);box(sh,T,TH-FH-2.0,0.9,X0,(TH+FH+2.0)/2,11.0,M.stone);box(sh,T,TH-FH,1.05,X0,FH+(TH-FH)/2,11.975,M.stone);
+  }else{box(sh,T,TH-FH,0.25,X0,FH+(TH-FH)/2,9.625,M.stone);box(sh,T,TH-FH,0.65,X0,FH+(TH-FH)/2,10.975,M.stone);box(sh,T,TH-FH-2.0,0.9,X0,(TH+FH+2.0)/2,10.2,M.stone);box(sh,T,TH-FH,0.3,X0,FH+(TH-FH)/2,11.45,M.stone);}   // west wall, back part z 9.5 -> 11.6 with the 1st-floor stair-exit door z 9.75-10.65 (top of flight 2->3)
+  box(g,0.08,2.1,0.9,X0,1.05,11.75,M.wood);                          // cave-stair door leaf
+  // west wall, front part (z 12.2 -> 15) cut on a diagonal next to the cave-stair door: open below the line (z 12.2, y 2.1) -> (z 14.6, y 0)
+  (function(){var s=new THREE.Shape();s.moveTo(12.2,2.1);s.lineTo(12.2,FH);s.lineTo(12.5,FH);s.lineTo(12.5,TH);s.lineTo(15,TH);s.lineTo(15,0);s.lineTo(14.9,0);s.lineTo(14.9,2.1);s.lineTo(14.0,2.1);s.lineTo(14.0,0.525);s.lineTo(12.2,2.1);   // + stair door z 14.0-14.9 (h 2.1) to flight 1
+    var o=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:T,bevelEnabled:false}),M.stone);o.rotation.y=-Math.PI/2;o.position.set(X0+T/2,0,0);sh.add(o);})();
+  box(g,0.08,2.1,0.9,X0,1.05,14.45,M.wood);                          // ground -> 1st floor stair door leaf (courtyard side, near the street)
+  box(sh,T,FH-2.1,0.9,X0,2.1+(FH-2.1)/2,11.75,M.stone);   // west wall under 1st-floor door: above the cave-stair door
+  box(sh,T,TH-FH-2.0,0.9,X0,(TH+FH+2.0)/2,ZD1,M.stone);              // west wall above 1st-floor door
+  box(sh,TW,TH,T,XC,TH/2,9.5,M.stone);                                // back wall
+  // front (street) face z=15: door 1.1 m in front of flight 1 (x 10.4-11.5), slot window in left panel
+  box(sh,1.3,3.2,T,10.95,1.6,15.0,M.stone);                            // left panel below slot (y 0-3.2)
+  box(sh,0.4,1.8,T,10.5,4.1,15.0,M.stone);                             // left of slot
+  box(sh,0.4,1.8,T,11.4,4.1,15.0,M.stone);                            // right of slot
+  box(sh,1.3,TH-5.0,T,10.95,(TH+5.0)/2,15.0,M.stone);                  // above slot
+  box(sh,SW,TH-2.3,T,wE,(TH+2.3)/2,15.0,M.stone);                     // header above door (y 2.3-6.13)
+  box(g,0.10,2.3,0.18,wE-SW/2+0.05,1.15,15.0,M.wood);box(g,0.10,2.3,0.18,X1-0.05,1.15,15.0,M.wood); // door frame (stays visible)
+  box(sh,TW+0.2,0.25,ZD+0.2,XC,TH+0.12,ZC,M.stone);                   // parapet cap
+  if(SALWA){   // ==== SALWA proposal stairs (from stairs-SALWA-proposal.html) ====
+    var r1=FH/16,t1=0.25,zDoor=14.91,t2=0.20,z2=13.41;
+    box(g,0.05,2.2,0.95,wE-SW/2+0.08,1.1,15.09+0.475,M.wood);                                // street door leaf, open 90deg outward to the street
+    for(var s=0;s<4;s++){box(g,SW,r1,t1,wE,(s+0.5)*r1,zDoor-(s+0.5)*t1,M.wood);}            // flight 1: 1 m from the door (z 14.91 -> 13.91), east lane
+    box(g,TW,0.12,1.0,XC,5*r1-0.06,zDoor-4*t1-0.5,M.rail);                                  // landing 1 m deep (z 13.91 -> 12.91), y 1.0
+    for(var s=0;s<4;s++){box(g,SW,r1,t2,wW,5*r1+(s+0.5)*r1,z2+(s+0.5)*t2,M.wood);}          // flight 2: west lane back toward the door (y 1.0 -> 2.0)
+    box(g,TW,0.12,0.7,XC,10*r1-0.06,z2+4*t2+0.35,M.rail);                                   // upper landing above the door (z 14.21 -> 14.91), y 2.0
+    for(var s=0;s<6;s++){box(g,SW,r1,t1,wE,10*r1+(s+0.5)*r1,14.21-(s+0.5)*t1,M.wood);}      // flight 3: east lane, 6 steps back toward the house (y 2.0 -> 3.2, z 14.21 -> 12.71), last step flush with the landing
+    box(g,TW,0.12,12.71-9.5,XC,FH-0.06,(12.71+9.5)/2,M.rail);                                // 1st-floor floor: tower covered from the last step to the back wall (z 12.71 -> 9.5), y 3.2
+    // 1st floor (3.2) -> top (6.13): 16 risers
+    var r2=(TH-FH)/16,zBk=9.58,zDc=12.05,tA2=0.20,xS=X0+0.08;
+    for(var s=0;s<6;s++){box(g,tA2,r2,SW,xS+(s+0.5)*tA2,FH+(s+0.5)*r2,zDc,M.wood);}         // flight 4: X from the corridor door, west -> east (x 9.18 -> 10.38)
+    var xT=xS+6*tA2,xE2=X1-0.08,z4a=zDc-SW/2;
+    box(g,xE2-xT,0.12,SW,(xT+xE2)/2,FH+7*r2-0.06,zDc,M.rail);                              // turn landing at the east end (x 10.38 -> 11.42, z 11.5 -> 12.6), y 4.48
+    var tB2=(z4a-zBk)/9;
+    for(var s=0;s<9;s++){box(g,SW,r2,tB2,wE,FH+7*r2+(s+0.5)*r2,z4a-(s+0.5)*tB2,M.wood);}    // flight 5: east lane, 9 steps front -> back to the back wall (z 11.5 -> 9.58), top step at 6.13
+    return;
+  }
+  // --- level 1: door -> 6 steps -> flat run -> back turn (2) -> 4 wide X steps -> 1st floor (3) ---
+  (function(){var y=0,top=FH,nA=6,rise=(top-y)/(nA+3),tread=0.40,zF=13.8,zBack=10.2;   // tread 0.40 (was 0.30)
+    for(var s=0;s<nA;s++){box(g,SW,rise,tread,wE,y+(s+0.5)*rise,zF-s*tread,M.wood);}
+    var zTopA=zF-(nA-1)*tread-tread/2, zL2=zBack+SW/2;
+    box(g,SW,0.12,zTopA-zL2,wE,y+nA*rise-0.06,(zTopA+zL2)/2,M.rail);                       // flat run
+    box(g,TW,0.12,SW,XC,y+nA*rise,zBack,M.rail);                                            // back turn landing 2
+    var nB=4,riseB=(top-(y+nA*rise))/(nB+1),WB=1.8,tB=0.30,xB0=X1-SW-tB/2;
+    var zIn=9.5+0.08,zOut=zBack+WB/2;                                                       // keep the steps inside the tower back wall (inner face z 9.58)
+    for(var s=0;s<nB;s++){box(g,tB,riseB,zOut-zIn,xB0-s*tB,y+nA*rise+(s+0.5)*riseB,(zIn+zOut)/2,M.wood);} // 2->3 (X-axis)
+  })();
+  // --- level 2: 1st floor (3) -> X flight west->east -> turn (4) -> Z flight front->back -> top landing (5) ---
+  (function(){var y=FH,top=TH,rise=(top-y)/16,n34=5,tA=0.28,zA=12.3,xW0=X0+0.1+tA/2,L4=0.9;   // zA aligned with 1st-floor door
+    for(var s=0;s<n34;s++){box(g,tA,rise,SW,xW0+s*tA,y+(s+0.5)*rise,zA,M.wood);}           // 3->4: 5 steps, tread 0.28
+    box(g,L4,0.12,1.0,X1-L4/2,y+n34*rise,zA,M.rail);                                        // turn landing 4 (0.9 m, east end)
+    var n45=16-n34,z45=zA-0.5-0.12,t45=0.21;
+    for(var s=0;s<n45;s++){box(g,SW,rise,t45,wE,y+n34*rise+(s+0.5)*rise,z45-s*t45,M.wood);} // 4->5: 11 steps, tread 0.24
+    box(g,TW,0.12,0.6,XC,top-0.06,9.8,M.rail);                                              // top landing 5
+  })();
+}
+/* ---- first floor ---- */
+function first(g){
+  var FW=3.0;                              // first-floor room height 3 m
+  var y=FH,w=interior(g,y,FW);
+  if(SALWA){
+    w.wz(0.5,0,0.4);w.wz(0.5,1.4,4.0);w.wz(0,4.0,6.7);   // SALWA: master balcony (z 0-0.5, x 0-4) only; bathroom front wall extended to z 0 (x 4-6.7)
+    box(g,1.0,FW-2.2,0.16,0.9,y+2.2+(FW-2.2)/2,0.5,M.wall);   // master bedroom french door (porte-fenêtre) x 0.4-1.4, h 2.2, onto the walkway
+    box(g,0.48,2.2,0.04,0.65,y+1.1,0.5,M.glass);box(g,0.48,2.2,0.04,1.15,y+1.1,0.5,M.glass);
+    box(g,1.0,0.06,0.1,0.9,y+2.2,0.5,M.wood);box(g,0.05,2.2,0.1,0.9,y+1.1,0.5,M.wood);box(g,0.05,2.2,0.1,0.42,y+1.1,0.5,M.wood);box(g,0.05,2.2,0.1,1.38,y+1.1,0.5,M.wood);
+    box(g,4.0,0.9,0.05,2.0,y+0.45,0.02,M.rail);box(g,0.05,0.9,0.5,0.02,y+0.45,0.25,M.rail);box(g,0.05,0.9,0.5,4.0,y+0.45,0.25,M.rail);   // master balcony rail (front edge x 0-4 + west end + east end at x 4)
+    // SALWA: kitchen 6 x 4 (x 6.7-12.7, z 1.5-5.5): back wall at z 1.5 with the wide window 2.0 x 1.2 (x 8.5-10.5, sill 1.0); strip z 0-1.5 joins balcony 2
+    w.wz(1.5,6.7,8.5);w.wz(1.5,10.5,11.3);w.wz(1.5,12.1,12.7);   // + kitchen door x 11.3-12.1 from the strip (east of the window)
+    box(g,0.8,FW-2.0,0.16,11.7,y+2.0+(FW-2.0)/2,1.5,M.wall);box(g,0.8,2.0,0.08,11.7,y+1.0,1.5,M.wood);
+    box(g,2.0,1.0,0.16,9.5,y+0.5,1.5,M.wall);box(g,2.0,FW-2.2,0.16,9.5,y+2.2+(FW-2.2)/2,1.5,M.wall);
+    box(g,2.0,1.2,0.05,9.5,y+1.6,1.5,M.glass);box(g,2.06,0.06,0.2,9.5,y+1.0,1.5,M.rail);box(g,2.06,0.06,0.2,9.5,y+2.2,1.5,M.rail);
+  }else w.wz(0,0,9.7);
+  w.wx(0,SALWA?0.5:0,1.5);w.wx(6.7,0,1.5);   // SALWA: bathroom east wall x 6.7, z 0-1.5   // 1st floor: close the ground yard openings
+  if(SALWA){   // SALWA 1st floor: master 4 x 5 (x 0-4, z 0.5-5.5); bedroom 2 4 x 4 (x 0-4, z 5.5-9.5); corridor x 4-5.5
+    w.wz(5.5,0,4.0);w.wx(4.0,0,4.5);w.wx(4.0,5.3,6.0);w.wx(4.0,6.8,9.5);w.wz(9.5,0,4.0);   // shared wall z 5.5 + x 4 wall (master door z 4.5-5.3, bedroom 2 door z 6.0-6.8) + bedroom 2 end z 9.5
+    box(g,0.08,2.0,0.8,4.0,y+1.0,4.9,M.wood);box(g,0.08,2.0,0.8,4.0,y+1.0,6.4,M.wood);        // door leaves
+    floor(g,0,0.5,4.0,5.5,0xf2e3c4,y+0.002);floor(g,0,5.5,4.0,9.5,0xf2e3c4,y+0.002);           // master + bedroom 2 floors (x 0-4)
+  }else w.wz(5.0,0,4.1);                   // 1st floor: master / bedroom 2 split at z 5.0
+  // living-room back wall (z 9.5) with a 1.2 x 1.2 window onto the external corridor, centred x 8.5, sill 1.0 m
+  w.wz(9.5,6.4,7.9);w.wz(9.5,9.1,12.7);
+  box(g,1.2,1.0,0.16,8.5,y+0.5,9.5,M.wall);box(g,1.2,FW-2.2,0.16,8.5,y+2.2+(FW-2.2)/2,9.5,M.wall);
+  box(g,1.2,1.2,0.05,8.5,y+1.6,9.5,M.glass);box(g,1.26,0.06,0.2,8.5,y+1.0,9.5,M.rail);   // glass + sill (centred on the corridor-facing stretch x 6.7-10.3)
+  if(!SALWA){w.wx(4.1,6.1,9.5);           // 1st floor: bedroom 2 east wall (door gap z 5.3-6.1)
+  w.wx(4.1,0,3.9);w.wx(4.1,4.7,5.3);}      // 1st floor: master bedroom east wall (door gap z 3.9-4.7) + segment to bedroom 2 door gap
+  w.wx(6.7,6.5,9.5);                       // 1st floor: living room west wall (door gap z 5.7-6.5)
+  if(!SALWA)w.wx(4.1,1.0,1.8);            // close the ground-floor master-bedroom door gap on the 1st floor
+  if(SALWA){floor(g,4.0,0,6.7,1.7,0xdde8ec,y+0.003);w.wz(1.7,4.0,4.95);w.wz(1.7,5.75,6.7);}   // SALWA: bathroom 2.7 x 1.7 (x 4.0-6.7, z 0-1.7), door z 1.7 x 4.95-5.75
+  else{floor(g,4.1,0,5.5,2.2,0xdde8ec,y+0.001);w.wz(2.2,4.1,4.3);w.wz(2.2,5.1,5.5);}   // 1st-floor bathroom stays at the corridor end
+  w.wz(5.5,10.7,11.6);                      // close the kitchen/living-room door gap on the 1st floor
+  // bedroom 2 extension into balcony 1: 2.5 long (z 9.5-12.0) x 3.5 wide (x 0-3.5); door to balcony at x 1.6-2.4
+  var ZB2=SALWA?9.5:12.0, XB2=SALWA?4.0:3.5;   // SALWA: bedroom 2 ends at z 9.5, 4 m wide (no extension)
+  floor(g,0,9.5,XB2,ZB2,0xf2e3c4,y);
+  w.wx(0,9.5,ZB2);if(!SALWA){w.wx(XB2,9.5,ZB2);w.wz(ZB2,0,1.6);w.wz(ZB2,2.4,XB2);}
+  w.wz(9.5,XB2-0.08,4.1+0.08);            // close the gap at the corner (x 3.5-4.1, z 9.5)
+  roofs1.push(box(g,XB2,0.22,ZB2-9.5,XB2/2,y+3.0+0.11,(9.5+ZB2)/2,mat(0xcfc7b3)));  // roof over the extension
+  furniture(g,y);
+  // slab under the first floor (visible edge) + balconies, gallery, stairwell landing
+  box(g,W,0.25,H,W/2,y-0.13,H/2,mat(0xb4b2a9));
+  roofs1.push(box(g,W,0.22,H,W/2,y+FW+0.11,H/2,mat(0xcfc7b3)));   // roof cover over first floor (main block z0-9.5; balconies & stairwell open)
+  box(g,5,0.25,4,10.2,y-0.13,-2.0,mat(0xd8d2c2));box(g,4.1,0.25,5.5,2.05,y-0.13,12.25,mat(0xd8d2c2));  // balcony 2 = 5x4 (x 7.7-12.7, z -4..0); balcony 1 = full garage roof
+  box(g,6.2,0.25,SALWA?2.0:3.0,7.2,y-0.13,SALWA?10.5:11.0,mat(0xe4ddcb));   // external corridor (x 4.1-10.3); SALWA: 2 m (z 9.5-11.5)
+  function rx(x,z1,z2){box(g,0.06,0.5,z2-z1,x,y+0.25,(z1+z2)/2,M.rail);}
+  function rz(z,x1,x2){box(g,x2-x1,0.5,0.06,(x1+x2)/2,y+0.25,z,M.rail);}
+  rz(-4,7.7,12.7);rx(7.7,-4,0);rx(12.7,-4,0);
+  var zCE=SALWA?11.5:12.5;rz(15,0,4.1);rx(0,ZB2,15);rx(4.1,zCE,15);rz(zCE,4.1,10.3);
+  if(SALWA)box(g,0.08,2.0,0.9,X0,y+1.0,11.0,M.wood);else{box(g,0.08,2.0,0.85,X0,y+1.0,12.05,M.wood);box(g,0.08,2.0,0.9,X0,y+1.0,10.2,M.wood);}   // + stair-exit door (z 9.75-10.65)                                                   // door corridor -> tower, top-right corner of corridor
+  var L=y+1.7;
+  label(g,'14. Balcony 2','5 × 4',10.2,L,-2.1,2.6);label(g,'15. Balcony 1','4.1 × 3.0 + 0.6 strip',1.9,L,13.5,2.6);
+  label(g,'16. External Corridor',SALWA?'width 2 m':'width 3 m',7.2,L,SALWA?10.5:11.0,2.2);label(g,'13. Stairwell','from ground',XC,L,11.2,2.0);
+}
+var plotM=[mat(0xb4b2a9),mat(0xcfd9b8)];box(scene,16.2,0.3,24,6.35,-0.15,4.0,plotM[0]);   // plot: x -1.75..14.45, z -8..16 (8 m backyard)
+box(scene,12.7,0.06,8,6.35,0.03,-4.0,plotM[1]);   // backyard ground (z -8..0)
+ground(gGround,1.1);ground(gTall,FH-0.2);first(gFirst);
+return{gGround:gGround,gFirst:gFirst,gTall:gTall,roofs1:roofs1,towerShells:towerShells,M:M};}
+
+/* ---------- geometry for the sun maths ---------- */
+var BASE=[];          // axis-aligned blockers taken from the model
+function collectBoxes(model){
+  var M=model.M,skip=[M.glass,M.cush,M.white,M.counter,M.car,M.tyre,M.water,M.plant,M.blue,M.dark],out=[];
+  [model.gTall,model.gFirst].forEach(function(g){g.updateMatrixWorld(true);g.traverse(function(o){
+    if(!o.isMesh||skip.indexOf(o.userData.mat0||o.material)>=0)return;
+    var bb=new THREE.Box3().setFromObject(o),sx=bb.max.x-bb.min.x,sy=bb.max.y-bb.min.y,sz=bb.max.z-bb.min.z;
+    if((o.userData.mat0||o.material)===M.wood&&!(Math.min(sx,sz)<=0.12&&sy>=1.9))return;   // furniture wood out, door leaves stay
+    var b={x0:bb.min.x,x1:bb.max.x,y0:bb.min.y,y1:bb.max.y,z0:bb.min.z,z1:bb.max.z};
+    if(b.y0<0.1&&b.y1>2.9&&b.y1<3.07)b.y1=3.08;                                          // ground walls meet the 1st-floor slab
+    b.tower=(b.x0>=10.2&&b.z0>=9.3&&b.x1<=12.8&&b.z1<=15.2);
+    out.push(b);});});
+  return out;}
+function scenBoxes(sc){var l=[];for(var i=0;i<BASE.length;i++){if(!sc.tower&&BASE[i].tower)continue;l.push(BASE[i]);}
+  if(sc.nb){l.push({x0:-12,x1:0,y0:0,y1:sc.nh,z0:-8,z1:15,nbr:true});l.push({x0:12.7,x1:24.7,y0:0,y1:sc.nh,z0:-8,z1:15,nbr:true});}
+  if(sc.tower&&sc.ext>0)l.push({x0:10.3,x1:12.7,y0:TOWER_TOP,y1:TOWER_TOP+sc.ext,z0:9.5,z1:15.0,tower:true});
+  return l;}
+function hit(o,d,b){var tmin=1e-4,tmax=1e9,lo,hi,t1,t2,t;
+  if(Math.abs(d.x)<1e-12){if(o.x<b.x0||o.x>b.x1)return false;}else{t1=(b.x0-o.x)/d.x;t2=(b.x1-o.x)/d.x;if(t1>t2){t=t1;t1=t2;t2=t;}if(t1>tmin)tmin=t1;if(t2<tmax)tmax=t2;if(tmin>tmax)return false;}
+  if(Math.abs(d.y)<1e-12){if(o.y<b.y0||o.y>b.y1)return false;}else{t1=(b.y0-o.y)/d.y;t2=(b.y1-o.y)/d.y;if(t1>t2){t=t1;t1=t2;t2=t;}if(t1>tmin)tmin=t1;if(t2<tmax)tmax=t2;if(tmin>tmax)return false;}
+  if(Math.abs(d.z)<1e-12){if(o.z<b.z0||o.z>b.z1)return false;}else{t1=(b.z0-o.z)/d.z;t2=(b.z1-o.z)/d.z;if(t1>t2){t=t1;t1=t2;t2=t;}if(t1>tmin)tmin=t1;if(t2<tmax)tmax=t2;if(tmin>tmax)return false;}
+  return true;}
+// project every box on the plane facing the sun and bin it in a 2D grid, so each point only tests the few boxes in front of it
+function makeIndex(boxes,d){var a=Math.abs(d.y)<0.95?{x:0,y:1,z:0}:{x:1,y:0,z:0};
+  var u={x:a.y*d.z-a.z*d.y,y:a.z*d.x-a.x*d.z,z:a.x*d.y-a.y*d.x},ul=Math.hypot(u.x,u.y,u.z);u.x/=ul;u.y/=ul;u.z/=ul;
+  var v={x:d.y*u.z-d.z*u.y,y:d.z*u.x-d.x*u.z,z:d.x*u.y-d.y*u.x};
+  var CS=0.6,rects=[],umin=1e9,vmin=1e9,umax=-1e9,vmax=-1e9;
+  for(var i=0;i<boxes.length;i++){var b=boxes[i],a0=1e9,a1=-1e9,b0=1e9,b1=-1e9;
+    for(var c=0;c<8;c++){var x=c&1?b.x1:b.x0,y=c&2?b.y1:b.y0,z=c&4?b.z1:b.z0,pu=x*u.x+y*u.y+z*u.z,pv=x*v.x+y*v.y+z*v.z;if(pu<a0)a0=pu;if(pu>a1)a1=pu;if(pv<b0)b0=pv;if(pv>b1)b1=pv;}
+    rects.push([a0,a1,b0,b1]);if(a0<umin)umin=a0;if(a1>umax)umax=a1;if(b0<vmin)vmin=b0;if(b1>vmax)vmax=b1;}
+  var nu=Math.ceil((umax-umin)/CS)+1,nv=Math.ceil((vmax-vmin)/CS)+1,cells=new Array(nu*nv);
+  for(i=0;i<rects.length;i++){var r=rects[i],i0=Math.floor((r[0]-umin)/CS),i1=Math.floor((r[1]-umin)/CS),j0=Math.floor((r[2]-vmin)/CS),j1=Math.floor((r[3]-vmin)/CS);
+    for(var j=j0;j<=j1;j++)for(var k=i0;k<=i1;k++){var id=j*nu+k;(cells[id]||(cells[id]=[])).push(i);}}
+  return{u:u,v:v,umin:umin,vmin:vmin,nu:nu,nv:nv,CS:CS,cells:cells,boxes:boxes,d:d};}
+function shaded(I,p){var pu=p.x*I.u.x+p.y*I.u.y+p.z*I.u.z,pv=p.x*I.v.x+p.y*I.v.y+p.z*I.v.z,i=Math.floor((pu-I.umin)/I.CS),j=Math.floor((pv-I.vmin)/I.CS);
+  if(i<0||j<0||i>=I.nu||j>=I.nv)return false;var c=I.cells[j*I.nu+i];if(!c)return false;
+  for(var k=0;k<c.length;k++)if(hit(p,I.d,I.boxes[c[k]]))return true;return false;}
+function inside(p,boxes){for(var i=0;i<boxes.length;i++){var b=boxes[i];if(p.x>=b.x0&&p.x<=b.x1&&p.y>=b.y0&&p.y<=b.y1&&p.z>=b.z0&&p.z<=b.z1)return true;}return false;}
+
+/* ---------- sample points: outdoor surfaces and room floors ---------- */
+var ZONES=[
+  {k:'roof',n:'الدالة (سطح الدار)',t:'h',y:6.45,cy:6.35,x0:0.15,x1:12.55,z0:0.15,z1:9.35},
+  {k:'troof',n:'سطح البرج',t:'h',y:6.40,cy:6.30,x0:10.4,x1:12.6,z0:9.6,z1:14.9},
+  {k:'corr',n:'الكوريدور الخارجي (الأول)',t:'h',y:3.22,cy:3.1,x0:4.15,x1:10.25,z0:9.55,z1:11.45},
+  {k:'b1',n:'البلكون 1 (فوق الكراج)',t:'h',y:3.22,cy:3.1,x0:0.1,x1:4.05,z0:9.55,z1:14.95},
+  {k:'b2',n:'البلكون 2 (الخلفي)',t:'h',y:3.22,cy:3.1,x0:7.75,x1:12.65,z0:-3.95,z1:-0.05},
+  {k:'court',n:'الفناء',t:'h',y:0.08,x0:4.15,x1:10.25,z0:9.55,z1:14.95},
+  {k:'yard',n:'الجنينة الخلفية',t:'h',y:0.08,x0:0.1,x1:9.6,z0:-3.9,z1:-0.1},
+  {k:'fN',n:'الواجهة الخلفية (الشمال)',t:'z',z:-0.12,cz:0,nz:-1,x0:0.1,x1:12.6,y0:0.1,y1:6.35},
+  {k:'fS',n:'الواجهة على الفناء',t:'z',z:9.62,cz:9.5,nz:1,x0:0.1,x1:12.6,y0:0.1,y1:6.35},
+  {k:'fStreet',n:'واجهة الشارع (الجنوب)',t:'z',z:15.12,cz:15.0,nz:1,x0:0.1,x1:12.6,y0:0.1,y1:6.35}
+];
+var ROOMS=[
+  {n:'غرفة البنات',f:'الأرضي',y:0.09,x0:0,x1:3,z0:2.5,z1:6.5},{n:'الحمّام',f:'الأرضي',y:0.09,x0:3,x1:4.5,z0:2.5,z1:5},
+  {n:'غرفة النوم 2',f:'الأرضي',y:0.09,x0:0,x1:3,z0:6.5,z1:10.5},{n:'غرفة سلوى',f:'الأرضي',y:0.09,x0:6.7,x1:9.7,z0:2.5,z1:5.5},
+  {n:'الكوجينة',f:'الأرضي',y:0.09,x0:9.7,x1:12.7,z0:0,z1:5.5},{n:'الصالون',f:'الأرضي',y:0.09,x0:6.7,x1:12.7,z0:5.5,z1:9.5},
+  {n:'غرفة الجدّة',f:'الأرضي',y:0.09,x0:9.7,x1:12.7,z0:-4,z1:0},{n:'الكراج',f:'الأرضي',y:0.09,x0:0,x1:3,z0:10.5,z1:15},
+  {n:'غرفة النوم الكبيرة',f:'الأول',y:3.3,x0:0,x1:4,z0:0.5,z1:5.5},{n:'غرفة النوم 2',f:'الأول',y:3.3,x0:0,x1:4,z0:5.5,z1:9.5},
+  {n:'الحمّام',f:'الأول',y:3.3,x0:4,x1:6.7,z0:0,z1:1.7},{n:'الكوريدور الداخلي',f:'الأول',y:3.3,x0:4,x1:6.7,z0:1.7,z1:9.5},
+  {n:'الكوجينة',f:'الأول',y:3.3,x0:6.7,x1:12.7,z0:1.5,z1:5.5},{n:'الصالون',f:'الأول',y:3.3,x0:6.7,x1:12.7,z0:5.5,z1:9.5}
+];
+function gridPts(zone,step){var pts=[];
+  if(zone.t==='h'){for(var x=zone.x0+step/2;x<zone.x1;x+=step)for(var z=zone.z0+step/2;z<zone.z1;z+=step){
+      if(zone.cy!==undefined&&!inside({x:x,y:zone.cy,z:z},BASE))continue;pts.push({x:x,y:zone.y,z:z,n:{x:0,y:1,z:0},s:step});}}
+  else{for(var x2=zone.x0+step/2;x2<zone.x1;x2+=step)for(var y2=zone.y0+step/2;y2<zone.y1;y2+=step){
+      if(!inside({x:x2,y:y2,z:zone.cz},BASE))continue;pts.push({x:x2,y:y2,z:zone.z,n:{x:0,y:0,z:zone.nz},s:step});}}
+  return pts;}
+function roomPts(r,step){var pts=[],ins=0.25;for(var x=r.x0+ins;x<=r.x1-ins+1e-6;x+=step)for(var z=r.z0+ins;z<=r.z1-ins+1e-6;z+=step)pts.push({x:x,y:r.y,z:z,n:{x:0,y:1,z:0}});return pts;}
+var CORR_FINE=[],COURT_PTS=[];
+function setupPoints(){ZONES.forEach(function(z){z.pts=gridPts(z,0.5);});ROOMS.forEach(function(r){r.pts=roomPts(r,0.5);});
+  CORR_FINE=gridPts({t:'h',y:3.22,cy:3.1,x0:4.15,x1:10.25,z0:9.55,z1:11.45},0.25);COURT_PTS=gridPts({t:'h',y:0.08,x0:4.15,x1:10.25,z0:11.55,z1:14.95},0.4);}
+
+/* ---------- computation (time-sliced so the page stays responsive) ---------- */
+function stepsOf(doy,stepMin){var t=sunTimes(doy),st=stepMin/60,out=[];for(var h=t.rise+st/2;h<t.set;h+=st)out.push(h);return{hours:out,st:st,t:t};}
+function fracNow(pts,d,boxes){if(d.y<=0)return 0;var I=makeIndex(boxes,d),lit=0,n=0;for(var i=0;i<pts.length;i++){var p=pts[i];if(p.n.x*d.x+p.n.y*d.y+p.n.z*d.z<=0){n++;continue;}n++;if(!shaded(I,p))lit++;}return n?lit/n:0;}
+var jobs=[],running=false;
+function queue(job){jobs.push(job);if(!running){running=true;setTimeout(pump,0);}}
+function pump(){var t0=performance.now();
+  while(jobs.length&&performance.now()-t0<14){var j=jobs[0];if(j.cancel||j.step()){jobs.shift();if(!j.cancel&&j.done)j.done();}}
+  $('busy').hidden=!jobs.length;if(jobs.length)setTimeout(pump,0);else running=false;}
+// one job = one day, one scenario, many point sets; accumulates sun hours per point and (optionally) AM/PM split
+function dayJob(sets,doy,sc,stepMin,done){var S0=stepsOf(doy,stepMin),boxes=scenBoxes(sc),k=0,res=sets.map(function(s){return{h:new Float32Array(s.length),am:0,pm:0};});
+  var job={step:function(){if(k>=S0.hours.length)return true;var h=S0.hours[k++],p=sunPos(doy,h);if(p.alt<=0.2)return false;
+      var d=dir(p.alt,p.az,sc.north),I=makeIndex(boxes,d);
+      for(var s=0;s<sets.length;s++){var pts=sets[s],r=res[s],lit=0;for(var i=0;i<pts.length;i++){var q=pts[i];if(q.n.x*d.x+q.n.y*d.y+q.n.z*d.z<=0)continue;if(!shaded(I,q)){r.h[i]+=S0.st;lit++;}}
+        if(pts.length){if(h<S0.t.noon)r.am+=lit/pts.length*S0.st;else r.pm+=lit/pts.length*S0.st;}}
+      return false;},done:function(){done(res);}};
+  queue(job);return job;}
+function mean(a){if(!a.length)return 0;var s=0;for(var i=0;i<a.length;i++)s+=a[i];return s/a.length;}
+
+/* ---------- state ---------- */
+var S={doy:172,min:540,north:0,nb:true,nh:10,ext:0,heat:false,wind:true,layer:'all',playing:false};
+function scen(over){var o={tower:true,nb:S.nb,nh:S.nh,ext:S.ext,north:S.north};for(var k in over)o[k]=over[k];return o;}
+var $=function(id){return document.getElementById(id);};
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+function svgEl(w,h){return '<svg viewBox="0 0 '+w+' '+h+'" role="img">';}
+function heatColor(h){var stops=[[0,[38,51,94]],[3,[63,116,168]],[6,[140,199,181]],[9,[245,215,110]],[12,[232,89,12]]];h=Math.max(0,Math.min(12,h));
+  for(var i=1;i<stops.length;i++)if(h<=stops[i][0]){var a=stops[i-1],b=stops[i],t=(h-a[0])/(b[0]-a[0]);return [a[1][0]+(b[1][0]-a[1][0])*t,a[1][1]+(b[1][1]-a[1][1])*t,a[1][2]+(b[1][2]-a[1][2])*t];}return stops[4][1];}
+
+/* ---------- 3D ---------- */
+var three=typeof THREE!=='undefined',R={};
+function build3D(){
+  var cv=$('cv'),renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true});
+  renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  var scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(40,1.5,0.5,500);
+  var hemi=new THREE.HemisphereLight(0xe4eeff,0x8a7a62,0.45);scene.add(hemi);var amb=new THREE.AmbientLight(0xffffff,0.12);scene.add(amb);
+  var sun=new THREE.DirectionalLight(0xfff1d6,1.0);sun.castShadow=true;sun.shadow.mapSize.set(4096,4096);
+  var sc=sun.shadow.camera;sc.left=-26;sc.right=26;sc.top=26;sc.bottom=-26;sc.near=1;sc.far=160;sun.shadow.bias=-0.0004;sun.shadow.normalBias=0.02;
+  var C=new THREE.Vector3(6.35,2.5,5.5);sun.target.position.copy(C);scene.add(sun);scene.add(sun.target);
+  var model=buildSalwa(scene);R.model=model;
+  model.gGround.visible=false;
+  // own materials for the 1st floor so it can be hidden from the eye while still casting shadows
+  model.gFirst.traverse(function(o){if(o.isMesh){o.userData.mat0=o.material;o.material=o.material.clone();}});
+  scene.traverse(function(o){if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
+  BASE=collectBoxes(model);
+  var street=new THREE.Mesh(new THREE.PlaneGeometry(90,14),new THREE.MeshLambertMaterial({color:0xcfc6b5}));street.rotation.x=-Math.PI/2;street.position.set(6.35,-0.02,22);street.receiveShadow=true;scene.add(street);
+  var land=new THREE.Mesh(new THREE.PlaneGeometry(90,90),new THREE.MeshLambertMaterial({color:0xb9ab90}));land.rotation.x=-Math.PI/2;land.position.set(6.35,-0.04,4);land.receiveShadow=true;scene.add(land);
+  // neighbours: 3-storey blocks touching both side walls, full plot depth (shadow casters, drawn see-through)
+  R.nb=[];[[-6,0],[18.7,0]].forEach(function(p){var m=new THREE.Mesh(new THREE.BoxGeometry(12,1,23),new THREE.MeshLambertMaterial({color:0x9aa0ab,transparent:true,opacity:0.32,depthWrite:false}));
+    m.position.set(p[0],0.5,3.5);m.castShadow=true;m.receiveShadow=false;scene.add(m);R.nb.push(m);});
+  R.ext=new THREE.Mesh(new THREE.BoxGeometry(2.4,1,5.5),new THREE.MeshLambertMaterial({color:0xb07a52}));R.ext.position.set(11.5,TOWER_TOP+0.5,12.25);R.ext.castShadow=true;R.ext.receiveShadow=true;scene.add(R.ext);
+  // compass
+  R.comp=new THREE.Group();R.comp.position.set(6.35,0.05,5.5);scene.add(R.comp);
+  [['شمال',0,'#c0392b'],['شرق',90,'#1b2231'],['جنوب',180,'#1b2231'],['غرب',270,'#1b2231']].forEach(function(l){var s=sprite(l[0],l[2],56);var a=l[1]*RAD;
+    s.position.set(21*Math.sin(a),1.2,-21*Math.cos(a));s.scale.set(3.6,1.8,1);R.comp.add(s);});
+  var ring=new THREE.Mesh(new THREE.RingGeometry(19.3,19.55,96),new THREE.MeshBasicMaterial({color:0x5c6b8a,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;R.comp.add(ring);
+  // sun disc, day path, wind, heat overlay
+  R.sunMesh=new THREE.Mesh(new THREE.SphereGeometry(1.2,24,16),new THREE.MeshBasicMaterial({color:0xffcf4a}));scene.add(R.sunMesh);
+  R.path=new THREE.Group();scene.add(R.path);R.wind=new THREE.Group();scene.add(R.wind);R.heat=new THREE.Group();scene.add(R.heat);
+  R.renderer=renderer;R.scene=scene;R.camera=camera;R.sun=sun;R.hemi=hemi;R.C=C;
+  R.th=0.35;R.ph=0.95;R.r=46;
+  var pts={},pd=0,px=0,py=0;
+  cv.addEventListener('pointerdown',function(e){pts[e.pointerId]={x:e.clientX,y:e.clientY};px=e.clientX;py=e.clientY;cv.setPointerCapture(e.pointerId);cv.style.cursor='grabbing';});
+  cv.addEventListener('pointermove',function(e){if(!pts[e.pointerId])return;pts[e.pointerId]={x:e.clientX,y:e.clientY};var k=Object.keys(pts);
+    if(k.length===2){var a=pts[k[0]],b=pts[k[1]],d=Math.hypot(a.x-b.x,a.y-b.y);if(pd)R.r=Math.max(16,Math.min(110,R.r*pd/d));pd=d;}
+    else{R.th-=(e.clientX-px)*0.008;R.ph=Math.max(0.1,Math.min(1.5,R.ph-(e.clientY-py)*0.006));px=e.clientX;py=e.clientY;}place();render();});
+  function up(e){delete pts[e.pointerId];pd=0;if(!Object.keys(pts).length)cv.style.cursor='grab';}
+  cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+  cv.addEventListener('wheel',function(e){e.preventDefault();R.r=Math.max(16,Math.min(110,R.r*(e.deltaY>0?1.08:0.93)));place();render();},{passive:false});
+  document.querySelectorAll('[data-view]').forEach(function(b){b.onclick=function(){var v=b.dataset.view;
+    if(v==='south'){R.th=0;R.ph=1.0;R.r=46;}else if(v==='east'){R.th=Math.PI/2;R.ph=1.0;R.r=44;}else if(v==='top'){R.th=0;R.ph=0.1;R.r=52;}else{R.th=-0.4;R.ph=0.8;R.r=24;}
+    place();render();};});
+  new ResizeObserver(resize).observe($('vp'));resize();
+}
+function sprite(text,color,px){var c=document.createElement('canvas');c.width=256;c.height=128;var g=c.getContext('2d');
+  g.fillStyle='rgba(255,255,255,0.88)';g.beginPath();if(g.roundRect)g.roundRect(8,24,240,80,40);else g.rect(8,24,240,80);g.fill();
+  g.fillStyle=color;g.font='700 '+px+'px "IBM Plex Sans Arabic", Tahoma, sans-serif';g.textAlign='center';g.textBaseline='middle';g.direction='rtl';g.fillText(text,128,66);
+  return new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false}));}
+function place(){var C=R.C;R.camera.position.set(C.x+R.r*Math.sin(R.ph)*Math.sin(R.th),C.y+R.r*Math.cos(R.ph),C.z+R.r*Math.sin(R.ph)*Math.cos(R.th));R.camera.lookAt(C);}
+function resize(){var vp=$('vp'),w=vp.clientWidth,h=vp.clientHeight;if(!w||!h)return;R.renderer.setSize(w,h,false);R.camera.aspect=w/h;R.camera.updateProjectionMatrix();place();render();}
+function render(){if(three&&R.renderer)R.renderer.render(R.scene,R.camera);}
+function applyLayer(){if(!three)return;var m=R.model,hideFirst=S.layer==='ground',hideRoof=S.layer!=='all';
+  m.gFirst.traverse(function(o){if(o.isSprite){o.visible=!hideFirst;return;}if(!o.isMesh)return;var isRoof=m.roofs1.indexOf(o)>=0,hide=hideFirst||(hideRoof&&isRoof);
+    o.material.colorWrite=!hide;o.material.depthWrite=!hide;});
+  R.ext.material.colorWrite=!hideRoof;}
+function buildPath(){if(!three)return;var g=R.path;while(g.children.length)g.remove(g.children[0]);
+  var t=sunTimes(S.doy),pts=[],RR=34,C=R.C;
+  for(var m=Math.floor(t.rise*60);m<=Math.ceil(t.set*60);m+=6){var p=sunPos(S.doy,m/60);if(p.alt<-1)continue;var d=dir(p.alt,p.az,S.north);pts.push(new THREE.Vector3(C.x+d.x*RR,Math.max(0,C.y+d.y*RR-2),C.z+d.z*RR));}
+  g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0xf0a500})));
+  for(var h=Math.ceil(t.rise);h<=Math.floor(t.set);h++){var p2=sunPos(S.doy,h);if(p2.alt<0.5)continue;var d2=dir(p2.alt,p2.az,S.north);
+    var dot=new THREE.Mesh(new THREE.SphereGeometry(0.3,10,8),new THREE.MeshBasicMaterial({color:0xf0a500}));dot.position.set(C.x+d2.x*RR,C.y+d2.y*RR-2,C.z+d2.z*RR);g.add(dot);
+    if(h%2===0){var s=sprite(String(h),'#7a4b00',64);s.position.copy(dot.position).add(new THREE.Vector3(0,1.4,0));s.scale.set(2.2,1.1,1);g.add(s);}}}
+function buildWind(){if(!three)return;var g=R.wind;while(g.children.length)g.remove(g.children[0]);g.visible=S.wind;if(!S.wind)return;
+  var col=0x0f8a8a,y=(S.nb?S.nh:6.4)+1.6;
+  [2,7,12].forEach(function(z){var a=new THREE.ArrowHelper(new THREE.Vector3(-1,0,0),new THREE.Vector3(30,y,z),12,col,1.6,0.9);g.add(a);});
+  var lbl=sprite('البحري','#0f6b6b',56);lbl.position.set(27,y+2.4,7);lbl.scale.set(3.6,1.8,1);g.add(lbl);
+  var top=TOWER_TOP+S.ext;
+  if(!S.nb||top>=S.nh){var a2=new THREE.ArrowHelper(new THREE.Vector3(-0.55,-0.83,0).normalize(),new THREE.Vector3(15.5,top+3.2,12.25),4.4,col,1.2,0.8);g.add(a2);
+    var l2=sprite('ملقف','#0f6b6b',56);l2.position.set(14.8,top+4.6,12.25);l2.scale.set(3,1.5,1);g.add(l2);}}
+function buildHeat(res){if(!three)return;var g=R.heat;while(g.children.length)g.remove(g.children[0]);if(!res)return;
+  var pos=[],col=[];
+  ZONES.forEach(function(z,zi){var hrs=res[zi].h;z.pts.forEach(function(p,i){var s=p.s/2*0.96,c=heatColor(hrs[i]).map(function(v){return v/255;}),q;
+      if(z.t==='h'){var y=p.y+0.02;q=[[p.x-s,y,p.z-s],[p.x+s,y,p.z-s],[p.x+s,y,p.z+s],[p.x-s,y,p.z+s]];}
+      else{var zz=p.z+0.02*z.nz;q=[[p.x-s,p.y-s,zz],[p.x+s,p.y-s,zz],[p.x+s,p.y+s,zz],[p.x-s,p.y+s,zz]];}
+      [0,1,2,0,2,3].forEach(function(k){pos.push(q[k][0],q[k][1],q[k][2]);col.push(c[0],c[1],c[2]);});});});
+  var geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
+  g.add(new THREE.Mesh(geo,new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:-2})));
+  g.visible=S.heat;render();}
+function update3D(p,d){if(!three)return;var C=R.C,day=p.alt>0;
+  R.nb.forEach(function(m){m.visible=S.nb;m.scale.y=S.nh;m.position.y=S.nh/2;});
+  R.ext.visible=S.ext>0;R.ext.scale.y=Math.max(0.01,S.ext);R.ext.position.y=TOWER_TOP+S.ext/2;
+  R.comp.rotation.y=S.north*RAD;
+  R.sunMesh.position.set(C.x+d.x*34,C.y+d.y*34-2,C.z+d.z*34);R.sunMesh.visible=p.alt>-1;
+  R.sun.position.set(C.x+d.x*70,C.y+d.y*70,C.z+d.z*70);
+  var k=Math.max(0,Math.min(1,p.alt/12));R.sun.intensity=day?0.2+0.65*k:0;
+  R.hemi.intensity=0.14+0.36*Math.max(0,Math.min(1,(p.alt+6)/20));
+  var night=new THREE.Color(0x1a2338),dawn=new THREE.Color(0xf2b27a),noon=new THREE.Color(0x9fc3e6),bg=new THREE.Color();
+  if(p.alt<-4)bg.copy(night);else if(p.alt<6)bg.copy(night).lerp(dawn,(p.alt+4)/10);else bg.copy(dawn).lerp(noon,Math.min(1,(p.alt-6)/14));
+  R.scene.background=bg;$('vp').style.background='#'+bg.getHexString();render();}
+
+/* ---------- refresh ---------- */
+var heatJob=null,heatT=null;
+function refresh(full){
+  var h=S.min/60,p=sunPos(S.doy,h),d=dir(p.alt,p.az,S.north),t=sunTimes(S.doy),boxes=scenBoxes(scen());
+  $('dayLbl').textContent=dateLbl(S.doy);$('timeLbl').textContent=hm(h);$('hTime').textContent=hm(h);
+  $('nbhLbl').textContent=S.nh.toFixed(1)+' م';$('extLbl').textContent=S.ext?('+'+S.ext.toFixed(1)+' م (يوصل '+(TOWER_TOP+S.ext).toFixed(1)+' م)'):'كيما في التصميم';
+  $('northLbl').textContent=(S.north>0?'+':'')+S.north+'°';
+  $('hSun').innerHTML=p.alt>0?'الشمس من <b>'+compass(p.az)+'</b> · ارتفاع <span class="num">'+p.alt.toFixed(0)+'°</span>':'الشمس تحت الأفق';
+  $('rRise').textContent=hm(t.rise);$('rSet').textContent=hm(t.set);
+  var cf=fracNow(CORR_FINE,d,boxes),kf=fracNow(COURT_PTS,d,boxes);
+  $('rCorr').textContent=Math.round(cf*100)+'%';$('mCorr').style.width=(cf*100)+'%';$('rCourt').textContent=Math.round(kf*100)+'%';$('mCourt').style.width=(kf*100)+'%';
+  document.querySelectorAll('#seasons button').forEach(function(b){b.setAttribute('aria-pressed',String(+b.dataset.d===S.doy));});
+  if(full){buildPath();drawHours();drawPolar();drawYearMarker();scheduleHeat();}else drawHourMarker();
+  update3D(p,d);}
+function scheduleHeat(){clearTimeout(heatT);heatT=setTimeout(function(){if(heatJob)heatJob.cancel=true;var doy=S.doy;
+  heatJob=dayJob(ZONES.map(function(z){return z.pts;}),doy,scen(),10,function(res){buildHeat(res);$('heatDay').textContent=dateLbl(doy);});},150);}
+/* ---------- season tables (whole house) ---------- */
+var tableJobs=[];
+function computeTables(){tableJobs.forEach(function(j){j.cancel=true;});tableJobs=[];var sets=ZONES.map(function(z){return z.pts;}).concat(ROOMS.map(function(r){return r.pts;})),out=[],left=4;
+  $('tZones').innerHTML='<tbody><tr><td>نحسب...</td></tr></tbody>';$('tRooms').innerHTML='<tbody><tr><td>نحسب...</td></tr></tbody>';
+  SEASONS.forEach(function(se,i){tableJobs.push(dayJob(sets,se.d,scen(),10,function(res){out[i]=res;if(--left===0)drawTables(out);}));});}
+function hcell(v){var c=heatColor(v).map(Math.round);return '<td class="h"><i style="width:'+Math.min(100,v/14*100)+'%;background:rgb('+c.join(',')+')"></i><span class="num">'+v.toFixed(1)+'</span></td>';}
+function drawTables(out){var nz=ZONES.length;
+  var th='<thead><tr><th>الفضاء</th>'+SEASONS.map(function(s){return '<th>'+s.n+'</th>';}).join('')+'</tr></thead><tbody>';
+  $('tZones').innerHTML=th+ZONES.map(function(z,zi){return '<tr><td>'+z.n+'</td>'+out.map(function(r){return hcell(mean(r[zi].h));}).join('')+'</tr>';}).join('')+'</tbody>';
+  $('tRooms').innerHTML='<thead><tr><th>البيت</th><th>الطابق</th>'+SEASONS.map(function(s){return '<th>'+s.n+'</th>';}).join('')+'</tr></thead><tbody>'+
+    ROOMS.map(function(r,ri){return '<tr><td>'+r.n+'</td><td>'+r.f+'</td>'+out.map(function(o){return hcell(mean(o[nz+ri].h));}).join('')+'</tr>';}).join('')+'</tbody>';
+  cache.tables=out;drawVerdict();}
+/* ---------- tower vs neighbours ---------- */
+var cache={},hypJobs=[];
+var SCN=[{k:'none',n:'لا برج لا جيران',o:{tower:false,nb:false,ext:0}},{k:'tower',n:'البرج برك',o:{tower:true,nb:false}},{k:'nb',n:'الجيران برك',o:{tower:false,nb:true}},{k:'both',n:'البرج والجيران (الواقع)',o:{tower:true,nb:true}}];
+function computeHyp(){hypJobs.forEach(function(j){j.cancel=true;});hypJobs=[];var out=SEASONS.map(function(){return [];}),left=16;
+  SEASONS.forEach(function(se,i){SCN.forEach(function(s,j){hypJobs.push(dayJob([CORR_FINE],se.d,scen(s.o),10,function(res){out[i][j]=res[0];if(--left===0){cache.hyp=out;drawBars();drawHyp();drawVerdict();}}));});});}
+function drawBars(){var r=cache.hyp;if(!r)return;var cols=[css('--muted'),css('--warn'),'#8b93a3',css('--shade')];
+  var W=560,Hh=260,L=34,Rr=10,T=16,B=36,max=6.5,y=function(v){return T+(1-v/max)*(Hh-T-B);},s=svgEl(W,Hh),gw=(W-L-Rr)/4,bw=(gw-22)/4;
+  for(var g=0;g<=6;g++){var yy=y(g);s+='<line x1="'+L+'" x2="'+(W-Rr)+'" y1="'+yy+'" y2="'+yy+'" stroke="'+css('--line')+'"/>'+axisText(L-6,yy+4,g+'س','end');}
+  SEASONS.forEach(function(se,i){var x0=L+i*gw+11;SCN.forEach(function(sc,j){var v=r[i][j].am,yy=y(v);
+      s+='<rect x="'+(x0+j*bw)+'" y="'+yy+'" width="'+(bw-3)+'" height="'+(Hh-B-yy)+'" rx="2" fill="'+cols[j]+'"><title>'+sc.n+': '+v.toFixed(1)+' س</title></rect><text x="'+(x0+j*bw+(bw-3)/2)+'" y="'+(yy-4)+'" text-anchor="middle" font-size="10" fill="'+css('--ink')+'">'+v.toFixed(1)+'</text>';});
+    s+=axisText(x0+(gw-22)/2,Hh-14,se.n);});
+  $('cBars').innerHTML=s+'</svg>';$('lBars').innerHTML=SCN.map(function(sc,j){return '<span><i style="background:'+cols[j]+'"></i>'+sc.n+'</span>';}).join('');}
+function pct(a,b){return b>0.01?Math.round((1-a/b)*100):0;}
+function drawHyp(){var r=cache.hyp;if(!r)return;var su=r[2],wi=r[0];
+  $('hypText').innerHTML='الجيران هوما اللي يحجبوا أكثر. في الصيف، شمس الصباح على الكوريدور تكون <b class="num">'+su[0].am.toFixed(1)+'</b> ساعة لو ما فما حتى شي. البرج وحدو ينقصها لـ<b class="num">'+su[1].am.toFixed(1)+'</b>، والجيران وحدهم لـ<b class="num">'+su[2].am.toFixed(1)+'</b>، والزوز مع بعض (الواقع) لـ<b class="num">'+su[3].am.toFixed(1)+'</b> ساعة. في الشتاء: <b class="num">'+wi[0].am.toFixed(1)+'</b> ← <b class="num">'+wi[3].am.toFixed(1)+'</b>. شمس العشية في الصيف تبقى <b class="num">'+su[3].pm.toFixed(1)+'</b> ساعة مع الجيران. يعني البرج يزيد شوية حجب، أما الجار اللي في الشرق (<span class="num">'+S.nh.toFixed(0)+'</span> م) يغطي على الصباح قبلو.';}
+function drawVerdict(){var v=[],r=cache.hyp,tb=cache.tables;
+  if(r)v.push({b:pct(r[2][3].am,r[2][0].am)+'%',t:'من شمس الصباح على الكوريدور في الصيف محجوبة (البرج والجيران)',c:'sun'});
+  if(tb){v.push({b:mean(tb[2][0].h).toFixed(1)+' س',t:'شمس على الدالة في نهار صيف: أكثر فضاء يسخن في الدار',c:''});
+    v.push({b:mean(tb[0][5].h).toFixed(1)+' / '+mean(tb[2][5].h).toFixed(1)+' س',t:'شمس على الفناء: شتاء / صيف',c:''});}
+  v.push({b:hm(sunTimes(172).rise)+' / '+hm(sunTimes(355).rise),t:'الشروق في الصيف / في الشتاء',c:''});
+  $('verdict').innerHTML=v.map(function(o){return '<div class="vcard '+o.c+'"><b class="num">'+o.b+'</b><small>'+o.t+'</small></div>';}).join('');}
+/* ---------- charts ---------- */
+function axisText(x,y,t,anchor,cls){return '<text x="'+x+'" y="'+y+'" text-anchor="'+(anchor||'middle')+'" font-size="12" fill="'+css('--muted')+'"'+(cls?' class="'+cls+'"':'')+'>'+t+'</text>';}
+var hoursT=null;
+function drawHours(){clearTimeout(hoursT);hoursT=setTimeout(function(){
+  var W=560,Hh=260,L=40,Rr=12,T=14,B=34,x=function(h){return L+(h-4)/(20-4)*(W-L-Rr);},y=function(f){return T+(1-f)*(Hh-T-B);};
+  var a=[],b=[],t=sunTimes(S.doy),b0=scenBoxes(scen({tower:false,nb:false,ext:0})),b1=scenBoxes(scen());
+  for(var m=4*60;m<=20*60;m+=10){var h=m/60,p=sunPos(S.doy,h),d=dir(p.alt,p.az,S.north);a.push([h,fracNow(CORR_FINE,d,b0)]);b.push([h,fracNow(CORR_FINE,d,b1)]);}
+  var s=svgEl(W,Hh);
+  for(var g=0;g<=4;g++){var yy=y(g/4);s+='<line x1="'+L+'" x2="'+(W-Rr)+'" y1="'+yy+'" y2="'+yy+'" stroke="'+css('--line')+'"/>'+axisText(L-6,yy+4,(g*25)+'%','end');}
+  for(var hh=4;hh<=20;hh+=2)s+=axisText(x(hh),Hh-12,hm(hh));
+  s+='<path d="M'+a.map(function(q){return x(q[0])+','+y(q[1]);}).join(' L')+' L'+b.slice().reverse().map(function(q){return x(q[0])+','+y(q[1]);}).join(' L')+'Z" fill="'+css('--shade-soft')+'"/>';
+  s+='<polyline fill="none" stroke="'+css('--muted')+'" stroke-width="2" stroke-dasharray="5 4" points="'+a.map(function(q){return x(q[0])+','+y(q[1]);}).join(' ')+'"/>';
+  s+='<polyline fill="none" stroke="'+css('--sun')+'" stroke-width="3" points="'+b.map(function(q){return x(q[0])+','+y(q[1]);}).join(' ')+'"/>';
+  s+='<line id="hMark" x1="0" x2="0" y1="'+T+'" y2="'+(Hh-B)+'" stroke="'+css('--ink')+'" stroke-width="1.5"/>';
+  s+='<line x1="'+x(t.noon)+'" x2="'+x(t.noon)+'" y1="'+T+'" y2="'+(Hh-B)+'" stroke="'+css('--muted')+'" stroke-dasharray="2 3"/>'+axisText(x(t.noon),T+10,'منتصف النهار');
+  $('cHours').innerHTML=s+'</svg>';$('hourDay').textContent=dateLbl(S.doy);drawHours.x=x;drawHourMarker();},60);}
+function drawHourMarker(){var m=document.getElementById('hMark');if(!m||!drawHours.x)return;var xx=drawHours.x(Math.max(4,Math.min(20,S.min/60)));m.setAttribute('x1',xx);m.setAttribute('x2',xx);}
+function drawSeasons(){var rows='<thead><tr><th>الفصل</th><th>الشروق</th><th>الغروب</th><th>طول النهار</th><th>تطلع من</th><th>تغرب في</th><th>ارتفاعها في الظهر</th></tr></thead><tbody>';
+  SEASONS.forEach(function(se){var t=sunTimes(se.d);rows+='<tr><td>'+se.n+' · '+se.lbl+'</td><td class="n">'+hm(t.rise)+'</td><td class="n">'+hm(t.set)+'</td><td>'+dur(t.day)+'</td><td>'+compass(t.riseAz)+' <span class="num">('+t.riseAz.toFixed(0)+'°)</span></td><td>'+compass(t.setAz)+' <span class="num">('+t.setAz.toFixed(0)+'°)</span></td><td class="n">'+t.noonAlt.toFixed(0)+'°</td></tr>';});
+  $('tSeasons').innerHTML=rows+'</tbody>';$('swing').textContent=Math.round(sunTimes(355).riseAz-sunTimes(172).riseAz)+'°';}
+var polarT=null;
+function drawPolar(){clearTimeout(polarT);polarT=setTimeout(function(){
+  var W=420,c=W/2,Rp=170,pt=function(alt,az){var r=(90-alt)/90*Rp,a=az*RAD;return [c+r*Math.sin(a),c-r*Math.cos(a)];},s=svgEl(W,W);
+  [0,30,60].forEach(function(a){s+='<circle cx="'+c+'" cy="'+c+'" r="'+((90-a)/90*Rp)+'" fill="none" stroke="'+css('--line')+'"/>'+axisText(c+4,c-(90-a)/90*Rp+14,a+'°','start');});
+  for(var az=0;az<360;az+=30){var p1=pt(0,az),p0=pt(90,az);s+='<line x1="'+p0[0]+'" y1="'+p0[1]+'" x2="'+p1[0]+'" y2="'+p1[1]+'" stroke="'+css('--line')+'"/>';}
+  var P={x:7.2,y:3.22,z:10.5},all=scenBoxes(scen()),groups={house:[],tower:[],nbr:[]};
+  all.forEach(function(b){(b.nbr?groups.nbr:b.tower?groups.tower:groups.house).push(b);});
+  [['house',css('--shade-soft'),0.8],['nbr','#8b93a3',0.55],['tower',css('--warn'),0.55]].forEach(function(gdef){var bl=groups[gdef[0]],run=[];
+    function flush(){if(run.length<2){run=[];return;}var dd='M'+pt(0,run[0][0]).join(',');run.forEach(function(q){dd+=' L'+pt(q[1],q[0]).join(',');});dd+=' L'+pt(0,run[run.length-1][0]).join(',')+'Z';
+      s+='<path d="'+dd+'" fill="'+gdef[1]+'" fill-opacity="'+gdef[2]+'"/>';run=[];}
+    for(var a2=0;a2<=360;a2+=3){var top=-1;for(var alt=1;alt<88;alt+=2){var d=dir(alt,a2,S.north),hitAny=false;for(var i=0;i<bl.length;i++)if(hit(P,d,bl[i])){hitAny=true;break;}if(hitAny)top=alt;}
+      if(top>0)run.push([a2,top]);else flush();}flush();});
+  [[172,css('--warn')],[79,css('--good')],[355,css('--shade')],[S.doy,css('--sun')]].forEach(function(pp,i){var t=sunTimes(pp[0]),q=[];for(var m=t.rise*60;m<=t.set*60;m+=5){var sp=sunPos(pp[0],m/60);if(sp.alt<0)continue;q.push(pt(sp.alt,sp.az).join(','));}
+    s+='<polyline fill="none" stroke="'+pp[1]+'" stroke-width="'+(i===3?3:2)+'" points="'+q.join(' ')+'"/>';
+    if(i<3)for(var h=Math.ceil(t.rise);h<=t.set;h++){var q2=sunPos(pp[0],h);if(q2.alt<1)continue;var xy=pt(q2.alt,q2.az);s+='<circle cx="'+xy[0]+'" cy="'+xy[1]+'" r="2.5" fill="'+pp[1]+'"/>';if(i===0&&h%2===0)s+='<text x="'+xy[0]+'" y="'+(xy[1]-6)+'" font-size="10" text-anchor="middle" fill="'+css('--muted')+'">'+h+'</text>';}});
+  var cur=sunPos(S.doy,S.min/60);if(cur.alt>0){var xy2=pt(cur.alt,cur.az);s+='<circle cx="'+xy2[0]+'" cy="'+xy2[1]+'" r="8" fill="'+css('--sun')+'" stroke="'+css('--surface')+'" stroke-width="2"/>';}
+  [['شمال',0],['شرق',90],['جنوب',180],['غرب',270]].forEach(function(l){var xy=pt(-12,l[1]);s+='<text x="'+xy[0]+'" y="'+(xy[1]+5)+'" font-size="14" font-weight="700" text-anchor="middle" fill="'+(l[1]===0?css('--warn'):css('--ink'))+'">'+l[0]+'</text>';});
+  $('cPolar').innerHTML=s+'</svg>';},120);}
+function drawYear(){var W=560,Hh=280,L=44,Rr=12,T=12,B=30,x=function(d){return L+(d-1)/364*(W-L-Rr);},y=function(h){return T+(20.5-h)/(20.5-4.5)*(Hh-T-B);};
+  var rise=[],set=[];for(var d=1;d<=365;d+=2){var t=sunTimes(d);rise.push([d,t.rise]);set.push([d,t.set]);}
+  var s=svgEl(W,Hh);for(var h=5;h<=20;h+=3)s+='<line x1="'+L+'" x2="'+(W-Rr)+'" y1="'+y(h)+'" y2="'+y(h)+'" stroke="'+css('--line')+'"/>'+axisText(L-6,y(h)+4,hm(h),'end');
+  s+='<path d="M'+set.map(function(q){return x(q[0])+','+y(q[1]);}).join(' L')+' L'+rise.slice().reverse().map(function(q){return x(q[0])+','+y(q[1]);}).join(' L')+'Z" fill="'+css('--sun-soft')+'"/>';
+  s+='<polyline fill="none" stroke="'+css('--sun')+'" stroke-width="2.5" points="'+rise.map(function(q){return x(q[0])+','+y(q[1]);}).join(' ')+'"/>';
+  s+='<polyline fill="none" stroke="'+css('--shade')+'" stroke-width="2.5" points="'+set.map(function(q){return x(q[0])+','+y(q[1]);}).join(' ')+'"/>';
+  for(var m=0;m<12;m++){var doy=Math.round((Date.UTC(YEAR,m,15)-Date.UTC(YEAR,0,0))/864e5);s+=axisText(x(doy),Hh-10,MONTHS[m],'middle','m');}
+  s+=axisText(x(40),y(6.9)+16,'الشروق')+axisText(x(40),y(18.0)-8,'الغروب');
+  s+='<line id="yMark" y1="'+T+'" y2="'+(Hh-B)+'" stroke="'+css('--ink')+'" stroke-width="1.5"/><rect x="'+L+'" y="'+T+'" width="'+(W-L-Rr)+'" height="'+(Hh-T-B)+'" fill="transparent"/>';
+  $('cYear').innerHTML=s+'</svg>';drawYear.x=x;drawYearMarker();
+  var svg=$('cYear').querySelector('svg');function at(e){var r=svg.getBoundingClientRect(),vx=(e.clientX-r.left)/r.width*W;return Math.max(1,Math.min(365,Math.round((vx-L)/(W-L-Rr)*364+1)));}
+  svg.addEventListener('pointermove',function(e){var d=at(e),t=sunTimes(d);$('yearHover').innerHTML=dateLbl(d)+': الشروق <span class="num">'+hm(t.rise)+'</span> · الغروب <span class="num">'+hm(t.set)+'</span> · النهار '+dur(t.day);});
+  svg.addEventListener('click',function(e){setDay(at(e));});}
+function drawYearMarker(){var m=document.getElementById('yMark');if(!m||!drawYear.x)return;var xx=drawYear.x(S.doy);m.setAttribute('x1',xx);m.setAttribute('x2',xx);}
+function drawWind(){var W=440,Hh=400,sx=function(x){return 150+x*9;},sz=function(z){return 60+(z+8)*11;},s=svgEl(W,Hh),top=TOWER_TOP+S.ext;
+  s+='<rect x="'+sx(-12)+'" y="'+sz(-8)+'" width="'+(12*9)+'" height="'+(23*11)+'" fill="#8b93a3" fill-opacity=".45"/><rect x="'+sx(12.7)+'" y="'+sz(-8)+'" width="'+(12*9)+'" height="'+(23*11)+'" fill="#8b93a3" fill-opacity=".45"/>';
+  s+='<rect x="'+sx(0)+'" y="'+sz(0)+'" width="'+(12.7*9)+'" height="'+(9.5*11)+'" fill="'+css('--surface2')+'" stroke="'+css('--ink')+'"/>';
+  s+='<rect x="'+sx(4.1)+'" y="'+sz(9.5)+'" width="'+(6.2*9)+'" height="'+(5.5*11)+'" fill="'+css('--sun-soft')+'"/><rect x="'+sx(0)+'" y="'+sz(9.5)+'" width="'+(4.1*9)+'" height="'+(5.5*11)+'" fill="'+css('--surface2')+'" stroke="'+css('--ink')+'"/>';
+  s+='<rect x="'+sx(10.3)+'" y="'+sz(9.5)+'" width="'+(2.4*9)+'" height="'+(5.5*11)+'" fill="'+css('--warn')+'"/>';
+  s+='<rect x="'+sx(-12)+'" y="'+sz(15)+'" width="'+(36.7*9)+'" height="'+(4*11)+'" fill="'+css('--line')+'"/>';
+  s+=axisText(sx(6.35),sz(17.3),'الشارع')+axisText(sx(6.35),sz(4.75)+4,'الدار')+axisText(sx(7.2),sz(12.6),'الفناء')+axisText(sx(-6),sz(4),'جار '+S.nh.toFixed(0)+' م')+axisText(sx(18.7),sz(4),'جار '+S.nh.toFixed(0)+' م');
+  s+='<text x="'+sx(11.5)+'" y="'+(sz(12.25)+4)+'" font-size="11" text-anchor="middle" fill="#fff">البرج</text>';
+  var wc=css('--wind');s+='<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="'+wc+'"/></marker></defs>';
+  [2,6,10].forEach(function(z){s+='<line x1="'+(W-6)+'" y1="'+sz(z)+'" x2="'+(sx(12.7)+10)+'" y2="'+sz(z)+'" stroke="'+wc+'" stroke-width="3" marker-end="url(#ah)"/>';});
+  s+='<line x1="'+(W-6)+'" y1="'+sz(16.5)+'" x2="'+sx(9)+'" y2="'+sz(16.5)+'" stroke="'+wc+'" stroke-width="3" stroke-dasharray="6 4" marker-end="url(#ah)"/>';
+  s+='<text x="'+(W-10)+'" y="'+(sz(-6))+'" font-size="13" font-weight="700" text-anchor="end" fill="'+wc+'">البحري</text>';
+  [['شمال',sx(6.35),24],['جنوب',sx(6.35),Hh-6]].forEach(function(l){s+='<text x="'+l[1]+'" y="'+l[2]+'" font-size="12" font-weight="700" text-anchor="middle" fill="'+css('--ink')+'">'+l[0]+'</text>';});
+  $('cWind').innerHTML=s+'</svg>';
+  var need=Math.max(0,S.nh+0.5-TOWER_TOP);
+  $('windText').innerHTML='البحري يجي من جهة البرج. على اليمين واليسار جيران بـ<span class="num">'+S.nh.toFixed(1)+'</span> م، والدار متاعك <span class="num">6.4</span> م، يعني البحري يتعدّى <b>فوق</b> سطوح الجيران وما يدخلش للدار وحدو. فمّا زوز طرق يدخل منهم:<br>'+
+    '<b>1. من الشارع:</b> البحري يمشي مع الشارع (الخط المتقطّع) ويدخل للفناء. أبواب وشبابيك على الفناء، مقابلين لشبابيك في الخلف، يعملوا تيار هواء في الدار.<br>'+
+    '<b>2. البرج كملقف:</b> كان تطلّع البرج بـ<b class="num">'+need.toFixed(1)+'</b> م على الأقل (يوصل '+(S.nh+0.5).toFixed(1)+' م، فوق الجيران)، وتعمل فتحة في أعلاه لجهة البحري، يلمّ الريح وينزّلها للدرج والدار. تنجم تجرّبها في الرسم بمؤشر "تعلية البرج".'+
+    (top>=S.nh?' <b style="color:var(--good)">بالتعلية الحالية البرج يطلع فوق الجيران.</b>':'');}
+function drawClimate(){var W=560,Hh=270,L=36,Rr=10,T=12,B=30,x=function(i){return L+(i+.5)*(W-L-Rr)/12;},y=function(v){return T+(50-v)/50*(Hh-T-B);},s=svgEl(W,Hh);
+  for(var v=0;v<=50;v+=10)s+='<line x1="'+L+'" x2="'+(W-Rr)+'" y1="'+y(v)+'" y2="'+y(v)+'" stroke="'+css('--line')+'"/>'+axisText(L-6,y(v)+4,v+'°','end');
+  s+='<path d="M'+CLIM.hi.map(function(v,i){return x(i)+','+y(v);}).join(' L')+' L'+CLIM.lo.map(function(v,i){return [i,v];}).reverse().map(function(q){return x(q[0])+','+y(q[1]);}).join(' L')+'Z" fill="'+css('--sun-soft')+'" stroke="'+css('--sun')+'"/>';
+  s+='<polyline fill="none" stroke="'+css('--sun')+'" stroke-width="3" points="'+CLIM.mean.map(function(v,i){return x(i)+','+y(v);}).join(' ')+'"/>';
+  CLIM.rec.forEach(function(v,i){s+='<circle cx="'+x(i)+'" cy="'+y(v)+'" r="3.5" fill="'+css('--warn')+'"><title>'+MONTHS[i]+': '+v+'°</title></circle>';});
+  CLIM.hi.forEach(function(v,i){s+='<text x="'+x(i)+'" y="'+(y(v)-6)+'" font-size="10" text-anchor="middle" fill="'+css('--ink')+'">'+Math.round(v)+'</text><text x="'+x(i)+'" y="'+(y(CLIM.lo[i])+14)+'" font-size="10" text-anchor="middle" fill="'+css('--muted')+'">'+Math.round(CLIM.lo[i])+'</text>';});
+  for(var i=0;i<12;i++)s+=axisText(x(i),Hh-10,MONTHS[i],'middle','m');$('cTemp').innerHTML=s+'</svg>';
+  var y2=function(v){return T+(100-v)/100*(Hh-T-B);},bw=(W-L-Rr)/12*0.42,s2=svgEl(W,Hh);
+  for(var g=0;g<=100;g+=25)s2+='<line x1="'+L+'" x2="'+(W-Rr)+'" y1="'+y2(g)+'" y2="'+y2(g)+'" stroke="'+css('--line')+'"/>'+axisText(L-6,y2(g)+4,g,'end');
+  for(var j=0;j<12;j++){var hy=y2(CLIM.hum[j]),ry=y2(CLIM.rain[j]);
+    s2+='<rect x="'+(x(j)-bw)+'" y="'+hy+'" width="'+(bw-1)+'" height="'+(Hh-B-hy)+'" rx="2" fill="'+css('--shade')+'"/><rect x="'+(x(j)+1)+'" y="'+ry+'" width="'+(bw-1)+'" height="'+(Hh-B-ry)+'" rx="2" fill="'+css('--good')+'"/>';
+    s2+='<text x="'+(x(j)-bw/2)+'" y="'+(hy-4)+'" font-size="9" text-anchor="middle" fill="'+css('--ink')+'">'+CLIM.hum[j]+'</text><text x="'+(x(j)+bw/2)+'" y="'+(ry-4)+'" font-size="9" text-anchor="middle" fill="'+css('--ink')+'">'+Math.round(CLIM.rain[j])+'</text>'+axisText(x(j),Hh-10,MONTHS[j],'middle','m');}
+  $('cHum').innerHTML=s2+'</svg>';
+  var rowsDef=[['معدّل الأقصى °','hi'],['المعدّل °','mean'],['معدّل الأدنى °','lo'],['الرقم القياسي °','rec'],['أدنى رقم °','recLo'],['الرطوبة %','hum'],['المطر مم','rain'],['أيام المطر','rdays'],['ساعات الشمس','sunh']];
+  $('tClim').innerHTML='<thead><tr><th></th>'+MONTHS.map(function(m){return '<th>'+m+'</th>';}).join('')+'</tr></thead><tbody>'+rowsDef.map(function(r){return '<tr><th>'+r[0]+'</th>'+CLIM[r[1]].map(function(v){return '<td class="n">'+v+'</td>';}).join('')+'</tr>';}).join('')+'</tbody>';}
+function drawTips(){var s172=sunTimes(172),s355=sunTimes(355),roofA=12.7*9.5,rainY=CLIM.rain.reduce(function(a,b){return a+b;},0),water=roofA*rainY/1000*0.8,P=0.5;
+  var tips=[
+    ['you','البرج ملقف للبحري','الجيران أعلى من دارك، فالبحري يتعدّى فوقك. برج يطلع فوق سطوح الجيران، فيه فتحة لجهة البحري وفتحة صغيرة في الجهة المقابلة، يلمّ الريح الباردة وينزّلها في الدرج. هذي فكرة الملقف القديمة في البلدان السخونة.'],
+    ['calc','الدالة هي أسخن بلاصة','الدالة تاخذ الشمس من الصباح للعشية بلا حتى ظل (شوف الجدول). عازل تحت الـétanchéité وطلاء أبيض عاكس يبدّلوا برشا حرارة الطابق الأول. وهي زادة أحسن بلاصة للسخّان والبانوات.'],
+    ['calc','حاجب فوق الشبابيك الجنوبية','في الظهر، الشمس في الصيف عالية (<span class="num">'+s172.noonAlt.toFixed(0)+'°</span>) وفي الشتاء واطية (<span class="num">'+s355.noonAlt.toFixed(0)+'°</span>). بروز بـ<span class="num">50</span> صم فوق شباك جنوبي يعمل ظل بطول <span class="num">'+(P*Math.tan(s172.noonAlt*RAD)).toFixed(1)+'</span> م في الصيف، و<span class="num">'+(P*Math.tan(s355.noonAlt*RAD)).toFixed(2)+'</span> م برك في الشتاء.'],
+    ['calc','العدو هو الغرب','في الصيف الشمس تغرب في الشمال الغربي (<span class="num">'+s172.setAz.toFixed(0)+'°</span>). الجيران يحميوك من الشرق ومن الغرب، أما الفناء والكوريدور والدالة يبقاو مكشوفين لشمس العشية. تعريشة فوق الكوريدور تنفع برشا.'],
+    ['src','الكهف مكيّف طبيعي','تحت الأرض، الحرارة تقرب لمعدّل العام في مدنين (<span class="num">21.7°</span>): بارد في أوت ودافي في جانفي. أهم حاجة فيه التهوية وعزل الرطوبة.'],
+    ['calc','ماجل لماء المطر','قريب <span class="num">'+rainY.toFixed(0)+'</span> مم مطر في العام. الدالة (<span class="num">'+roofA.toFixed(0)+'</span> م²) تلمّ قريب <span class="num">'+water.toFixed(0)+'</span> م³ في العام، بعد ما ننقصو <span class="num">20%</span> ضياع.'],
+    ['src','سخّان شمسي ببروسول','سخّان <span class="num">200</span> لتر بقريب <span class="num">2100</span> د، والدولة تعاون بـ<span class="num">400</span> د (<span class="num">700</span> د للـ<span class="num">300</span> لتر وأكثر). ثبّت الشروط مع ANME ولا STEG.'],
+    ['','الحيط المزدوج','حيط برّاني وحيط داخلي بينهم عازل ولا فراغ، خاصة في الواجهة الخلفية والواجهة اللي على الفناء، الزوز ياخذوا الشمس.']
+  ];
+  $('tipList').innerHTML=tips.map(function(t){var tag={calc:'<span class="tag calc">محسوبة</span>',src:'<span class="tag src">من مصدر</span>',you:'<span class="tag you">من كلامك</span>'}[t[0]]||'<span class="tag">نصيحة عامة</span>';return '<div class="tip">'+tag+'<h3>'+t[1]+'</h3><p>'+t[2]+'</p></div>';}).join('');
+  var f=[['البيوت اللي ما عندهاش شباك','جدول البيوت يورّي برشا بيوت بلا شمس مباشرة، لأن ملف التصميم ما فيهش شبابيك لكل بيت. قبل ما تبني، حدّد وين كل شباك، ونعاودو الحساب.'],
+    ['الجار اللي في الخلف','قلتلي اللي الجار في الخلف (الشمال) طابق أرضي برك، يعني ما يحجبش لا الشمس لا الريح، والحساب ماشي هكا: الخلف محلول. شبابيك في الواجهة الخلفية مقابلة لشبابيك على الفناء تعمل تيار هواء يقطع الدار من جيهة لجيهة.'],
+    ['الاتجاه بالضبط','من الصورة، الأرض تقريباً شمال–جنوب. فرق بعض الدرجات ما يبدّلش برشا، أما تنجم تصحّحو بالمؤشر.'],
+    ['الشرقي والغربي','ابعثلي من وين يجيو بالضبط (مثلاً "الشرقي يجي من جهة الجامع")، ونزيدهم في رسم الريح.'],
+    ['الفسقية والفناء','الماء في الفناء يبرّد الهواء بالتبخّر، والبحري اللي يدخل من الشارع يتعدّى عليه قبل ما يدخل للدار.']];
+  $('forgotList').innerHTML=f.map(function(x){return '<li><b>'+x[0]+'.</b> '+x[1]+'</li>';}).join('');}
+
+/* ---------- controls ---------- */
+function setDay(d){S.doy=d;$('day').value=d;refresh(true);}
+function changedScenario(){refresh(true);buildWind();drawWind();clearTimeout(changedScenario.t);changedScenario.t=setTimeout(function(){computeTables();computeHyp();},400);}
+$('day').addEventListener('input',function(e){S.doy=+e.target.value;refresh(true);});
+$('time').addEventListener('input',function(e){S.min=+e.target.value;refresh(false);drawPolar();});
+$('nbh').addEventListener('input',function(e){S.nh=+e.target.value;changedScenario();});
+$('ext').addEventListener('input',function(e){S.ext=+e.target.value;changedScenario();});
+$('north').addEventListener('input',function(e){S.north=+e.target.value;changedScenario();});
+document.querySelectorAll('#seasons button').forEach(function(b){b.onclick=function(){setDay(+b.dataset.d);};});
+document.querySelectorAll('#layer button').forEach(function(b){b.onclick=function(){S.layer=b.dataset.l;document.querySelectorAll('#layer button').forEach(function(x){x.setAttribute('aria-pressed',String(x===b));});applyLayer();render();};});
+document.querySelectorAll('#toggles button').forEach(function(b){b.onclick=function(){var k=b.dataset.t;S[k]=!S[k];b.setAttribute('aria-pressed',String(S[k]));
+  if(k==='heat'){$('heatLeg').hidden=!S.heat;if(three)R.heat.visible=S.heat;render();}else if(k==='wind'){buildWind();render();}else changedScenario();};});
+var raf=null;
+$('play').onclick=function(){if(S.playing){stop();return;}var t=sunTimes(S.doy);S.min=Math.floor(t.rise*60)-10;S.playing=true;$('play').textContent='❚❚ وقّف';
+  var last=performance.now();(function step(now){var dt=now-last;last=now;S.min+=dt/1000*70;if(S.min>t.set*60+10){stop();return;}$('time').value=Math.round(S.min);refresh(false);raf=requestAnimationFrame(step);})(last);};
+function stop(){S.playing=false;if(raf)cancelAnimationFrame(raf);S.min=Math.round(S.min/5)*5;$('time').value=S.min;$('play').textContent='▶ شغّل نهار كامل';drawPolar();}
+
+/* ---------- boot ---------- */
+function redrawTheme(){drawYear();drawClimate();drawWind();drawBars();refresh(true);}
+function boot(){
+  drawSeasons();drawYear();drawClimate();drawTips();
+  if(three){try{build3D();}catch(err){three=false;console.error(err);$('vp').innerHTML='<p style="padding:16px">المتصفح هذا ما يدعمش العرض ثلاثي الأبعاد (WebGL). الحسابات تحت تخدم عادي.</p>';}}
+  if(!three){$('vp').innerHTML='<p style="padding:16px">ما نجمتش نحمّل العرض ثلاثي الأبعاد.</p>';return;}
+  setupPoints();applyLayer();buildWind();drawWind();refresh(true);computeTables();computeHyp();drawVerdict();
+  if(window.matchMedia){var mq=window.matchMedia('(prefers-color-scheme: dark)');if(mq.addEventListener)mq.addEventListener('change',redrawTheme);}
+  new MutationObserver(redrawTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+}
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(boot,boot);else boot();
+})();
+</script>
+
+</body>
+</html>
