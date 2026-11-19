@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stairs — Salwa proposal</title>
+<style>
+  html,body{margin:0;height:100%;background:#eef1f4;font-family:"Segoe UI",Tahoma,sans-serif;color:#2c2c28;overflow:hidden}
+  #c3d{position:fixed;inset:0;cursor:grab;touch-action:none}
+  #ui{position:fixed;top:14px;right:14px;background:rgba(255,255,255,.9);backdrop-filter:blur(6px);border:1px solid #d3d7dd;border-radius:10px;padding:10px 14px;font-size:14px;line-height:1.7;max-width:280px}
+  #ui b{display:block;font-size:15px;margin-bottom:4px}
+  #ui button{margin:3px 0 3px 6px;border:1px solid #b3b8c0;background:#fff;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer;font-family:inherit}
+  #ui button.on{background:#2c2c28;color:#fff;border-color:#2c2c28}
+  #ui button:hover:not(.on){background:#eef0f3}
+  #hint{position:fixed;bottom:12px;left:0;right:0;text-align:center;font-size:13px;color:#6b6f77}
+</style>
+</head>
+<body>
+<div id="c3d"></div>
+<div id="ui"><b>Stairs + Tower (isolated)</b>
+<div>Test file to fix stair direction before merging into the model.</div>
+<div><button id="bWalls">Tower walls</button><button id="bAuto">Auto-rotate</button><button id="bTop">Top</button></div></div>
+<div id="hint">Drag to rotate · wheel to zoom</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+var el=document.getElementById('c3d');
+var scene=new THREE.Scene();
+var camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,0.1,400);
+var renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setClearColor(0,0);
+el.appendChild(renderer.domElement);
+addEventListener('resize',function(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+scene.add(new THREE.AmbientLight(0xffffff,0.85));
+var s1=new THREE.DirectionalLight(0xffffff,0.5);s1.position.set(8,20,12);scene.add(s1);
+var s2=new THREE.DirectionalLight(0xffffff,0.25);s2.position.set(-10,12,-8);scene.add(s2);
+function mat(c){return new THREE.MeshLambertMaterial({color:c});}
+var M={wood:mat(0xc9a06b),step:mat(0xcea877),rail:mat(0x7d7566),stone:mat(0xb9b3a6),slab:mat(0xcfc7b3),land:mat(0x9fb0c0)};
+function box(g,w,h,d,x,y,z,m){var o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);g.add(o);return o;}
+function label(g,t,sub,x,y,z,sc){var cv=document.createElement('canvas');cv.width=512;cv.height=200;var c=cv.getContext('2d');
+  c.font='700 62px sans-serif';c.textAlign='center';c.fillStyle='#1f2937';c.fillText(t,256,86);
+  if(sub){c.font='400 42px sans-serif';c.fillStyle='#5b6472';c.fillText(sub,256,146);}
+  var tx=new THREE.CanvasTexture(cv);tx.minFilter=THREE.LinearFilter;var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,depthTest:false}));
+  sp.scale.set(sc||3,(sc||3)*0.39,1);sp.position.set(x,y,z);g.add(sp);return sp;}
+
+// ===== constants (same as main model) =====
+var FH=3.2, TH=6.13;
+// tower footprint x 9.9-12.3 (2.4m wide), z 9.5-15 (5.5m deep)
+var TW=2.4, X0=9.9, X1=X0+TW, XC=X0+TW/2;      // tower width, west wall, east wall, centre
+var SW=1.1;                                    // stair tread width (per flight)
+var wE=X1-SW/2, wW=X0+SW/2;                    // east / west flight centres
+
+var gWalls=new THREE.Group();scene.add(gWalls);gWalls.visible=false;   // tower shell deleted (toggle button can bring it back)
+var gStair=new THREE.Group();scene.add(gStair);
+var gLabel=new THREE.Group();scene.add(gLabel);
+
+// ---- level slabs ----
+box(gStair,TW,0.12,5.5,XC,-0.06,12.25,M.slab);                    // ground base
+
+// ---- tower shell (transparent, toggle) ----
+var stoneT=new THREE.MeshLambertMaterial({color:0xb9b3a6,transparent:true,opacity:0.22,side:THREE.DoubleSide});
+box(gWalls,0.16,TH,5.5,X1,TH/2,12.25,stoneT);                     // east wall
+box(gWalls,0.16,TH,5.5,X0,TH/2,12.25,stoneT);                    // west wall
+box(gWalls,TW,TH,0.16,XC,TH/2,9.5,stoneT);                       // back wall
+box(gWalls,0.30,TH,0.16,X0+0.15,TH/2,15.0,stoneT);               // front left jamb
+box(gWalls,0.30,TH,0.16,X1-0.15,TH/2,15.0,stoneT);               // front right jamb
+box(gWalls,TW-0.6,0.9,0.16,XC,2.75,15.0,stoneT);                 // door header
+box(gWalls,TW,0.20,5.5,XC,TH+0.1,12.25,stoneT);                 // roof/top
+box(gStair,0.10,2.3,0.18,wE-SW/2,1.15,15.0,M.wood);box(gStair,0.10,2.3,0.18,wE+SW/2-0.1,1.15,15.0,M.wood); // STREET DOOR frame, in front of flight 1 (east)
+box(gStair,0.05,2.2,0.95,wE-SW/2+0.08,1.1,15.09+0.475,M.wood);                                   // door leaf, open 90deg OUTWARD to street (hinge west post)
+label(gLabel,'STREET DOOR','front (z=15)',wE,3.0,15.2,3.0);
+// ---- LEVEL markers (translucent full-footprint planes) ----
+// drawn as a strip OUTSIDE the tower (west of X0) so the stair view stays clear
+function lvl(y,c,t){box(gStair,1.2,0.03,5.5,X0-1.0,y,12.25,new THREE.MeshLambertMaterial({color:c,transparent:true,opacity:0.35,side:THREE.DoubleSide}));
+  label(gLabel,t,'y = '+(y<0.05?0:y).toFixed(2)+' m',X0-1.0,y+0.3,12.25,3.0);}
+lvl(0.02,0x5cb85c,'GROUND LEVEL');
+lvl(FH,  0x4a90d9,'1ST FLOOR LEVEL');
+lvl(TH,  0xe08a3c,'2ND FLOOR LEVEL');
+
+// ===== SCISSOR SWITCHBACK per level: door(front)->back turn->floor landing(front, over door) =====
+function level(y,top){
+  // SALWA flight 1: 1 m long from the door (4 treads x 0.25), 5 risers of FH/16 -> 1 m landing
+  var r1=(top-y)/16,t1=0.25,zDoor=14.91;
+  for(var s=0;s<4;s++){box(gStair,SW,r1,t1,wE,y+(s+0.5)*r1,zDoor-(s+0.5)*t1,M.step);}             // flight 1: z 14.91 -> 13.91
+  box(gStair,TW,0.12,1.0,XC,y+5*r1-0.06,zDoor-4*t1-0.5,M.land);                                   // landing 1 m deep (z 13.91 -> 12.91), y 1.0
+  // SALWA flight 2: turn on landing, west lane back toward the door, 5 risers (y 1.0 -> 2.0)
+  var t2=0.20,z2=13.41;
+  for(var s=0;s<4;s++){box(gStair,SW,r1,t2,wW,y+5*r1+(s+0.5)*r1,z2+(s+0.5)*t2,M.step);}           // flight 2: z 13.41 -> 14.21
+  box(gStair,TW,0.12,0.7,XC,y+10*r1-0.06,z2+4*t2+0.35,M.land);                                    // upper landing above the door (z 14.21 -> 14.91), y 2.0
+}
+level(0,FH);
+
+// ---- flow labels ----
+label(gLabel,'1','From door',wE,1.0,13.9,2.2);
+
+// ===== controls =====
+var cx=XC,cy=3.0,cz=12.25,theta=0.7,phi=0.95,r=14,auto=true;
+function place(){camera.position.set(cx+r*Math.sin(phi)*Math.sin(theta),cy+r*Math.cos(phi),cz+r*Math.sin(phi)*Math.cos(theta));camera.lookAt(cx,cy,cz);}
+var drag=false,px=0,py=0,pd=0;
+el.addEventListener('pointerdown',function(e){drag=true;auto=false;px=e.clientX;py=e.clientY;el.setPointerCapture(e.pointerId);el.style.cursor='grabbing';});
+el.addEventListener('pointermove',function(e){if(!drag)return;theta-=(e.clientX-px)*0.008;phi-=(e.clientY-py)*0.006;phi=Math.max(0.12,Math.min(1.45,phi));px=e.clientX;py=e.clientY;});
+el.addEventListener('pointerup',function(){drag=false;el.style.cursor='grab';});
+el.addEventListener('wheel',function(e){e.preventDefault();r+=e.deltaY*0.015;r=Math.max(6,Math.min(30,r));},{passive:false});
+el.addEventListener('touchstart',function(e){if(e.touches.length===2)pd=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);});
+el.addEventListener('touchmove',function(e){if(e.touches.length===2){var d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);r-=(d-pd)*0.04;r=Math.max(6,Math.min(30,r));pd=d;}},{passive:true});
+document.getElementById('bWalls').onclick=function(){gWalls.visible=!gWalls.visible;this.classList.toggle('on',gWalls.visible);};
+document.getElementById('bAuto').onclick=function(){auto=!auto;};
+document.getElementById('bTop').onclick=function(){auto=false;phi=0.13;theta=0;};
+(function anim(){requestAnimationFrame(anim);if(auto)theta+=0.004;place();renderer.render(scene,camera);})();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>نموذج ثلاثي الأبعاد — الطابق الأرضي والأول</title>
+<style>
+  html,body{margin:0;height:100%;background:#f2eee6;font-family:"Segoe UI",Tahoma,sans-serif;color:#3a3a36;overflow:hidden}
+  #c3d{position:fixed;inset:0;cursor:grab;touch-action:none}
+  #ui{position:fixed;top:14px;right:14px;background:rgba(255,255,255,.88);backdrop-filter:blur(6px);border:1px solid #d8d2c4;border-radius:10px;padding:10px 14px;font-size:14px;line-height:1.7;max-width:260px}
+  #ui b{display:block;font-size:15px;margin-bottom:4px}
+  #ui button{margin:3px 0 3px 6px;border:1px solid #b8b0a0;background:#fff;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer;font-family:inherit}
+  #ui button.on{background:#3a3a36;color:#fff;border-color:#3a3a36}
+  #ui button:hover:not(.on){background:#efe9dd}
+  #hint{position:fixed;bottom:12px;left:0;right:0;text-align:center;font-size:13px;color:#7a7264}
+</style>
+</head>
+<body>
+<div id="c3d"></div>
+<div id="ui"><b>البيت — ١١٫٥ × ٩٫٥ م</b>
+<div><button data-f="both" class="on">الطابقان</button><button data-f="ground">الأرضي فقط</button><button data-f="first">الأول فقط</button></div>
+<div><button id="bAuto">دوران تلقائي</button><button id="bTop">منظور علوي</button></div></div>
+<div id="hint">اسحب للتدوير · عجلة الفأرة أو إصبعان للتقريب</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+var el=document.getElementById('c3d');
+var scene=new THREE.Scene();
+var camera=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,0.1,400);
+var renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setClearColor(0,0);
+el.appendChild(renderer.domElement);
+addEventListener('resize',function(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+scene.add(new THREE.AmbientLight(0xffffff,0.8));
+var s1=new THREE.DirectionalLight(0xffffff,0.55);s1.position.set(14,26,10);scene.add(s1);
+var s2=new THREE.DirectionalLight(0xffffff,0.25);s2.position.set(-12,14,-12);scene.add(s2);
+function mat(c){return new THREE.MeshLambertMaterial({color:c});}
+var M={wall:mat(0xdcd6c8),rail:mat(0x8a8272),wood:mat(0xc9a06b),dark:mat(0xb58a55),cush:mat(0xe6ded0),white:mat(0xffffff),blue:mat(0xc8d6dc),counter:mat(0xd9cbaa),car:mat(0xc9ccd0),glass:mat(0xdfe3e7),tyre:mat(0x4a4438),water:mat(0x9fc3d6),plant:mat(0x8fae6a),stone:mat(0xb9b3a6)};
+var W=11.5,H=9.5,FH=3.2;  // floor-to-floor height
+var gGround=new THREE.Group(),gFirst=new THREE.Group(),gTall=new THREE.Group();scene.add(gGround);scene.add(gFirst);scene.add(gTall);
+
+function box(g,w,h,d,x,y,z,m){var o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);g.add(o);return o;}
+function floor(g,x1,z1,x2,z2,c,y){box(g,x2-x1,0.06,z2-z1,(x1+x2)/2,y+0.03,(z1+z2)/2,mat(c));}
+function label(g,t,sub,x,y,z,sc){var cv=document.createElement('canvas');cv.width=512;cv.height=200;var c=cv.getContext('2d');
+  c.font='500 60px sans-serif';c.textAlign='center';c.fillStyle='#3a3a36';c.fillText(t,256,84);
+  if(sub){c.font='400 44px sans-serif';c.fillStyle='#6b6a64';c.fillText(sub,256,150);}
+  var tx=new THREE.CanvasTexture(cv);tx.minFilter=THREE.LinearFilter;var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,depthTest:false}));
+  sp.scale.set(sc||3.2,(sc||3.2)*0.39,1);sp.position.set(x,y,z);g.add(sp);}
+function bed(g,x,z,w,d,y){box(g,w,0.35,d,x,y+0.18,z,M.wood);box(g,w-0.15,0.1,d-0.4,x,y+0.4,z+0.15,M.cush);box(g,w-0.3,0.12,0.4,x,y+0.42,z-d/2+0.3,M.white);}
+
+/* ---- shared interior (same on both floors) ---- */
+function interior(g,y,wallH){
+  var T=0.16;
+  function wx(x,z1,z2){box(g,T,wallH,z2-z1,x,y+wallH/2,(z1+z2)/2,M.wall);}
+  function wz(z,x1,x2){box(g,x2-x1,wallH,T,(x1+x2)/2,y+wallH/2,z,M.wall);}
+  floor(g,0,0,4.1,5.0,0xf2e3c4,y);floor(g,4.1,0,5.5,2.2,0xdde8ec,y);floor(g,4.1,2.2,5.5,9.5,0xecdfc2,y);
+  floor(g,0,5.0,4.1,9.5,0xf2e3c4,y);floor(g,5.5,0,11.5,4.5,0xf0e9d8,y);floor(g,5.5,4.5,11.5,9.5,0xedeae0,y);
+  wz(0,0,10.6);wz(0,11.4,11.5);wx(11.5,0,9.5);wx(0,0,9.5);
+  wz(9.5,5.2,11.5);
+  wx(5.5,0,2.7);wx(5.5,3.5,5.7);wx(5.5,6.5,9.5);wz(4.5,5.5,11.5);
+  wx(4.1,0,3.9);wx(4.1,4.7,5.3);wx(4.1,6.1,9.5);
+  wz(2.2,4.1,4.3);wz(2.2,5.1,5.5);wz(5.0,0,4.1);
+  return {wx:wx,wz:wz};
+}
+function furniture(g,y){
+  bed(g,1.35,1.75,1.9,2.5,y);box(g,0.6,0.9,2.6,3.7,y+0.45,3.3,M.dark);box(g,0.4,0.6,1.0,0.4,y+0.3,3.9,M.wood);
+  bed(g,0.85,6.4,1.1,2.0,y);bed(g,2.25,6.4,1.1,2.0,y);box(g,0.6,0.9,2.2,3.6,y+0.45,6.5,M.dark);
+  box(g,0.55,0.15,0.55,4.4,y+0.1,0.4,M.blue);box(g,0.4,0.35,0.5,5.2,y+0.2,0.5,M.white);box(g,0.45,0.5,0.3,5.15,y+0.3,1.85,M.white);
+  box(g,2.0,0.6,0.55,9.5,y+0.3,0.38,M.counter);box(g,0.55,0.6,3.1,11.2,y+0.3,2.55,M.counter);box(g,0.7,1.3,1.0,5.9,y+0.65,1.3,mat(0xcfd4d6));
+  box(g,2.6,0.1,1.35,8.3,y+0.5,3.3,M.wood);box(g,2.4,0.42,1.2,8.3,y+0.25,3.3,M.dark);
+  for(var k=0;k<3;k++){box(g,0.45,0.5,0.28,7.4+k*0.75,y+0.25,2.4,M.dark);box(g,0.45,0.5,0.28,7.4+k*0.75,y+0.25,4.2,M.dark);}
+  box(g,0.7,0.55,3.0,6.55,y+0.28,6.9,M.cush);box(g,3.3,0.55,0.7,7.85,y+0.28,5.75,M.cush);box(g,1.35,0.3,0.85,8.9,y+0.15,7.35,M.wood);box(g,0.32,1.2,2.5,5.8,y+0.6,7.45,M.tyre);
+  var L=y+1.7;
+  label(g,'غرفة النوم الرئيسية','٤٫١ × ٥٫٠',2.0,L,4.3,3.6);label(g,'غرفة نوم ٢','٤٫١ × ٤٫٥',2.05,L,8.5);
+  label(g,'الحمام','',4.8,L,1.3,1.8);label(g,'ممر','١٫٤',4.8,L,4.6,1.6);
+  label(g,'الكوجينة','٦ × ٤٫٥',8.5,L,1.6);label(g,'الصالون','٦ × ٥',8.6,L,8.6);
+}
+
+/* ---- ground floor ---- */
+function ground(g,wallH){
+  var y=0,w=interior(g,y,wallH);
+  w.wz(9.5,0,4.4);                       // bedroom 2 wall to garage: solid; corridor door 4.4-5.2
+  furniture(g,y);
+  // extra room 4x3 over balcony-2 footprint
+  floor(g,7.5,-3,11.5,0,0xe9dfc6,y);w.wz(-3,7.5,11.5);w.wx(7.5,-3,0);w.wx(11.5,-3,0);
+  bed(g,10.7,-1.9,1.2,2.0,y);box(g,1.6,0.6,0.55,8.5,y+0.3,-2.62,M.counter);box(g,0.55,0.6,1.0,7.9,y+0.3,-0.7,M.wood);
+  label(g,'غرفة إضافية','٤ × ٣',9.3,y+1.7,-0.7,2.6);
+  // garage 4.1 x 5.5
+  floor(g,0,9.5,4.1,15.0,0xdcd8d0,y);w.wx(0,9.5,15);w.wz(15,0,0.8);w.wx(4.1,10.9,15);w.wx(4.1,9.5,10.1);
+  box(g,3.3,0.05,0.08,2.45,y+2.2,15,M.rail);  // roll-up door top rail (shifted to courtyard side)
+  box(g,2.2,0.7,3.9,2.05,y+0.4,12.8,M.car);box(g,1.7,0.6,1.4,2.05,y+1.05,12.2,M.glass);box(g,1.7,0.35,0.9,2.05,y+0.9,13.85,M.glass);
+  [[0.95,11.4],[3.15,11.4],[0.95,14.0],[3.15,14.0]].forEach(function(p){box(g,0.2,0.6,0.6,p[0],y+0.3,p[1],M.tyre);});
+  label(g,'الكراج','٤٫١ × ٥٫٥',2.05,y+1.7,10.3,2.6);
+  // entrance path, courtyard, fountain, street wall with two gates, private passage, stairwell
+  floor(g,4.1,9.5,9.9,10.7,0xe4ddcb,y);floor(g,4.1,10.7,9.9,15.0,0xe3e6d3,y);floor(g,9.9,12.6,11.5,15.0,0xd3ccba,y);floor(g,9.9,9.5,11.5,12.6,0xc9c2b2,y);
+  w.wz(15,4.1,5.3);w.wz(15,6.3,10.3);w.wz(15,11.3,11.5);w.wx(11.5,9.5,15);
+  w.wx(9.9,12.6,15);w.wz(12.6,9.9,10.3);w.wz(12.6,11.1,11.5);
+  box(g,1.2,0.5,1.2,5.0,y+0.25,13.8,M.stone);box(g,0.9,0.1,0.9,5.0,y+0.5,13.8,M.water);box(g,0.15,0.9,0.15,5.0,y+0.7,13.8,M.stone);
+  [[4.5,14.6],[8.6,14.6],[4.5,11.1],[9.4,11.1]].forEach(function(p){box(g,0.4,0.6,0.4,p[0],y+0.3,p[1],M.plant);});
+  box(g,5.8,0.12,5.5,7.0,y+wallH+0.06,12.25,new THREE.MeshLambertMaterial({color:0xcfc7b3,transparent:true,opacity:0.45}));  // covered courtyard roof
+  for(var i=0;i<14;i++){box(g,1.0,0.06,0.24,10.7,0.20+i*0.228,14.00-i*0.33,M.rail);}          // درج ٢: 1m landing after external door, straight up to first floor
+  label(g,'الفناء','',7.0,y+1.7,12.0,2.2);label(g,'فسقية','',5.0,y+1.4,14.6,1.5);label(g,'باب الشارع (الأرضي)','',5.8,y+1.4,15.6,2.8);
+  label(g,'باب خاص للطابق الأول','',10.8,y+1.4,15.6,2.8);label(g,'بيت الدرج','',10.7,y+1.7,10.6,2.0);
+  // === برج الدرج (Tour) — على الواجهة الأمامية (الشارع z=15)، ارتفاع ٦٫١٣م ===
+  var TX=10.7,TZ=12.25,TWX=1.6,TWZ=5.5,TH=6.13;                    // full depth: front z=15 → back z=9.5
+  box(g,0.16,TH,TWZ,11.5,TH/2,TZ,M.stone);                         // east wall
+  box(g,0.16,TH,TWZ,9.9,TH/2,TZ,M.stone);                          // west wall
+  box(g,TWX,TH,0.16,TX,TH/2,9.5,M.stone);                          // back wall (interior side)
+  // front (street) face at z=15 + نافذة شق عمودي ٠٫٥٠ × ١٫٨٠م (y ٣٫٢٠ → ٥٫٠٠)
+  box(g,0.55,TH,0.16,10.175,TH/2,15.0,M.stone);                    // front pier left
+  box(g,0.55,TH,0.16,11.225,TH/2,15.0,M.stone);                    // front pier right
+  box(g,0.50,3.20,0.16,10.70,1.60,15.0,M.stone);                   // sill under slot
+  box(g,0.50,1.13,0.16,10.70,5.565,15.0,M.stone);                  // lintel over slot
+  box(g,TWX+0.2,0.25,TWZ+0.2,TX,TH+0.12,TZ,M.stone);               // parapet cap
+  // === باب مزدوج (٢ مصراع) + قاعدة ٠٫٦٠م — المدخل أمام البرج ===
+  box(g,1.40,0.60,0.50,10.70,0.30,14.70,M.stone);                  // plinth/steps (٠٫٦٠م)
+  box(g,0.48,2.20,0.08,10.55,1.70,15,M.wood);box(g,0.48,2.20,0.08,11.05,1.70,15,M.wood);  // door leaves
+}
+/* ---- first floor ---- */
+function first(g){
+  var y=FH,w=interior(g,y,1.1);
+  w.wz(9.5,0,1.6);w.wz(9.5,2.4,4.4);      // bedroom 2 door to balcony 1
+  furniture(g,y);
+  // slab under the first floor (visible edge) + balconies, gallery, stairwell landing
+  box(g,W,0.25,H,W/2,y-0.13,H/2,mat(0xb4b2a9));
+  box(g,4,0.25,3,9.5,y-0.13,-1.5,mat(0xd8d2c2));box(g,4.1,0.25,5.5,2.05,y-0.13,12.25,mat(0xd8d2c2));  // balcony 1 = full garage roof
+  box(g,5.8,0.25,2.0,7.0,y-0.13,10.5,mat(0xe4ddcb));box(g,1.6,0.25,2.0,10.7,y-0.13,10.5,mat(0xe6dfcd));  // external corridor + landing = 2m wide
+  function rx(x,z1,z2){box(g,0.06,0.5,z2-z1,x,y+0.25,(z1+z2)/2,M.rail);}
+  function rz(z,x1,x2){box(g,x2-x1,0.5,0.06,(x1+x2)/2,y+0.25,z,M.rail);}
+  rz(-3,7.5,11.5);rx(7.5,-3,0);rx(11.5,-3,0);
+  rz(15,0,4.1);rx(0,9.5,15);rx(4.1,11.5,15);rz(11.5,4.1,9.9);
+  box(g,0.16,1.1,2.4,9.9,y+0.55,11.4,M.wall);box(g,1.6,1.1,0.16,10.7,y+0.55,12.6,M.wall);box(g,0.16,1.1,3.1,11.5,y+0.55,11.05,M.wall);
+  for(var i=0;i<14;i++){box(g,0.30,0.06,1.0,7.0+i*0.30,y+0.20+i*0.228,10.5,mat(0xb0a898));}     // درج للطابق الثاني: starts at external corridor, climbs east into stairwell up to second floor
+  var L=y+1.7;
+  label(g,'بلكون ٢','٤ × ٣',9.3,L,-1.6,2.6);label(g,'بلكون ١','٤٫١ × ٥٫٥',1.9,L,12.2,2.6);
+  label(g,'ممر خارجي','عرض ٢ م',7,L,10.5,2.2);label(g,'بيت الدرج','درج للطابق الثاني',10.7,L,11.2,2.0);
+}
+box(scene,15,0.3,19,5.75,-0.15,6.5,mat(0xb4b2a9));
+ground(gGround,1.1);ground(gTall,FH-0.2);first(gFirst);
+
+var mode='both';
+function apply(){gFirst.visible=(mode!=='ground');gGround.visible=(mode==='ground');gTall.visible=(mode==='both');
+  gTall.children.forEach(function(o){if(o.isSprite)o.visible=false;});}
+apply();
+document.querySelectorAll('#ui button[data-f]').forEach(function(b){b.onclick=function(){mode=b.dataset.f;document.querySelectorAll('#ui button[data-f]').forEach(function(x){x.classList.toggle('on',x===b);});apply();};});
+
+var cx=5.75,cz=6.5,theta=0.9,phi=0.95,r=30,auto=true;
+function place(){camera.position.set(cx+r*Math.sin(phi)*Math.sin(theta),r*Math.cos(phi),cz+r*Math.sin(phi)*Math.cos(theta));camera.lookAt(cx,1.2,cz);}
+var drag=false,px=0,py=0,pd=0;
+el.addEventListener('pointerdown',function(e){drag=true;auto=false;px=e.clientX;py=e.clientY;el.setPointerCapture(e.pointerId);el.style.cursor='grabbing';});
+el.addEventListener('pointermove',function(e){if(!drag)return;theta-=(e.clientX-px)*0.008;phi-=(e.clientY-py)*0.006;phi=Math.max(0.15,Math.min(1.45,phi));px=e.clientX;py=e.clientY;});
+el.addEventListener('pointerup',function(){drag=false;el.style.cursor='grab';});
+el.addEventListener('wheel',function(e){e.preventDefault();r+=e.deltaY*0.02;r=Math.max(10,Math.min(50,r));},{passive:false});
+el.addEventListener('touchstart',function(e){if(e.touches.length===2)pd=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);});
+el.addEventListener('touchmove',function(e){if(e.touches.length===2){var d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);r-=(d-pd)*0.05;r=Math.max(10,Math.min(50,r));pd=d;}},{passive:true});
+document.getElementById('bAuto').onclick=function(){auto=!auto;};
+document.getElementById('bTop').onclick=function(){auto=false;phi=0.15;theta=Math.PI;};
+(function anim(){requestAnimationFrame(anim);if(auto)theta+=0.0035;place();renderer.render(scene,camera);})();
+})();
+</script>
+</body>
+</html>

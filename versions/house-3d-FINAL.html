@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>House 3D v3 — with approved tower stairs</title>
+<style>
+  html,body{margin:0;height:100%;background:#f2eee6;font-family:"Segoe UI",Tahoma,sans-serif;color:#3a3a36;overflow:hidden}
+  #c3d{position:fixed;inset:0;cursor:grab;touch-action:none}
+  #ui{position:fixed;top:14px;right:14px;background:rgba(255,255,255,.88);backdrop-filter:blur(6px);border:1px solid #d8d2c4;border-radius:10px;padding:10px 14px;font-size:14px;line-height:1.7;max-width:260px}
+  #ui b{display:block;font-size:15px;margin-bottom:4px}
+  #ui button{margin:3px 0 3px 6px;border:1px solid #b8b0a0;background:#fff;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer;font-family:inherit}
+  #ui button.on{background:#3a3a36;color:#fff;border-color:#3a3a36}
+  #ui button:hover:not(.on){background:#efe9dd}
+  #hint{position:fixed;bottom:12px;left:0;right:0;text-align:center;font-size:13px;color:#7a7264}
+</style>
+</head>
+<body>
+<div id="c3d"></div>
+<div id="ui"><b>البيت — 11.5 × 9.5 م (v3 · درج البرج المعتمد)</b>
+<div><button data-f="both" class="on">الطابقان</button><button data-f="ground">الأرضي فقط</button><button data-f="first">الأول فقط</button></div>
+<div><button id="bAuto">دوران تلقائي</button><button id="bTop">منظور علوي</button><button id="bTower">إخفاء البرج (عرض الدرج)</button></div></div>
+<div id="hint">اسحب للتدوير · عجلة الفأرة أو إصبعان للتقريب</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+var el=document.getElementById('c3d');
+var scene=new THREE.Scene();
+var camera=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,0.1,400);
+var renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setClearColor(0,0);
+el.appendChild(renderer.domElement);
+addEventListener('resize',function(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+scene.add(new THREE.AmbientLight(0xffffff,0.8));
+var s1=new THREE.DirectionalLight(0xffffff,0.55);s1.position.set(14,26,10);scene.add(s1);
+var s2=new THREE.DirectionalLight(0xffffff,0.25);s2.position.set(-12,14,-12);scene.add(s2);
+function mat(c){return new THREE.MeshLambertMaterial({color:c});}
+var M={wall:mat(0xdcd6c8),rail:mat(0x8a8272),wood:mat(0xc9a06b),dark:mat(0xb58a55),cush:mat(0xe6ded0),white:mat(0xffffff),blue:mat(0xc8d6dc),counter:mat(0xd9cbaa),car:mat(0xc9ccd0),glass:mat(0xdfe3e7),tyre:mat(0x4a4438),water:mat(0x9fc3d6),plant:mat(0x8fae6a),stone:mat(0xb9b3a6)};
+var W=11.5,H=9.5,FH=3.2;  // floor-to-floor height
+var gGround=new THREE.Group(),gFirst=new THREE.Group(),gTall=new THREE.Group();scene.add(gGround);scene.add(gFirst);scene.add(gTall);
+
+function box(g,w,h,d,x,y,z,m){var o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);g.add(o);return o;}
+function floor(g,x1,z1,x2,z2,c,y){box(g,x2-x1,0.06,z2-z1,(x1+x2)/2,y+0.03,(z1+z2)/2,mat(c));}
+function label(g,t,sub,x,y,z,sc){var cv=document.createElement('canvas');cv.width=512;cv.height=200;var c=cv.getContext('2d');
+  c.font='500 60px sans-serif';c.textAlign='center';c.fillStyle='#3a3a36';c.fillText(t,256,84);
+  if(sub){c.font='400 44px sans-serif';c.fillStyle='#6b6a64';c.fillText(sub,256,150);}
+  var tx=new THREE.CanvasTexture(cv);tx.minFilter=THREE.LinearFilter;var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,depthTest:false}));
+  sp.scale.set(sc||3.2,(sc||3.2)*0.39,1);sp.position.set(x,y,z);g.add(sp);}
+function bed(g,x,z,w,d,y){box(g,w,0.35,d,x,y+0.18,z,M.wood);box(g,w-0.15,0.1,d-0.4,x,y+0.4,z+0.15,M.cush);box(g,w-0.3,0.12,0.4,x,y+0.42,z-d/2+0.3,M.white);}
+
+/* ---- shared interior (same on both floors) ---- */
+function interior(g,y,wallH){
+  var T=0.16;
+  function wx(x,z1,z2){box(g,T,wallH,z2-z1,x,y+wallH/2,(z1+z2)/2,M.wall);}
+  function wz(z,x1,x2){box(g,x2-x1,wallH,T,(x1+x2)/2,y+wallH/2,z,M.wall);}
+  floor(g,0,0,4.1,5.0,0xf2e3c4,y);floor(g,4.1,0,5.5,9.5,0xecdfc2,y);   // corridor full length (bathroom drawn per floor)
+  floor(g,0,5.0,4.1,9.5,0xf2e3c4,y);floor(g,5.5,0,11.5,5.5,0xf0e9d8,y);floor(g,5.5,5.5,11.5,9.5,0xedeae0,y);   // living room 6x4 (z 5.5-9.5)
+  wz(0,8.5,10.6);wz(0,11.4,11.5);wx(11.5,0,9.5);wx(0,2.5,9.5);   // ground: x 0-8.5 at z 0 and west wall z 0-2.5 are open yard (1st floor closes them)
+  // wz(9.5,5.2,11.5) living-room back wall drawn per floor (1st floor has a window)
+  wx(5.5,2.5,2.7);wx(5.5,3.5,5.7);wz(5.5,5.5,9.5);wz(5.5,10.4,11.5);   // x=5.5 z 0-2.5 open yard on ground (1st floor closes); x=5.5 z 5.7-9.5 (living west wall) drawn per floor; gap x 9.5-10.4 = kitchen door from living (closed on 1st floor)
+  // x=4.1 wall drawn per floor (ground: rooms end at x 3)
+  // wz(5.0,0,4.1) bedroom split is drawn per floor (ground z 5.5, first z 5.0)
+  return {wx:wx,wz:wz};
+}
+function furniture(g,y,gnd){
+  bed(g,gnd?1.2:1.35,gnd?4.25:1.75,1.9,2.5,y);if(gnd){box(g,0.6,0.9,1.6,2.6,y+0.45,5.5,M.dark);}else{box(g,0.6,0.9,2.6,3.7,y+0.45,3.3,M.dark);box(g,0.4,0.6,1.0,0.4,y+0.3,3.9,M.wood);}
+  var zb=gnd?7.9:6.4;bed(g,0.85,zb,1.1,2.0,y);bed(g,gnd?2.15:2.25,zb,1.1,2.0,y);
+  if(gnd)box(g,2.2,0.9,0.6,1.5,y+0.45,10.1,M.dark);else box(g,0.6,0.9,2.2,3.6,y+0.45,zb+0.1,M.dark);
+  if(gnd){box(g,0.55,0.15,0.55,3.35,y+0.1,2.95,M.blue);box(g,0.4,0.35,0.5,4.15,y+0.2,3.0,M.white);box(g,0.45,0.5,0.3,3.4,y+0.3,4.7,M.white);}
+  else{box(g,0.55,0.15,0.55,4.4,y+0.1,0.4,M.blue);box(g,0.4,0.35,0.5,5.2,y+0.2,0.5,M.white);box(g,0.45,0.5,0.3,5.15,y+0.3,1.85,M.white);}
+  box(g,2.0,0.6,0.55,9.5,y+0.3,0.38,M.counter);box(g,0.55,0.6,3.1,11.2,y+0.3,2.55,M.counter);box(g,0.7,1.3,gnd?0.9:1.0,gnd?8.95:5.9,y+0.65,gnd?1.6:0.75,mat(0xcfd4d6));
+  if(gnd){box(g,1.9,0.1,1.35,9.7,y+0.5,3.0,M.wood);box(g,1.7,0.42,1.2,9.7,y+0.25,3.0,M.dark);   // ground: table in the 3 m kitchen east part
+    for(var k=0;k<2;k++){box(g,0.45,0.5,0.28,9.35+k*0.75,y+0.25,2.1,M.dark);box(g,0.45,0.5,0.28,9.35+k*0.75,y+0.25,3.9,M.dark);}}
+  else{box(g,2.6,0.1,1.35,8.3,y+0.5,3.3,M.wood);box(g,2.4,0.42,1.2,8.3,y+0.25,3.3,M.dark);
+    for(var k=0;k<3;k++){box(g,0.45,0.5,0.28,7.4+k*0.75,y+0.25,2.4,M.dark);box(g,0.45,0.5,0.28,7.4+k*0.75,y+0.25,4.2,M.dark);}}
+  var lx=0;
+  box(g,0.7,0.55,2.6,6.55+lx,y+0.28,7.6,M.cush);box(g,3.3,0.55,0.7,7.85+lx,y+0.28,6.55,M.cush);box(g,1.35,0.3,0.85,8.9+lx,y+0.15,7.9,M.wood);box(g,0.32,1.2,2.5,5.8+lx,y+0.6,7.95,M.tyre);   // living furniture (room z 5.5-9.5)
+  var L=y+1.7;
+  label(g,gnd?"1. Girls' Bedroom":'1. Master Bedroom',gnd?'3 × 4':'4.1 × 5.0',gnd?1.5:2.0,L,gnd?4.1:4.3,gnd?2.8:3.6);label(g,'2. Bedroom 2',gnd?'3 × 4':'4.1 × 4.5',gnd?1.5:2.05,L,gnd?8.5:8.5);
+  if(gnd)label(g,'3. Bathroom','1.5 × 2.5',3.75,L,3.75,1.8);else label(g,'3. Bathroom','',4.8,L,1.3,1.8);
+  label(g,'4. Corridor',gnd?'1.4 / 2.5':'1.4',gnd?4.3:4.8,L,gnd?7.5:4.6,1.6);
+  label(g,'5. Kitchen',gnd?'3 × 5.5':'6 × 4.5',gnd?10.0:8.5,L,gnd?1.2:1.6);label(g,'6. Living Room','6 × 4',8.6,L,8.6);
+}
+
+/* ---- ground floor ---- */
+function ground(g,wallH){
+  var y=0,w=interior(g,y,wallH);
+  w.wz(9.5,3.0,4.4);w.wz(9.5,5.2,11.5);   // corridor strip ends at z 9.5; corridor door to courtyard 4.4-5.2; living back wall
+  // ground west strip: girls' bedroom 3x4 (z 0-4), bathroom (z 4-5.5), bedroom 2 3x4 (z 5.5-9.5)
+  w.wz(10.5,0,3.0);                                    // bedroom 2 back wall z 10.5 (room z 6.5-10.5)
+  // backyard notch x 0-3, z 0-3 (outside); girls' bedroom 3x4 (x 0-3, z 3-7): east wall x 3 with door z 3.3-4.1
+  floor(g,0,0,5.5,2.5,0xcfd9b8,y+0.001);w.wz(2.5,0,3.0);w.wz(2.5,3.0,4.5);w.wz(2.5,5.4,5.5);   // yard x 0-5.5 z 0-2.5; covered area ends on the z=2.5 line; corridor yard door x 4.5-5.4
+  box(g,0.9,2.1,0.08,4.95,y+1.05,2.5,M.wood);        // corridor -> yard door leaf
+  w.wx(3.0,2.5,5.3);w.wx(3.0,6.1,6.5);w.wz(6.5,0,3.0);floor(g,3.0,5.0,4.1,6.5,0xecdfc2,y+0.001);
+  // bathroom 1.5 x 2.5 BESIDE the girls' room (parallel): x 3.0-4.5, z 3.0-5.5; door on its east wall z 3.9-4.7 (corridor 1.0 m here)
+  floor(g,3.0,2.5,4.5,5.0,0xdde8ec,y+0.002);w.wz(5.0,3.0,4.5);w.wx(4.5,2.5,3.4);w.wx(4.5,4.2,5.0);
+  box(g,0.08,2.0,0.8,4.5,y+1.0,3.8,M.wood);           // bathroom door leaf
+  // bedroom 2 = 3 wide x 4 deep (x 0-3, z 7-11); east wall at x 3 with door z 7.5-8.3; strip x 3-4.1 z 7-9.5 joins the corridor
+  w.wx(3.0,6.5,7.0);w.wx(3.0,7.8,10.5);
+  box(g,0.08,2.0,0.8,3.0,y+1.0,7.4,M.wood);           // bedroom 2 door leaf
+  floor(g,3.0,6.5,4.1,9.5,0xecdfc2,y+0.001);   // corridor widening (west)
+  // living room 6x4 (x 5.5-11.5, z 5.5-9.5): west wall at x 5.5 with door z 5.7-6.5
+  w.wx(5.5,6.5,9.5);
+  box(g,0.08,2.0,0.8,5.5,y+1.0,6.1,M.wood);           // living room door leaf
+  box(g,0.08,2.0,0.8,3.0,y+1.0,5.7,M.wood);                                                   // girls' bedroom door leaf (x 3, z 5.3-6.1)
+  furniture(g,y,true);
+  // Salwa's room 3x3 next to the living room: x 5.5-8.5, z 2.5-5.5 (back wall on the z=2.5 line); door on x 5.5, z 2.7-3.5
+  floor(g,5.5,2.5,8.5,5.5,0xf3e6d8,y+0.001);
+  w.wx(8.5,2.5,5.5);w.wz(2.5,5.5,8.5);
+  box(g,0.08,2.0,0.8,5.5,y+1.0,3.1,M.wood);           // door leaf (corridor -> Salwa)
+  label(g,"17. Salwa's Room",'3 × 3',7.0,y+1.7,4.0,2.6);
+  box(g,0.9,2.1,0.08,9.95,y+1.05,5.5,M.wood);          // kitchen door leaf (living room -> kitchen, x 9.5-10.4)
+  // grandmother's room 3x4 under balcony 2 (x 8.5-11.5, z -4..0)
+  floor(g,8.5,-4,11.5,0,0xe9dfc6,y);w.wz(-4,8.5,11.5);w.wx(11.5,-4,0);
+  w.wz(0,10.6,11.4);                                   // no door to the kitchen: close the shared gap (ground only)
+  w.wx(8.5,-4,-2.45);w.wx(8.5,-1.55,0);                // west wall with 0.9 m door opening to the backyard (z -2.45..-1.55)
+  box(g,0.08,2.1,0.9,8.5,y+1.05,-2.0,M.wood);          // grandma's backyard door leaf (x 8.5 line)
+  // kitchen 3 x 5.5 (x 8.5-11.5): west wall x 8.5 z 0-2.5 with yard door z 0.8-1.7 (same line/orientation as grandma's door)
+  w.wx(8.5,0,0.8);w.wx(8.5,1.7,2.5);box(g,0.08,2.1,0.9,8.5,y+1.05,1.25,M.wood);
+  floor(g,5.5,0,8.5,2.5,0xcfd9b8,y+0.001);   // yard up to the z=2.5 line
+  bed(g,10.6,-2.4,1.4,2.0,y);box(g,1.4,0.6,0.55,9.4,y+0.3,-3.6,M.counter);box(g,0.55,0.6,1.0,8.9,y+0.3,-0.8,M.wood);
+  label(g,"7. Grandmother's Room",'3 × 4',10.0,y+1.7,-1.0,3.0);
+  // garage 4.1 x 5.5
+  // garage 3x4 directly behind bedroom 2: x 0-3, z 11-15, roll-up front on the street; door to courtyard on x=3 at z 11.5-12.3
+  floor(g,0,10.5,3.0,15.0,0xdcd8d0,y);floor(g,3.0,9.5,4.1,15,0xe3e6d3,y);
+  w.wx(0,9.5,15);w.wx(3.0,10.5,11.0);w.wx(3.0,11.8,15);
+  box(g,2.4,0.05,0.08,1.6,y+2.2,15,M.rail);  // roll-up door top rail on the street line (garage 3 x 4.5, z 10.5-15)
+  box(g,2.0,0.7,3.9,1.5,y+0.4,12.4,M.car);box(g,1.5,0.6,1.4,1.5,y+1.05,11.8,M.glass);box(g,1.5,0.35,0.9,1.5,y+0.9,13.45,M.glass);
+  [[0.5,11.0],[2.5,11.0],[0.5,13.6],[2.5,13.6]].forEach(function(p){box(g,0.2,0.6,0.6,p[0],y+0.3,p[1],M.tyre);});
+  label(g,'8. Garage','3 × 4.5',1.5,y+1.7,11.1,2.4);
+  // entrance path, courtyard, fountain, street wall with two gates, private passage, stairwell
+  // courtyard now x 4.1-9.1 (tower widened west to 2.4 m: x 9.1-11.5)
+  floor(g,4.1,9.5,9.1,11,0xe4ddcb,y);floor(g,4.1,11,9.1,15.0,0xe3e6d3,y);floor(g,9.1,9.5,11.5,15.0,0xc9c2b2,y);
+  w.wz(15,3.0,5.3);w.wz(15,6.3,9.1);
+  box(g,1.2,0.5,1.2,5.0,y+0.25,13.8,M.stone);box(g,0.9,0.1,0.9,5.0,y+0.5,13.8,M.water);box(g,0.15,0.9,0.15,5.0,y+0.7,13.8,M.stone);
+  [[4.5,14.6],[8.4,14.6],[4.5,11.1],[8.6,11.1]].forEach(function(p){box(g,0.4,0.6,0.4,p[0],y+0.3,p[1],M.plant);});
+  label(g,'9. Courtyard','',6.6,y+1.7,12.0,2.2);label(g,'10. Fountain','',5.0,y+1.4,14.6,1.5);label(g,'11. Street Door','ground',5.8,y+1.4,15.6,2.8);
+  label(g,'12. Private Door','1st floor',10.95,y+1.4,15.6,2.8);label(g,'13. Stairwell','',10.3,y+1.7,10.6,2.0);
+  tower(g);
+}
+
+/* ==== TOWER + APPROVED STAIRS (from stairs-BEST-locked.html, commit 496ec07) ==== */
+// tower x 9.1-11.5 (2.4 m), z 9.5-15 (5.5 m), height 6.13 m; stair tread width 1.1 m
+var TW=2.4, X0=9.1, X1=X0+TW, XC=X0+TW/2, SW=1.1, TH=6.13;
+var wE=X1-SW/2, wW=X0+SW/2;                       // east / west stair lanes
+var towerShells=[];                               // toggled by the "hide tower" button (stairs stay visible)
+function tower(g){
+  var T=0.16, ZC=12.25, ZD=5.5;
+  var sh=new THREE.Group();g.add(sh);towerShells.push(sh);
+  // --- shell (in its own sub-group so it can be hidden) ---
+  box(sh,T,TH,ZD,X1,TH/2,ZC,M.stone);                                 // east wall (house east line)
+  var ZD1=12.05;                                                      // 1st-floor door centre — top-right corner of the 3 m corridor (z 9.5-12.5)
+  box(sh,T,TH,ZD1-0.45-9.5,X0,TH/2,(9.5+ZD1-0.45)/2,M.stone);         // west wall, back part (z 9.5 -> door)
+  box(sh,T,TH,15-(ZD1+0.45),X0,TH/2,(ZD1+0.45+15)/2,M.stone);         // west wall, front part (door -> z 15)
+  box(sh,T,FH,0.9,X0,FH/2,ZD1,M.stone);                               // west wall under 1st-floor door
+  box(sh,T,TH-FH-2.0,0.9,X0,(TH+FH+2.0)/2,ZD1,M.stone);              // west wall above 1st-floor door
+  box(sh,TW,TH,T,XC,TH/2,9.5,M.stone);                                // back wall
+  // front (street) face z=15: door 1.1 m in front of flight 1 (x 10.4-11.5), slot window in left panel
+  box(sh,1.3,3.2,T,9.75,1.6,15.0,M.stone);                            // left panel below slot (y 0-3.2)
+  box(sh,0.4,1.8,T,9.3,4.1,15.0,M.stone);                             // left of slot
+  box(sh,0.4,1.8,T,10.2,4.1,15.0,M.stone);                            // right of slot
+  box(sh,1.3,TH-5.0,T,9.75,(TH+5.0)/2,15.0,M.stone);                  // above slot
+  box(sh,SW,TH-2.3,T,wE,(TH+2.3)/2,15.0,M.stone);                     // header above door (y 2.3-6.13)
+  box(g,0.10,2.3,0.18,wE-SW/2+0.05,1.15,15.0,M.wood);box(g,0.10,2.3,0.18,X1-0.05,1.15,15.0,M.wood); // door frame (stays visible)
+  box(sh,TW+0.2,0.25,ZD+0.2,XC,TH+0.12,ZC,M.stone);                   // parapet cap
+  // --- level 1: door -> 6 steps -> flat run -> back turn (2) -> 4 wide X steps -> 1st floor (3) ---
+  (function(){var y=0,top=FH,nA=6,rise=(top-y)/(nA+3),tread=0.40,zF=13.8,zBack=10.2;   // tread 0.40 (was 0.30)
+    for(var s=0;s<nA;s++){box(g,SW,rise,tread,wE,y+(s+0.5)*rise,zF-s*tread,M.wood);}
+    var zTopA=zF-(nA-1)*tread-tread/2, zL2=zBack+SW/2;
+    box(g,SW,0.12,zTopA-zL2,wE,y+nA*rise-0.06,(zTopA+zL2)/2,M.rail);                       // flat run
+    box(g,TW,0.12,SW,XC,y+nA*rise,zBack,M.rail);                                            // back turn landing 2
+    var nB=4,riseB=(top-(y+nA*rise))/(nB+1),WB=1.8,tB=0.30,xB0=X1-SW-tB/2;
+    for(var s=0;s<nB;s++){box(g,tB,riseB,WB,xB0-s*tB,y+nA*rise+(s+0.5)*riseB,zBack,M.wood);} // 2->3 (X-axis)
+  })();
+  // --- level 2: 1st floor (3) -> X flight west->east -> turn (4) -> Z flight front->back -> top landing (5) ---
+  (function(){var y=FH,top=TH,rise=(top-y)/16,n34=5,tA=0.28,zA=12.3,xW0=X0+0.1+tA/2,L4=0.9;   // zA aligned with 1st-floor door
+    for(var s=0;s<n34;s++){box(g,tA,rise,SW,xW0+s*tA,y+(s+0.5)*rise,zA,M.wood);}           // 3->4: 5 steps, tread 0.28
+    box(g,L4,0.12,1.0,X1-L4/2,y+n34*rise,zA,M.rail);                                        // turn landing 4 (0.9 m, east end)
+    var n45=16-n34,z45=zA-0.5-0.12,t45=0.21;
+    for(var s=0;s<n45;s++){box(g,SW,rise,t45,wE,y+n34*rise+(s+0.5)*rise,z45-s*t45,M.wood);} // 4->5: 11 steps, tread 0.24
+    box(g,TW,0.12,0.6,XC,top-0.06,9.8,M.rail);                                              // top landing 5
+  })();
+}
+/* ---- first floor ---- */
+function first(g){
+  var FW=3.0;                              // first-floor room height 3 m
+  var y=FH,w=interior(g,y,FW);
+  w.wz(0,0,8.5);w.wx(0,0,2.5);w.wx(5.5,0,2.5);   // 1st floor: close the ground yard openings
+  w.wz(5.0,0,4.1);                         // 1st floor: master / bedroom 2 split at z 5.0
+  // living-room back wall (z 9.5) with a 1.2 x 1.2 window onto the external corridor, centred x 8.5, sill 1.0 m
+  w.wz(9.5,5.2,6.7);w.wz(9.5,7.9,11.5);
+  box(g,1.2,1.0,0.16,7.3,y+0.5,9.5,M.wall);box(g,1.2,FW-2.2,0.16,7.3,y+2.2+(FW-2.2)/2,9.5,M.wall);
+  box(g,1.2,1.2,0.05,7.3,y+1.6,9.5,M.glass);box(g,1.26,0.06,0.2,7.3,y+1.0,9.5,M.rail);   // glass + sill (centred on the corridor-facing stretch x 5.5-9.1)
+  w.wx(4.1,6.1,9.5);                       // 1st floor: bedroom 2 east wall (door gap z 5.3-6.1)
+  w.wx(4.1,0,3.9);w.wx(4.1,4.7,5.3);       // 1st floor: master bedroom east wall (door gap z 3.9-4.7) + segment to bedroom 2 door gap
+  w.wx(5.5,6.5,9.5);                       // 1st floor: living room west wall (door gap z 5.7-6.5)
+  w.wx(4.1,1.0,1.8);                       // close the ground-floor master-bedroom door gap on the 1st floor
+  floor(g,4.1,0,5.5,2.2,0xdde8ec,y+0.001);w.wz(2.2,4.1,4.3);w.wz(2.2,5.1,5.5);   // 1st-floor bathroom stays at the corridor end
+  w.wz(5.5,9.5,10.4);                      // close the kitchen/living-room door gap on the 1st floor
+  // bedroom 2 extension into balcony 1: 2.5 long (z 9.5-12.0) x 3.5 wide (x 0-3.5); door to balcony at x 1.6-2.4
+  var ZB2=12.0, XB2=3.5;
+  floor(g,0,9.5,XB2,ZB2,0xf2e3c4,y);
+  w.wx(0,9.5,ZB2);w.wx(XB2,9.5,ZB2);w.wz(ZB2,0,1.6);w.wz(ZB2,2.4,XB2);
+  w.wz(9.5,XB2-0.08,4.1+0.08);            // close the 0.6 m gap at the corner (x 3.5-4.1, z 9.5)
+  box(g,XB2,0.22,ZB2-9.5,XB2/2,y+3.0+0.11,(9.5+ZB2)/2,mat(0xcfc7b3));  // roof over the extension
+  furniture(g,y);
+  // slab under the first floor (visible edge) + balconies, gallery, stairwell landing
+  box(g,W,0.25,H,W/2,y-0.13,H/2,mat(0xb4b2a9));
+  box(g,W,0.22,H,W/2,y+FW+0.11,H/2,mat(0xcfc7b3));   // roof cover over first floor (main block z0-9.5; balconies & stairwell open)
+  box(g,5,0.25,4,9.0,y-0.13,-2.0,mat(0xd8d2c2));box(g,4.1,0.25,5.5,2.05,y-0.13,12.25,mat(0xd8d2c2));  // balcony 2 = 5x4 (x 6.5-11.5, z -4..0); balcony 1 = full garage roof
+  box(g,5.0,0.25,3.0,6.6,y-0.13,11.0,mat(0xe4ddcb));                                        // external corridor 3 m wide (z 9.5-12.5, x 4.1-9.1)
+  function rx(x,z1,z2){box(g,0.06,0.5,z2-z1,x,y+0.25,(z1+z2)/2,M.rail);}
+  function rz(z,x1,x2){box(g,x2-x1,0.5,0.06,(x1+x2)/2,y+0.25,z,M.rail);}
+  rz(-4,6.5,11.5);rx(6.5,-4,0);rx(11.5,-4,0);
+  rz(15,0,4.1);rx(0,ZB2,15);rx(4.1,12.5,15);rz(12.5,4.1,9.1);
+  box(g,0.08,2.0,0.85,X0,y+1.0,12.05,M.wood);                                                  // door corridor -> tower, top-right corner of corridor
+  var L=y+1.7;
+  label(g,'14. Balcony 2','5 × 4',9.0,L,-2.1,2.6);label(g,'15. Balcony 1','4.1 × 3.0 + 0.6 strip',1.9,L,13.5,2.6);
+  label(g,'16. External Corridor','width 3 m',6.6,L,11.0,2.2);label(g,'13. Stairwell','from ground',XC,L,11.2,2.0);
+}
+box(scene,15,0.3,24,5.75,-0.15,4.0,mat(0xb4b2a9));   // plot: x -1.75..13.25, z -8..16 (8 m backyard)
+box(scene,11.5,0.06,8,5.75,0.03,-4.0,mat(0xcfd9b8));   // backyard ground (z -8..0)
+ground(gGround,1.1);ground(gTall,FH-0.2);first(gFirst);
+
+var mode='both';
+function apply(){gFirst.visible=(mode!=='ground');gGround.visible=(mode==='ground');gTall.visible=(mode==='both');
+  gTall.children.forEach(function(o){if(o.isSprite)o.visible=false;});}
+apply();
+document.querySelectorAll('#ui button[data-f]').forEach(function(b){b.onclick=function(){mode=b.dataset.f;document.querySelectorAll('#ui button[data-f]').forEach(function(x){x.classList.toggle('on',x===b);});apply();};});
+
+var cx=5.75,cz=6.5,theta=0.9,phi=0.95,r=30,auto=true;
+function place(){camera.position.set(cx+r*Math.sin(phi)*Math.sin(theta),r*Math.cos(phi),cz+r*Math.sin(phi)*Math.cos(theta));camera.lookAt(cx,1.2,cz);}
+var drag=false,px=0,py=0,pd=0;
+el.addEventListener('pointerdown',function(e){drag=true;auto=false;px=e.clientX;py=e.clientY;el.setPointerCapture(e.pointerId);el.style.cursor='grabbing';});
+el.addEventListener('pointermove',function(e){if(!drag)return;theta-=(e.clientX-px)*0.008;phi-=(e.clientY-py)*0.006;phi=Math.max(0.15,Math.min(1.45,phi));px=e.clientX;py=e.clientY;});
+el.addEventListener('pointerup',function(){drag=false;el.style.cursor='grab';});
+el.addEventListener('wheel',function(e){e.preventDefault();r+=e.deltaY*0.02;r=Math.max(10,Math.min(50,r));},{passive:false});
+el.addEventListener('touchstart',function(e){if(e.touches.length===2)pd=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);});
+el.addEventListener('touchmove',function(e){if(e.touches.length===2){var d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);r-=(d-pd)*0.05;r=Math.max(10,Math.min(50,r));pd=d;}},{passive:true});
+document.getElementById('bAuto').onclick=function(){auto=!auto;};
+document.getElementById('bTop').onclick=function(){auto=false;phi=0.15;theta=Math.PI;};
+document.getElementById('bTower').onclick=function(){var hide=!this.classList.contains('on');towerShells.forEach(function(s){s.visible=!hide;});this.classList.toggle('on',hide);this.textContent=hide?'إظهار البرج':'إخفاء البرج (عرض الدرج)';};
+(function anim(){requestAnimationFrame(anim);if(auto)theta+=0.0035;place();renderer.render(scene,camera);})();
+})();
+</script>
+</body>
+</html>

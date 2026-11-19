@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة نسخ البيت</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f3ee;--surface:#ffffff;--surface2:#f0ebe3;--ink:#2a2622;--muted:#7a7068;--line:#e3dcd2;
+  --accent:#b5652b;--accent-ink:#ffffff;--accent-soft:#f6e6d8;--good:#2f7d5b;--shadow:0 1px 2px rgba(40,30,20,.06),0 4px 16px rgba(40,30,20,.06);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1b1916;--surface:#25221e;--surface2:#2e2a25;--ink:#f1ece5;--muted:#a89e93;--line:#3a352f;
+  --accent:#e08a4c;--accent-ink:#1b1916;--accent-soft:#3a2c20;--good:#5cc196;--shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+}}
+:root[data-theme="dark"]{
+  --bg:#1b1916;--surface:#25221e;--surface2:#2e2a25;--ink:#f1ece5;--muted:#a89e93;--line:#3a352f;
+  --accent:#e08a4c;--accent-ink:#1b1916;--accent-soft:#3a2c20;--good:#5cc196;--shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Tajawal",system-ui,sans-serif;font-size:16px;line-height:1.6}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:20px}
+h1{font-size:28px;font-weight:800;margin:0}
+.sub{color:var(--muted);margin:2px 0 0}
+nav{display:flex;gap:8px;flex-wrap:wrap}
+nav a{color:var(--ink);text-decoration:none;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:14px}
+nav a:hover{border-color:var(--accent)}
+section{margin-top:36px}
+h2{font-size:21px;margin:0 0 4px}
+.lead{color:var(--muted);margin:0 0 14px;font-size:15px}
+.hero{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+.hero .tag{display:inline-block;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:13px;padding:2px 10px;border-radius:999px}
+.hero h3{font-size:24px;margin:8px 0 4px}
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;align-content:start}
+.fact{background:var(--surface2);border-radius:12px;padding:10px 12px}
+.fact b{display:block;font-size:20px;direction:ltr;text-align:right}
+.fact span{color:var(--muted);font-size:13px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:0;cursor:pointer;font:inherit;font-weight:700;font-size:15px;padding:9px 16px;border-radius:10px;text-decoration:none;background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--accent)}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow)}
+.card h4{margin:0;font-size:17px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.chip{background:var(--surface2);border-radius:999px;padding:1px 9px}
+.chip.hot{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.card p{margin:0;color:var(--muted);font-size:14px;flex:1}
+.card .btns{margin-top:8px}
+.card .btn{font-size:14px;padding:7px 12px}
+.plans{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.plan{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;text-decoration:none;color:var(--ink);display:flex;flex-direction:column}
+.plan img{width:100%;aspect-ratio:4/3;object-fit:contain;background:#fff;display:block}
+.plan span{padding:8px 10px;font-size:14px}
+.plan small{display:block;color:var(--muted)}
+.group-title{font-weight:700;margin:18px 0 8px;font-size:16px}
+/* cost */
+.cost{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
+.cost-top{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:12px}
+.field label{display:block;font-size:13px;color:var(--muted)}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 8px;min-width:0}
+input:focus{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
+.tbl{width:100%;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right;vertical-align:middle}
+th{font-size:13px;color:var(--muted);font-weight:500}
+td input{width:100%}
+td.num{direction:ltr;text-align:left;font-variant-numeric:tabular-nums;white-space:nowrap}
+td .src{display:block;font-size:12px;color:var(--muted)}
+.x{background:none;border:0;color:var(--muted);cursor:pointer;font-size:18px;line-height:1}
+.x:hover{color:var(--accent)}
+.totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:14px}
+.total{background:var(--surface2);border-radius:12px;padding:12px}
+.total span{color:var(--muted);font-size:13px}
+.total b{display:block;font-size:22px;direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+.total.big{background:var(--accent);color:var(--accent-ink)}
+.total.big span{color:inherit;opacity:.85}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+/* modal */
+dialog{border:0;padding:0;border-radius:14px;width:min(1100px,96vw);height:min(760px,90vh);background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(20,15,10,.55)}
+.dlg-head{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line);gap:8px}
+.dlg-head b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+dialog iframe{width:100%;height:calc(100% - 50px);border:0;display:block;background:#fff}
+footer{margin-top:40px;color:var(--muted);font-size:13px;text-align:center}
+input[type=number]{direction:ltr;text-align:right}
+@media (max-width:760px){.hero{grid-template-columns:1fr}h1{font-size:23px}
+  table{min-width:0}thead{display:none}
+  tbody tr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px 8px;padding:10px 0;border-bottom:1px solid var(--line);position:relative}
+  tbody td{border:0;padding:0}
+  tbody td:first-child{grid-column:1/-1;padding-left:28px}
+  tbody td.num{grid-column:1/-1;text-align:right;font-weight:700}
+  tbody td:last-child{position:absolute;left:0;top:14px}
+  tbody td:nth-child(2)::before{content:"الكمية";display:block;font-size:12px;color:var(--muted)}
+  tbody td:nth-child(3)::before{content:"الوحدة";display:block;font-size:12px;color:var(--muted)}
+  tbody td:nth-child(4)::before{content:"سعر الوحدة";display:block;font-size:12px;color:var(--muted)}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1>لوحة نسخ البيت</h1>
+    <p class="sub">كل نسخ التصميم في مكان واحد، مع حاسبة التكلفة</p>
+  </div>
+  <nav>
+    <a href="#final">النسخة النهائية</a>
+    <a href="#versions">كل النسخ</a>
+    <a href="#plans">المخططات</a>
+    <a href="#cost">حساب التكلفة</a>
+  </nav>
+</header>
+
+<section id="final" style="margin-top:0">
+  <div class="hero">
+    <div>
+      <span class="tag">النسخة النهائية المعتمدة</span>
+      <h3>البيت v3 مع درج البرج واقتراح سلوى</h3>
+      <p class="lead" style="margin:0">آخر تعديل: 2 أكتوبر 2026، حمّام الطابق الأول 2.7 × 1.7 م. فيها البيت والأساسات والكهف واقتراح سلوى للدرج.</p>
+      <div class="btns">
+        <a class="btn" href="./">افتح النسخة النهائية</a>
+        <button class="btn ghost" data-preview="./" data-title="النسخة النهائية">معاينة هنا</button>
+      </div>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>12.7 × 9.5 م</b><span>مساحة البيت</span></div>
+      <div class="fact"><b>2</b><span>طابقان: الأرضي والأول</span></div>
+      <div class="fact"><b>6 × 7 م</b><span>الكهف تحت الأرض (−2.8 م)</span></div>
+      <div class="fact"><b>3.2 م</b><span>ارتفاع الطابق</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="versions">
+  <h2>كل النسخ ثلاثية الأبعاد</h2>
+  <p class="lead">من الأحدث إلى الأقدم. كل نسخة محفوظة كما هي، ما تحذف منها شيء.</p>
+  <div class="grid" id="vgrid"></div>
+</section>
+
+<section id="plans">
+  <h2>المخططات والواجهات</h2>
+  <p class="lead">اضغط على أي صورة لفتحها بالحجم الكامل.</p>
+  <div id="pgroups"></div>
+</section>
+
+<section id="cost">
+  <h2>حساب التكلفة</h2>
+  <p class="lead">المساحات مأخوذة من تصميم v3، والأسعار تكتبها أنت. كل شيء قابل للتعديل، ويتحفظ في هذا المتصفح.</p>
+  <div class="cost">
+    <div class="cost-top">
+      <div class="field"><label for="cur">العملة</label><input id="cur" value="د.ت" style="width:90px"></div>
+      <div class="field"><label for="cont">احتياط للطوارئ (%)</label><input id="cont" type="number" min="0" step="1" value="10" style="width:110px"></div>
+      <button class="btn ghost" id="addRow">+ أضف بند</button>
+      <button class="btn ghost" id="resetCost">إرجاع القيم الأصلية</button>
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th style="width:31%">البند</th><th style="width:15%">الكمية</th><th style="width:10%">الوحدة</th><th style="width:18%">سعر الوحدة</th><th style="width:20%">المجموع</th><th style="width:6%"></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="totals">
+      <div class="total"><span>مجموع البنود</span><b id="tSub">0</b></div>
+      <div class="total"><span>الاحتياط</span><b id="tCont">0</b></div>
+      <div class="total"><span>سعر المتر المربع (للطابقين)</span><b id="tM2">0</b></div>
+      <div class="total big"><span>التكلفة الإجمالية</span><b id="tAll">0</b></div>
+    </div>
+    <p class="note">الكميات الافتراضية من ملف v3: البيت 12.7 × 9.5 م لكل طابق، الكهف 6 × 7 م، البلكون 1 مساحته 4.1 × 3 م، والبلكون 2 مساحته 5 × 4 م. راجعها مع المقاول قبل الاعتماد.</p>
+  </div>
+</section>
+
+<footer>تصميم البيت · كل النسخ محفوظة في مجلد <span dir="ltr">versions/</span></footer>
+</div>
+
+<dialog id="dlg">
+  <div class="dlg-head"><b id="dlgTitle"></b><div style="display:flex;gap:6px"><a class="btn ghost" id="dlgOpen" target="_blank" rel="noopener">افتح في صفحة</a><button class="btn ghost" id="dlgClose">إغلاق</button></div></div>
+  <iframe id="dlgFrame" title="معاينة"></iframe>
+</dialog>
+
+<script>
+var VERSIONS=[
+  {f:'versions/house-3d-v3.html',t:'v3 مع اقتراح سلوى',d:'2026-10-02',k:'بيت كامل',hot:'الأحدث',p:'نسخة محفوظة من النسخة النهائية: 12.7 × 9.5 م، الأساسات، الكهف، واقتراح سلوى للدرج.'},
+  {f:'versions/stairs-SALWA-proposal.html',t:'اقتراح سلوى للدرج (البداية)',d:'2026-09-28',k:'الدرج',p:'أول خطوات اقتراح سلوى، منفصل. النسخة الكاملة موجودة داخل النسخة النهائية.'},
+  {f:'versions/foundation-3d-v1.html',t:'الأساسات v1',d:'2026-09-27',k:'الأساسات',p:'مخطط الأساسات ثلاثي الأبعاد: القواعد والأعمدة والجسور.'},
+  {f:'versions/house-3d-FINAL.html',t:'النسخة "FINAL" القديمة',d:'2026-09-16',k:'بيت كامل',p:'نسخة مجمدة من v3 قبل تعديلات سلوى (وسم final-version).'},
+  {f:'versions/house-3d-AZIZ-version.html',t:'نسخة عزيز',d:'2026-09-16',k:'بيت كامل',p:'نسخة مجمدة من البيت مع درج البرج (وسم aziz-version).'},
+  {f:'versions/stairs-BEST-locked.html',t:'الدرج المعتمد (مقفل)',d:'2026-09-16',k:'الدرج',p:'درج البرج المعتمد، محفوظ كما هو بدون أي تعديل.'},
+  {f:'versions/stairs-tour.approved-v1.html',t:'جولة الدرج: المعتمدة v1',d:'2026-09-16',k:'الدرج',p:'أول نسخة معتمدة من درج البرج.'},
+  {f:'versions/stairs-tour.html',t:'جولة الدرج',d:'2026-09-16',k:'الدرج',p:'اختبار الدرج والبرج منفصلين.'},
+  {f:'versions/house-3d-v2.html',t:'البيت v2',d:'2026-09-07',k:'بيت كامل',p:'المقترح الثاني: 11.5 × 9.5 م مع الكراج والغرفة الإضافية.'},
+  {f:'versions/house-3d-v1.html',t:'البيت v1',d:'2026-09-07',k:'بيت كامل',p:'أول نموذج ثلاثي الأبعاد للطابقين.'}
+];
+var PLANS=[
+  {g:'المقترح الثاني (v2)',items:[
+    ['house-plans-v2-both-floors.svg','الطابقان في لوحة واحدة'],['ground-floor-v2.svg','الطابق الأرضي'],['first-floor-v2.svg','الطابق الأول']]},
+  {g:'واجهات ومراجع v2',items:[
+    ['facade-elevation-v2.png','الواجهة'],['facade-elevation-alt-v2.png','واجهة بديلة'],['facade-elevation-alt-dimensioned-v2.png','واجهة بديلة بالمقاسات'],
+    ['entrance-door-stairwell-elevation-v2.png','باب الدخول وبيت الدرج'],['ground-floor-projected-plan-rdc-v2.png','مسقط الطابق الأرضي'],['first-floor-projected-plan-etage-v2.png','مسقط الطابق الأول']]},
+  {g:'المقترح الأول (v1)',items:[
+    ['house-plans-v1-both-floors.png','الطابقان في لوحة واحدة'],['ground-floor-v1.png','الطابق الأرضي'],['first-floor-v1.png','الطابق الأول'],['house-plans-v1-both-floors.pdf','نسخة PDF للطباعة']]},
+  {g:'المقترحات المبكرة',items:[
+    ['floor-plan-v4.png','مقترح 4'],['floor-plan-v3.png','مقترح 3'],['floor-plan-v2.png','مقترح 2']]}
+];
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function fmtDate(d){var p=d.split('-'),m=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];return (+p[2])+' '+m[+p[1]-1]+' '+p[0];}
+
+document.getElementById('vgrid').innerHTML=VERSIONS.map(function(v){
+  return '<div class="card"><h4>'+esc(v.t)+'</h4><div class="meta"><span class="chip">'+esc(v.k)+'</span><span>'+fmtDate(v.d)+'</span>'+(v.hot?'<span class="chip hot">'+esc(v.hot)+'</span>':'')+'</div><p>'+esc(v.p)+'</p><div class="btns"><a class="btn" href="'+v.f+'">افتح</a><button class="btn ghost" data-preview="'+v.f+'" data-title="'+esc(v.t)+'">معاينة</button></div></div>';
+}).join('');
+document.getElementById('pgroups').innerHTML=PLANS.map(function(g){
+  return '<div class="group-title">'+esc(g.g)+'</div><div class="plans">'+g.items.map(function(it){
+    var src='plans/'+it[0],pdf=/\.pdf$/.test(it[0]);
+    return '<a class="plan" href="'+src+'" target="_blank" rel="noopener">'+(pdf?'<img alt="" src="plans/house-plans-v1-both-floors.png">':'<img loading="lazy" alt="'+esc(it[1])+'" src="'+src+'">')+'<span>'+esc(it[1])+'<small dir="ltr">'+esc(it[0])+'</small></span></a>';
+  }).join('')+'</div>';
+}).join('');
+
+/* preview dialog */
+var dlg=document.getElementById('dlg'),frame=document.getElementById('dlgFrame');
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-preview]');if(!b)return;
+  frame.src=b.getAttribute('data-preview');document.getElementById('dlgTitle').textContent=b.getAttribute('data-title');
+  document.getElementById('dlgOpen').href=b.getAttribute('data-preview');dlg.showModal();
+});
+function closeDlg(){dlg.close();}
+document.getElementById('dlgClose').onclick=closeDlg;
+dlg.addEventListener('close',function(){frame.src='about:blank';});
+
+/* cost calculator */
+var FLOOR=12.7*9.5;
+var DEFAULT={cur:'د.ت',cont:10,rows:[
+  {n:'بناء الطابق الأرضي (العظم)',q:+FLOOR.toFixed(2),u:'م²',p:0,s:'12.7 × 9.5 م'},
+  {n:'بناء الطابق الأول (العظم)',q:+FLOOR.toFixed(2),u:'م²',p:0,s:'12.7 × 9.5 م'},
+  {n:'الكهف تحت الأرض',q:42,u:'م²',p:0,s:'6 × 7 م'},
+  {n:'الأساسات',q:1,u:'مقطوعة',p:0,s:''},
+  {n:'البلكون 1',q:12.3,u:'م²',p:0,s:'4.1 × 3 م'},
+  {n:'البلكون 2',q:20,u:'م²',p:0,s:'5 × 4 م'},
+  {n:'التشطيب (الطابقان)',q:+(FLOOR*2).toFixed(2),u:'م²',p:0,s:'الطابقان'},
+  {n:'الكهرباء',q:1,u:'مقطوعة',p:0,s:''},
+  {n:'السباكة (الماء والصرف)',q:1,u:'مقطوعة',p:0,s:''},
+  {n:'الأبواب والشبابيك',q:1,u:'مقطوعة',p:0,s:''}
+]};
+var KEY='house3d-cost-v1',state;
+function load(){try{var s=JSON.parse(localStorage.getItem(KEY));if(s&&s.rows)return s;}catch(e){}return JSON.parse(JSON.stringify(DEFAULT));}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function money(x){return Math.round(x).toLocaleString('en-US')+' '+state.cur;}
+function render(){
+  document.getElementById('cur').value=state.cur;document.getElementById('cont').value=state.cont;
+  document.getElementById('rows').innerHTML=state.rows.map(function(r,i){
+    return '<tr data-i="'+i+'"><td><input data-k="n" value="'+esc(r.n)+'" aria-label="البند">'+(r.s?'<span class="src">من التصميم: '+esc(r.s)+'</span>':'')+'</td>'+
+      '<td><input data-k="q" type="number" min="0" step="any" value="'+r.q+'" aria-label="الكمية"></td>'+
+      '<td><input data-k="u" value="'+esc(r.u)+'" aria-label="الوحدة"></td>'+
+      '<td><input data-k="p" type="number" min="0" step="any" value="'+(r.p||'')+'" placeholder="اكتب السعر" aria-label="سعر الوحدة"></td>'+
+      '<td class="num" data-tot></td><td><button class="x" title="احذف البند" aria-label="احذف البند">×</button></td></tr>';
+  }).join('');
+  calc();
+}
+function calc(){
+  var sub=0;
+  [].forEach.call(document.querySelectorAll('#rows tr'),function(tr){var r=state.rows[+tr.dataset.i],t=(+r.q||0)*(+r.p||0);sub+=t;tr.querySelector('[data-tot]').textContent=money(t);});
+  var cont=sub*(+state.cont||0)/100,all=sub+cont;
+  document.getElementById('tSub').textContent=money(sub);document.getElementById('tCont').textContent=money(cont);
+  document.getElementById('tAll').textContent=money(all);document.getElementById('tM2').textContent=money(all/(FLOOR*2));
+}
+document.getElementById('rows').addEventListener('input',function(e){
+  var k=e.target.dataset.k;if(!k)return;var r=state.rows[+e.target.closest('tr').dataset.i];
+  r[k]=(k==='q'||k==='p')?parseFloat(e.target.value)||0:e.target.value;save();calc();
+});
+document.getElementById('rows').addEventListener('click',function(e){
+  if(!e.target.classList.contains('x'))return;state.rows.splice(+e.target.closest('tr').dataset.i,1);save();render();
+});
+document.getElementById('cur').addEventListener('input',function(e){state.cur=e.target.value;save();calc();});
+document.getElementById('cont').addEventListener('input',function(e){state.cont=parseFloat(e.target.value)||0;save();calc();});
+document.getElementById('addRow').onclick=function(){state.rows.push({n:'بند جديد',q:1,u:'مقطوعة',p:0,s:''});save();render();};
+document.getElementById('resetCost').onclick=function(){if(confirm('ترجع كل الكميات والأسعار للقيم الأصلية؟')){state=JSON.parse(JSON.stringify(DEFAULT));save();render();}};
+state=load();render();
+</script>
+</body>
+</html>
