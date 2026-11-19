@@ -100,13 +100,28 @@ ul.plain li{margin:4px 0}
   html{scroll-padding-top:64px}
 }
 @media print{
-  aside,.noprint,.frame{display:none!important}
+  aside,.noprint,.frame,.mini{display:none!important}
   .shell{display:block}
   main{padding:0}
   .chapter{break-inside:auto;page-break-before:always}
   .print-only{display:block!important}
   input.in{border:0;background:none}
 }
+.boq td{vertical-align:top}
+.boq input.txt{width:100%;min-width:170px;text-align:start;direction:rtl}
+.boq input.unitin{min-width:80px;width:100px}
+.boq select.sel{min-width:110px}
+select.in{width:auto;text-align:start;direction:rtl;padding:4px 4px}
+.qcell{display:flex;gap:4px;align-items:center;justify-content:flex-end}
+.mini{font:inherit;font-size:14px;line-height:1;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:6px;padding:5px 7px;cursor:pointer}
+.mini:hover{background:var(--surface2);color:var(--ink)}
+.mini.del:hover{color:var(--warn);border-color:var(--warn)}
+input.in.ov{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:700}
+.src{font-size:12px;color:var(--muted);margin-top:3px}
+.src.estsrc{color:var(--warn)}
+.hint{font-size:12px;color:var(--muted);text-align:left;margin-top:3px}
+.diacell{display:flex;gap:8px;align-items:center;white-space:nowrap}
+.rowtools{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .print-only{display:none}
 </style>
 </head>
@@ -147,7 +162,7 @@ ul.plain li{margin:4px 0}
       <div class="card stat"><div class="k">الطوابق</div><div class="v">أرضي + أوّل <small>+ كهف</small></div></div>
       <div class="card stat"><div class="k">مجموع مواد الطابق الأول</div><div class="v"><span class="num" id="sumTotal">0</span> <small id="sumCur">د.ت</small></div></div>
     </div>
-    <p class="lede" style="margin-top:18px">الكرّاس هذا يلمّ كل شيء في بلاصة وحدة: النموذج النهائي ثلاثي الأبعاد، مقاسات الدار الكل والبيوت، الأساسات بمقاساتها، الدراسة المناخية كاملة (الشمس والريح)، وفي الآخر قائمة المواد الأولية للطابق الأول (حديد 6 و 12، إسمنت، رمل، حصى، آجر، هوردي، بوترال) بجدول تكتب فيه الأسوام وتطلعلك التكلفة. الحساب للطابق الأول برك، خاطر هو اللي باش تصير فيه الأشغال؛ الأساسات والطابق الأرضي موجودين للمعلومة.</p>
+    <p class="lede" style="margin-top:18px">الكرّاس هذا يلمّ كل شيء في بلاصة وحدة: النموذج النهائي ثلاثي الأبعاد، مقاسات الدار الكل والبيوت، الأساسات بمقاساتها، الدراسة المناخية كاملة (الشمس والريح)، وفي الآخر قائمة المواد الأولية للطابق الأول (حديد 6 و 12، إسمنت، رمل، حصى، آجر، هوردي، بوترال) بأسوام تونس (نوفمبر 2026)، وكل شيء فيه يتبدّل: الكمية، الوحدة، السوم وقطر الحديد. الحساب للطابق الأول برك، خاطر هو اللي باش تصير فيه الأشغال؛ الأساسات والطابق الأرضي موجودين للمعلومة.</p>
     <div class="note">الكميات محسوبة من النموذج والنسب تقديرية. قبل الشراء، خلّي المهندس ولا المقاول يثبّت عدد السواري، الحديد، وسمك السقف.</div>
   </div>
 </section>
@@ -271,7 +286,7 @@ ul.plain li{margin:4px 0}
 <section class="chapter" id="c-cost">
   <span class="eyebrow">الفصل 6 · الطابق الأول فقط</span>
   <h2>المواد الأولية والتكلفة</h2>
-  <p class="lede">الجدول الأوّل هو المهم: كل مادة بكمّيتها، اكتب سوم الوحدة وتطلعلك التكلفة. الحديد 6 و 12 فقط. الكميات محسوبة من مقاسات النموذج، وتنجم تبدّل أي رقم تحت (الكميات والنسب) والحساب يتعاود وحدو. الأرقام تتسجّل في المتصفّح متاعك.</p>
+  <p class="lede">كل شيء في الجدول يتبدّل: اسم المادة، الكمية، الوحدة، سوم الوحدة، ونوع الحديد (القطر) لكل عنصر. الأسوام المكتوبة هي أسوام تونس (المصدر مكتوب تحت كل مادة). اللي مكتوب عليه "تقديري" ما لقيتلوش سوم منشور، بدّلو بسوم الكرّاء متاعك. الأرقام تتسجّل في المتصفّح متاعك.</p>
 
   <div class="card total-card">
     <div><div class="unit">مجموع المواد</div><div class="big"><span class="num" id="tSub">0</span> <span class="cur">د.ت</span></div></div>
@@ -281,20 +296,25 @@ ul.plain li{margin:4px 0}
       <label class="unit">العملة <input class="in" id="cur" style="width:70px" value="د.ت"></label>
       <label class="unit">الاحتياط % <input class="in" id="cont" type="number" step="1" min="0" style="width:64px" value="10"></label>
       <button class="btn" id="csv">CSV</button>
-      <button class="btn" id="reset">رجّع الأرقام الأصلية</button>
+      <button class="btn" id="reset">رجّع كل شيء للأصل</button>
     </div>
   </div>
 
   <h3>1. قائمة المواد والأسوام</h3>
-  <div class="tbl"><table id="boq">
-    <thead><tr><th>المادة</th><th class="n">الكمية</th><th>الوحدة</th><th class="n">سوم الوحدة</th><th class="n">المجموع</th></tr></thead>
+  <div class="tbl"><table id="boq" class="boq">
+    <thead><tr><th>المادة</th><th class="n">الكمية</th><th>الوحدة</th><th class="n">سوم الوحدة</th><th class="n">المجموع</th><th class="noprint"></th></tr></thead>
     <tbody></tbody>
-    <tfoot><tr><td colspan="4">المجموع</td><td class="n num" id="boqSum"></td></tr></tfoot>
+    <tfoot><tr><td colspan="4">المجموع</td><td class="n num" id="boqSum"></td><td class="noprint"></td></tr></tfoot>
   </table></div>
+  <div class="rowtools noprint">
+    <button class="btn" data-add="main">+ زيد مادة</button>
+    <button class="btn" data-restore="main" hidden>رجّع المواد اللي نحّيتها</button>
+  </div>
+  <p class="unit">الكمية محسوبة من النموذج. كي تكتب رقمك يولّي ملوّن، والزرّ ↺ يرجّع الرقم المحسوب. كي تبدّل الوحدة (مثلاً الحديد من القضيب للكغ) الكمية والسوم يتحوّلو وحدهم. الزرّ × ينحّي المادة.</p>
 
-  <h3>2. منين جات الكميات (حسب العنصر)</h3>
+  <h3>2. منين جات الكميات (حسب العنصر) · اختار قطر الحديد</h3>
   <div class="tbl"><table id="byEl">
-    <thead><tr><th>العنصر</th><th>المقاس</th><th class="n">خرسانة م³</th><th class="n">حديد 12 كغ</th><th class="n">حديد 6 كغ</th><th class="n">آجر (حبة)</th><th class="n">ملاط م³</th></tr></thead>
+    <thead><tr><th>العنصر</th><th>المقاس</th><th class="n">خرسانة م³</th><th>الحديد الرئيسي</th><th>الحديد الثانوي (كادرات، شبكة)</th><th class="n">آجر (حبة)</th><th class="n">ملاط م³</th></tr></thead>
     <tbody></tbody>
     <tfoot></tfoot>
   </table></div>
@@ -312,7 +332,7 @@ ul.plain li{margin:4px 0}
   <h3>4. النسب المستعملة <span class="est">تقديرية · يثبّتها المهندس</span></h3>
   <div class="grid g2">
     <div class="tbl"><table id="rConc"><thead><tr><th>الخرسانة والحديد</th><th class="n">القيمة</th><th>الوحدة</th></tr></thead><tbody></tbody></table></div>
-    <div class="tbl"><table id="rMas"><thead><tr><th>البني والطلي والسقف</th><th class="n">القيمة</th><th>الوحدة</th></tr></thead><tbody></tbody></table></div>
+    <div class="tbl"><table id="rMas"><thead><tr><th>البني والطلي والسقف والتحويل</th><th class="n">القيمة</th><th>الوحدة</th></tr></thead><tbody></tbody></table></div>
   </div>
   <p class="unit" id="ratioCheck"></p>
 </section>
@@ -321,7 +341,7 @@ ul.plain li{margin:4px 0}
 <section class="chapter" id="c-dalle">
   <span class="eyebrow">الفصل 7 · الدالة فقط</span>
   <h2>حساب الدالة (سقف الطابق الأول)</h2>
-  <p class="lede">حساب منفصل للدالة وحدها: السقف بالهوردي 16 + بلاكة 5 سم، مع الجسور اللي تتصبّ معاها في نفس النهار. السواري، الدرج، الحيوط والطلي موش داخلين هنا. الأسوام هي نفسها متاع الفصل 6: كي تبدّل سوم هنا يتبدّل غادي، والعكس.</p>
+  <p class="lede">حساب منفصل للدالة وحدها: السقف بالهوردي 16 + بلاكة 5 سم، مع الجسور اللي تتصبّ معاها في نفس النهار. السواري، الدرج، الحيوط والطلي موش داخلين هنا. اسم المادة، الوحدة والسوم مشتركين مع الفصل 6 (تبدّل هنا يتبدّل غادي)، أما الكمية والمواد اللي تزيدها ولا تنحّيها خاصّين بالدالة.</p>
 
   <div class="card total-card">
     <div><div class="unit">مجموع مواد الدالة</div><div class="big"><span class="num" id="dSub">0</span> <span class="cur">د.ت</span></div></div>
@@ -338,24 +358,28 @@ ul.plain li{margin:4px 0}
   <div class="grid g4" style="margin-top:14px">
     <div class="card stat"><div class="k">مساحة الدالة</div><div class="v"><span class="num" id="dArea">0</span> <small>م²</small></div></div>
     <div class="card stat"><div class="k">خرسانة (مع الضياع)</div><div class="v"><span class="num" id="dConc">0</span> <small>م³</small></div></div>
-    <div class="card stat"><div class="k">حديد 12</div><div class="v"><span class="num" id="dKg12">0</span> <small>كغ</small></div></div>
-    <div class="card stat"><div class="k">حديد 6</div><div class="v"><span class="num" id="dKg6">0</span> <small>كغ</small></div></div>
+    <div class="card stat"><div class="k" id="dKgML">الحديد الرئيسي</div><div class="v"><span class="num" id="dKgM">0</span> <small>كغ</small></div></div>
+    <div class="card stat"><div class="k" id="dKgSL">الحديد الثانوي</div><div class="v"><span class="num" id="dKgS">0</span> <small>كغ</small></div></div>
   </div>
 
   <h3>مواد الدالة والأسوام</h3>
-  <div class="tbl"><table id="dBoq">
-    <thead><tr><th>المادة</th><th class="n">الكمية</th><th>الوحدة</th><th class="n">سوم الوحدة</th><th class="n">المجموع</th></tr></thead>
+  <div class="tbl"><table id="dBoq" class="boq">
+    <thead><tr><th>المادة</th><th class="n">الكمية</th><th>الوحدة</th><th class="n">سوم الوحدة</th><th class="n">المجموع</th><th class="noprint"></th></tr></thead>
     <tbody></tbody>
-    <tfoot><tr><td colspan="4">المجموع</td><td class="n num" id="dBoqSum"></td></tr></tfoot>
+    <tfoot><tr><td colspan="4">المجموع</td><td class="n num" id="dBoqSum"></td><td class="noprint"></td></tr></tfoot>
   </table></div>
+  <div class="rowtools noprint">
+    <button class="btn" data-add="dalle">+ زيد مادة</button>
+    <button class="btn" data-restore="dalle" hidden>رجّع المواد اللي نحّيتها</button>
+  </div>
 
-  <h3>تفصيل الدالة حسب العنصر</h3>
+  <h3>تفصيل الدالة حسب العنصر · اختار قطر الحديد</h3>
   <div class="tbl"><table id="dEl">
-    <thead><tr><th>العنصر</th><th>المقاس</th><th class="n">خرسانة م³</th><th class="n">حديد 12 كغ</th><th class="n">حديد 6 كغ</th><th class="n">هوردي</th><th class="n">بوترال م.ط</th></tr></thead>
+    <thead><tr><th>العنصر</th><th>المقاس</th><th class="n">خرسانة م³</th><th>الحديد الرئيسي</th><th>الحديد الثانوي (كادرات، شبكة)</th><th class="n">هوردي</th><th class="n">بوترال م.ط</th></tr></thead>
     <tbody></tbody>
     <tfoot></tfoot>
   </table></div>
-  <p class="unit">المقاسات والنسب هي نفسها متاع الفصل 6 (الكميات من النموذج والنسب التقديرية)؛ بدّلها غادي والدالة تتعاود وحدها. الكوفراج والدعائم (étais) واليد العاملة موش داخلين.</p>
+  <p class="unit">قطر الحديد هنا هو نفسو متاع الفصل 6. المقاسات والنسب تتبدّل في الفصل 6 والدالة تتعاود وحدها. الكوفراج والدعائم (étais) واليد العاملة موش داخلين.</p>
 </section>
 
 <!-- 8 -->
@@ -387,6 +411,8 @@ ul.plain li{margin:4px 0}
         <li>وزن الحديد: <span class="num">0.00617 × d²</span> كغ/م، يعني حديد 6 = <span class="num">0.222</span> كغ/م، حديد 12 = <span class="num">0.888</span> كغ/م (قضيب 12 م = <span class="num">10.66</span> كغ).</li>
         <li>نسبة الحديد للمقارنة: حوالي 30 كغ/م² للبناية الكل مع الأساسات (دروس IUT Strasbourg).</li>
         <li>الآجر: 15 حبة في المتر المربع لوجه 30 × 20 مع فاصل 1 سم (حساب؛ بدّلها حسب الآجر اللي تشريه).</li>
+        <li>الأسوام: <a href="https://www.tuniscope.com/ar/article/444538/actu-arabe/arabe/materiaux-construction-prix-tunisie-144409">Tuniscope، 12 نوفمبر 2026</a> للحديد بالقطر (6: 2.700، 8: 13.500، 10: 19.000، 12: 26.500، 14: 37.000، 16: 48.500)، الآجر BKS 12 (0.930) و BKS 8 (0.850)، والهوردي 16 (1.400). المقال ما يكتبش الوحدة: حسبنا حديد 6 للكغ والباقي للقضيب 12 م، لأنها هكّا تجي قريبة من بعضها في الكغ (حوالي 2.5 د.ت).</li>
+        <li>الإسمنت، الرمل، الحصى، البوترال، الماء وسلك الربط: ما لقيناش سوم منشور، الأسوام المكتوبة تقديرية. <a href="https://www.lapresse.tn/2026/11/13/construction-en-tunisie-les-prix-du-sable-et-du-gravier-explosent-de-50/">La Presse، 13 نوفمبر 2026</a>: الإسمنت والحديد طلعو حوالي 10%، والرمل والحصى لين 50%.</li>
         <li>الشمس: معادلات NOAA، مدنين <span class="num">33.35°N 10.50°E</span>.</li>
       </ul>
     </div>
@@ -543,78 +569,177 @@ var R0={
   cem:350, sandC:0.5, grav:0.8, water:175, wasteC:5,
   colBars:4, lap:0.6, colStSp:0.15, colStL:0.9,
   beamBars:6, beamLapPct:10, beamStPm:5, beamStL:1.2,
+  stMain:80, stSec:25, wasteS:5, wire:1, barL:12,
   slabConc:0.05, slabMesh:11, hourdis:8.33, pout:1.67,
-  stH12:80, stH6:25, wasteS:5, wire:1,
   brick:15, layExt:2, layNeigh:1, layInt:1, wasteB:5,
-  mortM2:0.025, mortCem:350, mortSand:1.1, plast:0.02, wasteP:10
+  mortM2:0.025, mortCem:350, mortSand:1.1, plast:0.02, wasteP:10,
+  dSand:1.6, dGrav:1.5, truck:6
 };
 var RL={
   cem:['إسمنت في م³ خرسانة','كغ'], sandC:['رمل في م³ خرسانة','م³'], grav:['حصى في م³ خرسانة','م³'], water:['ماء في م³ خرسانة','لتر'], wasteC:['ضياع الخرسانة','%'],
-  colBars:['حديد 12 في كل سارية','قضيب'], lap:['زيادة التركيب (recouvrement)','م'], colStSp:['المسافة بين الكادرات (حديد 6) في السارية','م'], colStL:['طول الكادر في السارية','م'],
-  beamBars:['حديد 12 في الجسر (فوق + تحت)','قضيب'], beamLapPct:['زيادة التركيب في الجسر','%'], beamStPm:['كادرات حديد 6 في المتر','حبة/م'], beamStL:['طول الكادر في الجسر','م'],
-  slabConc:['خرسانة البلاكة (5 سم)','م³/م²'], slabMesh:['شبكة حديد 6 في البلاكة','م/م²'], hourdis:['هوردي 16','حبة/م²'], pout:['بوترال','م.ط/م²'],
-  stH12:['حديد 12 في الدرج','كغ/م³'], stH6:['حديد 6 في الدرج','كغ/م³'], wasteS:['ضياع الحديد','%'], wire:['سلك الربط','% من الحديد'],
+  colBars:['قضبان رئيسية في كل سارية','قضيب'], lap:['زيادة التركيب (recouvrement)','م'], colStSp:['المسافة بين الكادرات في السارية','م'], colStL:['طول الكادر في السارية','م'],
+  beamBars:['قضبان رئيسية في الجسر (فوق + تحت)','قضيب'], beamLapPct:['زيادة التركيب في الجسر','%'], beamStPm:['كادرات في المتر من الجسر','حبة/م'], beamStL:['طول الكادر في الجسر','م'],
+  stMain:['حديد رئيسي في الدرج','كغ/م³'], stSec:['حديد ثانوي في الدرج','كغ/م³'], wasteS:['ضياع الحديد','%'], wire:['سلك الربط','% من الحديد'], barL:['طول القضيب','م'],
+  slabConc:['خرسانة البلاكة (5 سم)','م³/م²'], slabMesh:['شبكة الحديد في البلاكة','م/م²'], hourdis:['هوردي 16','حبة/م²'], pout:['بوترال','م.ط/م²'],
   brick:['آجر في م² لكل طبقة','حبة'], layExt:['طبقات الواجهة','طبقة'], layNeigh:['طبقات الحيط اللاصق للجار','طبقة'], layInt:['طبقات الحيط الداخلي','طبقة'], wasteB:['ضياع الآجر','%'],
-  mortM2:['ملاط البني لكل م² وطبقة','م³'], mortCem:['إسمنت في م³ ملاط','كغ'], mortSand:['رمل في م³ ملاط','م³'], plast:['سمك الطلي','م'], wasteP:['ضياع الطلي','%']
+  mortM2:['ملاط البني لكل م² وطبقة','م³'], mortCem:['إسمنت في م³ ملاط','كغ'], mortSand:['رمل في م³ ملاط','م³'], plast:['سمك الطلي','م'], wasteP:['ضياع الطلي','%'],
+  dSand:['وزن م³ رمل (للتحويل للطن)','طن'], dGrav:['وزن م³ حصى (للتحويل للطن)','طن'], truck:['حجم الكميون','م³']
 };
-var CONC=['cem','sandC','grav','water','wasteC','colBars','lap','colStSp','colStL','beamBars','beamLapPct','beamStPm','beamStL','stH12','stH6','wasteS','wire'];
-var MAS=['brick','layExt','layNeigh','layInt','wasteB','mortM2','mortCem','mortSand','plast','wasteP','slabConc','slabMesh','hourdis','pout'];
-var MATS=[
-  ['cement','إسمنت (شكارة 50 كغ)','شكارة'],
-  ['sandC','رمل للخرسانة','م³'],
-  ['sandM','رمل للبني والطلي','م³'],
-  ['grav','حصى (قرافيا)','م³'],
-  ['water','ماء','م³'],
-  ['h12','حديد 12 (قضيب 12 م)','قضيب'],
-  ['h6','حديد 6 (قضيب 12 م)','قضيب'],
-  ['wire','سلك الربط','كغ'],
-  ['brExt','آجر الواجهات والبرج','حبة'],
-  ['brInt','آجر الحيوط الداخلية واللاصقة','حبة'],
-  ['hourdis','هوردي 16','حبة'],
-  ['pout','بوترال','م.ط']
-];
-var KEY='house3d-boq-v2';
-var st=load(KEY)||{};
-var Q=Object.assign({},Q0,st.Q||{}),R=Object.assign({},R0,st.R||{}),P=st.P||{},ON=Object.assign({corr:true,par:true},st.ON||{});
-$('cur').value=st.cur||'د.ت';$('cont').value=st.cont==null?10:st.cont;
-$('onCorr').checked=ON.corr;$('onPar').checked=ON.par;
-var W12=0.888,W6=0.222,BAR12=12*W12,BAR6=12*W6;
+var CONC=['cem','sandC','grav','water','wasteC','colBars','lap','colStSp','colStL','beamBars','beamLapPct','beamStPm','beamStL','stMain','stSec','wasteS','wire','barL'];
+var MAS=['slabConc','slabMesh','hourdis','pout','brick','layExt','layNeigh','layInt','wasteB','mortM2','mortCem','mortSand','plast','wasteP','dSand','dGrav','truck'];
 
-function compute(){
-  var c=1+R.wasteC/100,s=1+R.wasteS/100,b=1+R.wasteB/100,p=1+R.wasteP/100;
-  var els=[];
-  function beam(len){return {v:len*Q.beamB*Q.beamH,h12:len*R.beamBars*(1+R.beamLapPct/100)*W12,h6:len*R.beamStPm*R.beamStL*W6};}
-  function slab(a){return {v:a*R.slabConc,h6:a*R.slabMesh*W6,hd:a*R.hourdis,pt:a*R.pout};}
-  var col={v:Q.nCol*Q.sCol*Q.sCol*Q.hCol,h12:Q.nCol*R.colBars*(Q.hCol+R.lap)*W12,h6:Q.nCol*(Math.floor(Q.hCol/R.colStSp)+1)*R.colStL*W6};
-  els.push({n:'السواري',d:fmt(Q.nCol)+' × '+fmt(Q.sCol*100)+'×'+fmt(Q.sCol*100)+' سم × '+fmt(Q.hCol,1)+' م',v:col.v,h12:col.h12,h6:col.h6});
-  var bm=beam(Q.beamLen);els.push({n:'جسور السقف',d:fmt(Q.beamLen,1)+' م · '+fmt(Q.beamB*100)+'×'+fmt(Q.beamH*100)+' سم',v:bm.v,h12:bm.h12,h6:bm.h6});
-  var sl=slab(Q.roof);els.push({n:'سقف الأول (هوردي 16+5)',d:fmt(Q.roof,2)+' م²',v:sl.v,h6:sl.h6,hd:sl.hd,pt:sl.pt});
-  var ts=slab(Q.towRoof),tb=beam(Q.towBeam);els.push({n:'غطاء البرج + جسورو',d:fmt(Q.towRoof,1)+' م² · '+fmt(Q.towBeam,1)+' م',v:ts.v+tb.v,h12:tb.h12,h6:ts.h6+tb.h6,hd:ts.hd,pt:ts.pt});
-  els.push({n:'درج البرج (الأول ← السطح)',d:'16 درجة · '+fmt(Q.stairs,2)+' م³',v:Q.stairs,h12:Q.stairs*R.stH12,h6:Q.stairs*R.stH6});
-  if(ON.corr){var cs=slab(Q.corr),cb=beam(Q.corrBeam);els.push({n:'الكوريدور الخارجي',d:fmt(Q.corr,1)+' م² · جسر '+fmt(Q.corrBeam,1)+' م',v:cs.v+cb.v,h12:cb.h12,h6:cs.h6+cb.h6,hd:cs.hd,pt:cs.pt});}
-  function wall(n,a,lay,ext){var br=a*lay*R.brick*b;els.push({n:n,d:fmt(a,1)+' م² × '+fmt(lay)+' طبقة',brE:ext?br:0,brI:ext?0:br,br:br,m:a*lay*R.mortM2});}
-  wall('حيوط الواجهات',Q.wExt,R.layExt,1);
-  wall('حيوط لاصقة للجيران',Q.wNeigh,R.layNeigh,0);
-  wall('حيوط داخلية',Q.wInt,R.layInt,0);
-  wall('حيوط البرج (واجهات)',Q.wTowExt,R.layExt,1);
-  wall('حيط البرج اللاصق',Q.wTowNeigh,R.layNeigh,0);
-  var parA=ON.par?Q.parLen*Q.parH:0;
-  if(ON.par)wall('حيوط البالكونات والكوريدور',parA,1,1);
-  var inA=2*Q.wInt+Q.wExt+Q.wNeigh+Q.wTowExt+Q.wTowNeigh+Q.roof+Q.towRoof+parA;
-  var outA=Q.wExt+Q.wTowExt+parA;
-  var plM=(inA+outA)*R.plast*p;
-  els.push({n:'الطلي (داخل + السقف + برّا)',d:fmt(inA,0)+' + '+fmt(outA,0)+' م² · '+fmt(R.plast*100,0)+' سم',m:plM});
-  var T={v:0,h12:0,h6:0,brE:0,brI:0,m:0,hd:0,pt:0};
-  els.forEach(function(e){for(var k in T)T[k]+=(e[k]||0);});
-  var vc=T.v*c,vm=T.m;
-  var h12=T.h12*s,h6=T.h6*s;
-  var M={
-    cement:(vc*R.cem+vm*R.mortCem)/50,
-    sandC:vc*R.sandC, sandM:vm*R.mortSand, grav:vc*R.grav, water:vc*R.water/1000,
-    h12:h12/BAR12, h6:h6/BAR6, wire:(h12+h6)*R.wire/100,
-    brExt:T.brE, brInt:T.brI, hourdis:T.hd, pout:T.pt
-  };
-  return {els:els,T:T,M:M,kg12:h12,kg6:h6,vc:vc,vm:vm};
+var DIAS=[6,8,10,12,14,16];
+function W(d){return 0.00617*d*d;}   /* kg per metre of bar */
+var E0={col:{m:12,s:6},beam:{m:12,s:6},roof:{s:6},towS:{s:6},towB:{m:12,s:6},stairs:{m:12,s:6},corrS:{s:6},corrB:{m:12,s:6}};
+var SRC={
+  tn:'السوم: Tuniscope، 12 نوفمبر 2026',
+  tnBar:'السوم: Tuniscope، 12 نوفمبر 2026 (الوحدة موش مكتوبة، حسبناه للقضيب 12 م)',
+  tnKg:'السوم: Tuniscope، 12 نوفمبر 2026 (الوحدة موش مكتوبة، حسبناه للكغ)',
+  est:'سوم تقديري، غير مؤكّد: بدّلو',
+  you:'سومك'
+};
+var DEF={
+  cement:{n:'إسمنت',k:'cem',u:'bag',p:17.5,src:'est'},
+  sandC:{n:'رمل للخرسانة',k:'sand',u:'m3',p:45,src:'est'},
+  sandM:{n:'رمل للبني والطلي',k:'sand',u:'m3',p:45,src:'est'},
+  grav:{n:'حصى (قرافيا)',k:'grav',u:'m3',p:55,src:'est'},
+  water:{n:'ماء',k:'water',u:'m3',p:1,src:'est'},
+  wire:{n:'سلك الربط',k:'wire',u:'kg',p:5,src:'est'},
+  brExt:{n:'آجر BKS 12 (الواجهات والبرج)',k:'pcs',u:'pc',p:0.93,src:'tn'},
+  brInt:{n:'آجر BKS 8 (الحيوط الداخلية واللاصقة)',k:'pcs',u:'pc',p:0.85,src:'tn'},
+  hourdis:{n:'هوردي 16',k:'pcs',u:'pc',p:1.4,src:'tn'},
+  pout:{n:'بوترال',k:'ml',u:'ml',p:6.5,src:'est'}
+};
+var STEELP={6:['kg',2.7,'tnKg'],8:['bar',13.5,'tnBar'],10:['bar',19,'tnBar'],12:['bar',26.5,'tnBar'],14:['bar',37,'tnBar'],16:['bar',48.5,'tnBar']};
+function defOf(id){if(DEF[id])return DEF[id];var d=+id.slice(1),s=STEELP[d]||['kg',0,'est'];return {n:'حديد '+d,k:'steel',d:d,u:s[0],p:s[1],src:s[2]};}
+function n2(v){return String(Math.round(v*100)/100);}
+function units(k,d){
+  if(k==='cem')return [['bag','شكارة 50 كغ',50],['kg','كغ',1],['t','طن',1000]];
+  if(k==='sand')return [['m3','م³',1],['t','طن',1/R.dSand],['truck','كميون '+n2(R.truck)+' م³',R.truck]];
+  if(k==='grav')return [['m3','م³',1],['t','طن',1/R.dGrav],['truck','كميون '+n2(R.truck)+' م³',R.truck]];
+  if(k==='water')return [['m3','م³',1],['l','لتر',0.001]];
+  if(k==='steel'){var w=W(d);return [['bar','قضيب '+n2(R.barL)+' م',R.barL],['kg','كغ',1/w],['t','طن',1000/w]];}
+  if(k==='wire')return [['kg','كغ',1]];
+  if(k==='pcs')return [['pc','حبة',1],['k','ألف حبة',1000]];
+  return [['ml','م.ط',1]];
+}
+function roundQ(q,u){return (u==='m3'||u==='t'||u==='truck'||u==='k')?Math.round(q*100)/100:Math.ceil(q-1e-9);}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+
+var KEY='house3d-boq-v3';
+var st=load(KEY)||{};
+function merge(a,b){var o={};for(var k in a)o[k]=Object.assign({},a[k],(b||{})[k]||{});return o;}
+var Q,R,E,CFG,OV,HID,CUS,ON,DON;
+function initState(s){
+  Q=Object.assign({},Q0,s.Q||{});R=Object.assign({},R0,s.R||{});E=merge(E0,s.E);
+  CFG=s.CFG||{};OV=s.OV||{main:{},dalle:{}};HID=s.HID||{main:[],dalle:[]};CUS=s.CUS||{main:[],dalle:[]};
+  ON=Object.assign({corr:true,par:true},s.ON||{});DON=Object.assign({tow:true,corr:true},s.DON||{});
+}
+initState(st);
+$('cur').value=st.cur||'د.ت';$('cont').value=st.cont==null?10:st.cont;
+function syncSwitches(){$('onCorr').checked=ON.corr;$('onPar').checked=ON.par;$('dTow').checked=DON.tow;$('dCorr').checked=DON.corr;}
+syncSwitches();
+function cfg(id){return Object.assign({},defOf(id),CFG[id]||{});}
+function setCfg(id,k,v){CFG[id]=CFG[id]||{};CFG[id][k]=v;}
+
+function calc(t){
+  var main=t==='main',els=[];
+  function beamEl(n,len,key){return {n:n,d:fmt(len,1)+' م · '+fmt(Q.beamB*100)+'×'+fmt(Q.beamH*100)+' سم',key:key,v:len*Q.beamB*Q.beamH,mM:len*R.beamBars*(1+R.beamLapPct/100),sM:len*R.beamStPm*R.beamStL};}
+  function slabEl(n,a,key){return {n:n,d:fmt(a,2)+' م²',key:key,v:a*R.slabConc,sM:a*R.slabMesh,hd:a*R.hourdis,pt:a*R.pout};}
+  if(main)els.push({n:'السواري',d:fmt(Q.nCol)+' × '+fmt(Q.sCol*100)+'×'+fmt(Q.sCol*100)+' سم × '+fmt(Q.hCol,1)+' م',key:'col',v:Q.nCol*Q.sCol*Q.sCol*Q.hCol,mM:Q.nCol*R.colBars*(Q.hCol+R.lap),sM:Q.nCol*(Math.floor(Q.hCol/R.colStSp)+1)*R.colStL});
+  els.push(slabEl(main?'سقف الأول (هوردي 16+5)':'دالة السقف الرئيسي (هوردي 16+5)',Q.roof,'roof'));
+  els.push(beamEl('جسور السقف الرئيسي',Q.beamLen,'beam'));
+  var tow=main?true:DON.tow,corr=main?ON.corr:DON.corr;
+  if(tow){els.push(slabEl('دالة غطاء البرج',Q.towRoof,'towS'));els.push(beamEl('جسور غطاء البرج',Q.towBeam,'towB'));}
+  if(main)els.push({n:'درج البرج (الأول ← السطح)',d:'16 درجة · '+fmt(Q.stairs,2)+' م³',key:'stairs',v:Q.stairs,mM:Q.stairs*R.stMain/W(E.stairs.m),sM:Q.stairs*R.stSec/W(E.stairs.s)});
+  if(corr){els.push(slabEl('دالة الكوريدور الخارجي',Q.corr,'corrS'));els.push(beamEl('جسر الكوريدور',Q.corrBeam,'corrB'));}
+  if(main){
+    var b=1+R.wasteB/100,p=1+R.wasteP/100;
+    var wall=function(n,a,lay,ext){var br=a*lay*R.brick*b;els.push({n:n,d:fmt(a,1)+' م² × '+fmt(lay)+' طبقة',brE:ext?br:0,brI:ext?0:br,br:br,m:a*lay*R.mortM2});};
+    wall('حيوط الواجهات',Q.wExt,R.layExt,1);
+    wall('حيوط لاصقة للجيران',Q.wNeigh,R.layNeigh,0);
+    wall('حيوط داخلية',Q.wInt,R.layInt,0);
+    wall('حيوط البرج (واجهات)',Q.wTowExt,R.layExt,1);
+    wall('حيط البرج اللاصق',Q.wTowNeigh,R.layNeigh,0);
+    var parA=ON.par?Q.parLen*Q.parH:0;
+    if(ON.par)wall('حيوط البالكونات والكوريدور',parA,1,1);
+    var inA=2*Q.wInt+Q.wExt+Q.wNeigh+Q.wTowExt+Q.wTowNeigh+Q.roof+Q.towRoof+parA,outA=Q.wExt+Q.wTowExt+parA;
+    els.push({n:'الطلي (داخل + السقف + برّا)',d:fmt(inA,0)+' + '+fmt(outA,0)+' م² · '+fmt(R.plast*100,0)+' سم',m:(inA+outA)*R.plast*p});
+  }
+  var T={v:0,br:0,brE:0,brI:0,m:0,hd:0,pt:0,kgM:0,kgS:0},steel={};
+  els.forEach(function(e){var ek=E[e.key];
+    if(ek&&e.mM){e.kgM=e.mM*W(ek.m);steel[ek.m]=(steel[ek.m]||0)+e.mM;}
+    if(ek&&e.sM){e.kgS=e.sM*W(ek.s);steel[ek.s]=(steel[ek.s]||0)+e.sM;}
+    for(var k in T)T[k]+=(e[k]||0);});
+  var vc=T.v*(1+R.wasteC/100),vm=T.m,kg=0,s=1+R.wasteS/100;
+  for(var d in steel){steel[d]*=s;kg+=steel[d]*W(+d);}
+  var base={cement:vc*R.cem+vm*R.mortCem,sandC:vc*R.sandC,sandM:vm*R.mortSand,grav:vc*R.grav,water:vc*R.water/1000,wire:kg*R.wire/100,brExt:T.brE,brInt:T.brI,hourdis:T.hd,pout:T.pt};
+  for(d in steel)base['s'+d]=steel[d];
+  return {els:els,T:T,base:base,steel:steel,kg:kg,vc:vc,area:Q.roof+(tow?Q.towRoof:0)+(corr?Q.corr:0)};
+}
+
+var ORDER={main:['cement','sandC','sandM','grav','water','#steel','wire','brExt','brInt','hourdis','pout'],dalle:['cement','sandC','grav','water','#steel','wire','hourdis','pout']};
+function rowIds(t,r){var out=[];
+  ORDER[t].forEach(function(id){if(id==='#steel')Object.keys(r.steel).map(Number).sort(function(a,b){return a-b;}).forEach(function(d){out.push('s'+d);});else out.push(id);});
+  return out.filter(function(id){return HID[t].indexOf(id)<0&&((r.base[id]||0)>0||OV[t][id]!=null);});}
+function model(t,r){
+  return rowIds(t,r).map(function(id){var c=cfg(id),us=units(c.k,c.d),u=us.filter(function(x){return x[0]===c.u;})[0]||us[0];
+    var auto=roundQ((r.base[id]||0)/u[2],u[0]),ov=OV[t][id],q=ov!=null?ov:auto;
+    return {id:id,c:c,us:us,u:u,auto:auto,ov:ov,q:q,p:+c.p||0};});
+}
+var SIG={};
+function tbOf(t){return $(t==='main'?'boq':'dBoq').tBodies[0];}
+function buildTable(t,M){
+  var h='';
+  M.forEach(function(m){
+    h+='<tr data-t="'+t+'" data-id="'+m.id+'"><td><input class="in txt" data-f="n" aria-label="اسم المادة" value="'+esc(m.c.n)+'"><div class="src" data-x="src"></div></td>'+
+      '<td class="n"><div class="qcell"><input class="in" type="number" step="any" min="0" data-f="q" aria-label="الكمية"><button class="mini" data-f="rq" title="رجّع الكمية المحسوبة" aria-label="رجّع الكمية المحسوبة">↺</button></div><div class="hint" data-x="hint"></div></td>'+
+      '<td><select class="in sel" data-f="u" aria-label="الوحدة">'+m.us.map(function(x){return '<option value="'+x[0]+'"'+(x[0]===m.u[0]?' selected':'')+'>'+x[1]+'</option>';}).join('')+'</select></td>'+
+      '<td class="n"><input class="in" type="number" step="any" min="0" data-f="p" placeholder="0" aria-label="سوم الوحدة"></td><td class="n num" data-x="tot"></td>'+
+      '<td class="n noprint"><button class="mini del" data-f="del" title="نحّي المادة" aria-label="نحّي المادة">×</button></td></tr>';
+  });
+  CUS[t].forEach(function(c){
+    h+='<tr data-t="'+t+'" data-cid="'+c.id+'"><td><input class="in txt" data-f="n" aria-label="اسم المادة" value="'+esc(c.n)+'"><div class="src">مادة زدتها إنت</div></td>'+
+      '<td class="n"><div class="qcell"><input class="in" type="number" step="any" min="0" data-f="q" aria-label="الكمية"></div></td>'+
+      '<td><input class="in txt unitin" data-f="u" aria-label="الوحدة" value="'+esc(c.u)+'"></td>'+
+      '<td class="n"><input class="in" type="number" step="any" min="0" data-f="p" placeholder="0" aria-label="سوم الوحدة"></td><td class="n num" data-x="tot"></td>'+
+      '<td class="n noprint"><button class="mini del" data-f="del" title="نحّي المادة" aria-label="نحّي المادة">×</button></td></tr>';
+  });
+  tbOf(t).innerHTML=h;
+}
+function setVal(i,v){if(!i||document.activeElement===i)return;var s=(v===''||v==null)?'':String(Math.round(+v*10000)/10000);if(i.value!==s)i.value=s;}
+function setTxt(i,v){if(!i||document.activeElement===i)return;if(i.value!==v)i.value=v;}
+function fillTable(t,M,r){
+  var tb=tbOf(t),sub=0;
+  M.forEach(function(m){var tr=tb.querySelector('tr[data-id="'+m.id+'"]');if(!tr)return;
+    var qi=tr.querySelector('[data-f=q]');setVal(qi,m.q);qi.classList.toggle('ov',m.ov!=null);
+    tr.querySelector('[data-f=rq]').hidden=m.ov==null;
+    setTxt(tr.querySelector('[data-f=n]'),m.c.n);setVal(tr.querySelector('[data-f=p]'),m.p||'');
+    var src=tr.querySelector('[data-x=src]');src.textContent=SRC[m.c.src]||'';src.classList.toggle('estsrc',m.c.src==='est');
+    var base=m.q*m.u[2],hint='';
+    if(m.c.k==='steel')hint=m.u[0]==='kg'?'≈ '+fmt(base/R.barL,1)+' قضيب':'≈ '+fmt(base*W(m.c.d),0)+' كغ';
+    else if(m.c.k==='cem'&&m.u[0]!=='kg')hint='≈ '+fmt(base,0)+' كغ';
+    if(m.ov!=null)hint=(hint?hint+' · ':'')+'المحسوبة: '+fmt(m.auto,m.auto%1?2:0);
+    tr.querySelector('[data-x=hint]').textContent=hint;
+    var tot=m.q*m.p;sub+=tot;tr.querySelector('[data-x=tot]').textContent=m.p?fmt(tot,2):'—';});
+  CUS[t].forEach(function(c){var tr=tb.querySelector('tr[data-cid="'+c.id+'"]');if(!tr)return;
+    setVal(tr.querySelector('[data-f=q]'),c.q);setVal(tr.querySelector('[data-f=p]'),c.p||'');setTxt(tr.querySelector('[data-f=n]'),c.n);setTxt(tr.querySelector('[data-f=u]'),c.u);
+    var tot=(+c.q||0)*(+c.p||0);sub+=tot;tr.querySelector('[data-x=tot]').textContent=c.p?fmt(tot,2):'—';});
+  var rb=document.querySelector('[data-restore="'+t+'"]');rb.hidden=!HID[t].length;rb.textContent='رجّع المواد اللي نحّيتها ('+HID[t].length+')';
+  return sub;
+}
+function diaSel(key,w){return '<select class="in sel dia" data-e="'+key+'" data-w="'+w+'" aria-label="قطر الحديد">'+DIAS.map(function(d){return '<option value="'+d+'"'+(E[key][w]===d?' selected':'')+'>Ø '+d+'</option>';}).join('')+'</select>';}
+function steelCell(e,w){var ek=E[e.key],m=w==='m'?e.mM:e.sM;if(!ek||!m||ek[w]==null)return '<td class="unit">—</td>';
+  return '<td><div class="diacell">'+diaSel(e.key,w)+'<span class="num">'+fmt(w==='m'?e.kgM:e.kgS,0)+' كغ</span></div></td>';}
+function elTable(id,r,dalle){
+  var h='';r.els.forEach(function(e){
+    h+='<tr><td>'+e.n+'</td><td class="unit">'+e.d+'</td><td class="n num">'+(e.v?fmt(e.v,2):'—')+'</td>'+steelCell(e,'m')+steelCell(e,'s')+
+      (dalle?'<td class="n num">'+(e.hd?fmt(e.hd,0):'—')+'</td><td class="n num">'+(e.pt?fmt(e.pt,0):'—')+'</td>'
+            :'<td class="n num">'+(e.br?fmt(e.br,0):'—')+'</td><td class="n num">'+(e.m?fmt(e.m,2):'—')+'</td>')+'</tr>';});
+  $(id).tBodies[0].innerHTML=h;
+  var T=r.T;
+  $(id).tFoot.innerHTML='<tr><td colspan="2">المجموع (قبل الضياع)</td><td class="n num">'+fmt(T.v,2)+'</td><td class="num">'+fmt(T.kgM,0)+' كغ</td><td class="num">'+fmt(T.kgS,0)+' كغ</td>'+
+    (dalle?'<td class="n num">'+fmt(T.hd,0)+'</td><td class="n num">'+fmt(T.pt,0)+'</td>':'<td class="n num">'+fmt(T.br,0)+'</td><td class="n num">'+fmt(T.m,2)+'</td>')+'</tr>';
 }
 function inputRow(obj,key,lab,group){
   return '<tr><td>'+lab[0]+'</td><td class="n"><input class="in" type="number" step="any" data-g="'+group+'" data-k="'+key+'" value="'+obj[key]+'"></td><td class="unit">'+lab[1]+'</td></tr>';
@@ -624,86 +749,85 @@ function buildInputs(){
   $('qWalls').tBodies[0].innerHTML=WALLS.map(function(k){return inputRow(Q,k,QL[k],'Q');}).join('');
   $('rConc').tBodies[0].innerHTML=CONC.map(function(k){return inputRow(R,k,RL[k],'R');}).join('');
   $('rMas').tBodies[0].innerHTML=MAS.map(function(k){return inputRow(R,k,RL[k],'R');}).join('');
-  $('boq').tBodies[0].innerHTML=MATS.map(function(m){return '<tr><td>'+m[1]+'<div class="unit" id="x_'+m[0]+'"></div></td><td class="n num" id="q_'+m[0]+'"></td><td>'+m[2]+'</td><td class="n"><input class="in" type="number" step="any" min="0" data-g="P" data-k="'+m[0]+'" value="'+(P[m[0]]==null?'':P[m[0]])+'" placeholder="0"></td><td class="n num" id="s_'+m[0]+'"></td></tr>';}).join('');
 }
-var last=null;
+var LAST={};
 function render(){
-  var r=compute();last=r;var cur=$('cur').value||'';
+  var cur=$('cur').value||'',cp=parseFloat($('cont').value)||0;
   document.querySelectorAll('.cur').forEach(function(e){e.textContent=cur;});$('sumCur').textContent=cur;
-  var sub=0;
-  MATS.forEach(function(m){var q=r.M[m[0]],qq=(m[2]==='م³')?Math.round(q*100)/100:Math.ceil(q);
-    $('q_'+m[0]).textContent=fmt(qq,m[2]==='م³'?2:0);
-    var pr=parseFloat(P[m[0]])||0,t=qq*pr;sub+=t;$('s_'+m[0]).textContent=pr?fmt(t,2):'—';});
-  $('x_h12').textContent=fmt(r.kg12,0)+' كغ';$('x_h6').textContent=fmt(r.kg6,0)+' كغ';
-  $('x_cement').textContent=fmt(r.M.cement*50,0)+' كغ';
-  var cp=parseFloat($('cont').value)||0,cont=sub*cp/100;
-  $('boqSum').textContent=fmt(sub,2);$('tSub').textContent=fmt(sub,2);$('tCont').textContent=fmt(cont,2);$('tAll').textContent=fmt(sub+cont,2);$('tContP').textContent=fmt(cp);$('sumTotal').textContent=fmt(sub+cont,0);
-  var h='';r.els.forEach(function(e){h+='<tr><td>'+e.n+'</td><td class="unit">'+e.d+'</td><td class="n num">'+(e.v?fmt(e.v,2):'—')+'</td><td class="n num">'+(e.h12?fmt(e.h12,0):'—')+'</td><td class="n num">'+(e.h6?fmt(e.h6,0):'—')+'</td><td class="n num">'+(e.br?fmt(e.br,0):'—')+'</td><td class="n num">'+(e.m?fmt(e.m,2):'—')+'</td></tr>';});
-  $('byEl').tBodies[0].innerHTML=h;
-  $('byEl').tFoot.innerHTML='<tr><td colspan="2">المجموع (قبل ضياع الخرسانة والحديد)</td><td class="n num">'+fmt(r.T.v,2)+'</td><td class="n num">'+fmt(r.T.h12,0)+'</td><td class="n num">'+fmt(r.T.h6,0)+'</td><td class="n num">'+fmt(r.T.brE+r.T.brI,0)+'</td><td class="n num">'+fmt(r.T.m,2)+'</td></tr>';
-  var area=Q.roof+Q.towRoof+(ON.corr?Q.corr:0);
-  $('ratioCheck').textContent='للمقارنة: الحديد هنا حوالي '+fmt((r.kg12+r.kg6)/area,1)+' كغ في المتر المربع من السقف (بلا أساسات، والبوترال جاهز فيه حديدو). المرجع للبناية الكل بالأساسات حوالي 30 كغ/م².';
-  renderDalle(cur,cp);
-  document.querySelectorAll('input[data-g="P"]').forEach(function(i){if(i!==document.activeElement){var v=P[i.dataset.k]==null?'':P[i.dataset.k];if(i.value!==String(v))i.value=v;}});
-  store(KEY,{Q:Q,R:R,P:P,ON:ON,DON:DON,cur:$('cur').value,cont:$('cont').value});
+  var tot={};
+  ['main','dalle'].forEach(function(t){
+    var r=calc(t),M=model(t,r);
+    var sig=M.map(function(m){return m.id+':'+m.u[0]+':'+m.us.map(function(x){return x[1];}).join('/');}).join('|')+'#'+CUS[t].map(function(c){return c.id;}).join(',');
+    if(SIG[t]!==sig){buildTable(t,M);SIG[t]=sig;}
+    tot[t]=fillTable(t,M,r);LAST[t]={r:r,M:M};
+    elTable(t==='main'?'byEl':'dEl',r,t==='dalle');
+  });
+  var s=tot.main,c=s*cp/100;
+  $('boqSum').textContent=fmt(s,2);$('tSub').textContent=fmt(s,2);$('tCont').textContent=fmt(c,2);$('tAll').textContent=fmt(s+c,2);$('tContP').textContent=fmt(cp);$('sumTotal').textContent=fmt(s+c,0);
+  s=tot.dalle;c=s*cp/100;
+  $('dBoqSum').textContent=fmt(s,2);$('dSub').textContent=fmt(s,2);$('dCont').textContent=fmt(c,2);$('dAll').textContent=fmt(s+c,2);$('dContP').textContent=fmt(cp);
+  var dr=LAST.dalle.r;
+  $('dArea').textContent=fmt(dr.area,1);$('dConc').textContent=fmt(dr.vc,2);
+  $('dKgM').textContent=fmt(dr.T.kgM*(1+R.wasteS/100),0);$('dKgS').textContent=fmt(dr.T.kgS*(1+R.wasteS/100),0);
+  $('dKgML').textContent='الحديد الرئيسي (Ø '+E.beam.m+')';$('dKgSL').textContent='الحديد الثانوي (Ø '+E.roof.s+')';
+  var mr=LAST.main.r;
+  $('ratioCheck').textContent='للمقارنة: الحديد هنا حوالي '+fmt(mr.kg/mr.area,1)+' كغ في المتر المربع من السقف (بلا أساسات، والبوترال جاهز فيه حديدو). المرجع للبناية الكل بالأساسات حوالي 30 كغ/م².';
+  store(KEY,{Q:Q,R:R,E:E,CFG:CFG,OV:OV,HID:HID,CUS:CUS,ON:ON,DON:DON,cur:$('cur').value,cont:$('cont').value});
 }
-/* ---- slab (dalle) only: roof slab + the beams poured with it ---- */
-var DON=Object.assign({tow:true,corr:true},st.DON||{});
-$('dTow').checked=DON.tow;$('dCorr').checked=DON.corr;
-var DMATS=['cement','sandC','grav','water','h12','h6','wire','hourdis','pout'];
-function computeDalle(){
-  var c=1+R.wasteC/100,s=1+R.wasteS/100,els=[];
-  function beam(len){return {v:len*Q.beamB*Q.beamH,h12:len*R.beamBars*(1+R.beamLapPct/100)*W12,h6:len*R.beamStPm*R.beamStL*W6};}
-  function slab(a){return {v:a*R.slabConc,h6:a*R.slabMesh*W6,hd:a*R.hourdis,pt:a*R.pout};}
-  var sl=slab(Q.roof),bm=beam(Q.beamLen),area=Q.roof;
-  els.push({n:'دالة السقف الرئيسي (هوردي 16+5)',d:fmt(Q.roof,2)+' م²',v:sl.v,h6:sl.h6,hd:sl.hd,pt:sl.pt});
-  els.push({n:'جسور السقف الرئيسي',d:fmt(Q.beamLen,1)+' م · '+fmt(Q.beamB*100)+'×'+fmt(Q.beamH*100)+' سم',v:bm.v,h12:bm.h12,h6:bm.h6});
-  if(DON.tow){var ts=slab(Q.towRoof),tb=beam(Q.towBeam);area+=Q.towRoof;
-    els.push({n:'دالة غطاء البرج',d:fmt(Q.towRoof,1)+' م²',v:ts.v,h6:ts.h6,hd:ts.hd,pt:ts.pt});
-    els.push({n:'جسور غطاء البرج',d:fmt(Q.towBeam,1)+' م',v:tb.v,h12:tb.h12,h6:tb.h6});}
-  if(DON.corr){var cs=slab(Q.corr),cb=beam(Q.corrBeam);area+=Q.corr;
-    els.push({n:'دالة الكوريدور الخارجي',d:fmt(Q.corr,1)+' م²',v:cs.v,h6:cs.h6,hd:cs.hd,pt:cs.pt});
-    els.push({n:'جسر الكوريدور',d:fmt(Q.corrBeam,1)+' م',v:cb.v,h12:cb.h12,h6:cb.h6});}
-  var T={v:0,h12:0,h6:0,hd:0,pt:0};els.forEach(function(e){for(var k in T)T[k]+=(e[k]||0);});
-  var vc=T.v*c,h12=T.h12*s,h6=T.h6*s;
-  return {els:els,T:T,area:area,vc:vc,kg12:h12,kg6:h6,M:{cement:vc*R.cem/50,sandC:vc*R.sandC,grav:vc*R.grav,water:vc*R.water/1000,h12:h12/BAR12,h6:h6/BAR6,wire:(h12+h6)*R.wire/100,hourdis:T.hd,pout:T.pt}};
-}
-var dLast=null;
-function dRows(){return MATS.filter(function(m){return DMATS.indexOf(m[0])>=0;});}
-function buildDalle(){
-  $('dBoq').tBodies[0].innerHTML=dRows().map(function(m){return '<tr><td>'+m[1]+'<div class="unit" id="dx_'+m[0]+'"></div></td><td class="n num" id="dq_'+m[0]+'"></td><td>'+m[2]+'</td><td class="n"><input class="in" type="number" step="any" min="0" data-g="P" data-k="'+m[0]+'" value="'+(P[m[0]]==null?'':P[m[0]])+'" placeholder="0"></td><td class="n num" id="ds_'+m[0]+'"></td></tr>';}).join('');
-}
-function renderDalle(cur,cp){
-  var r=computeDalle();dLast=r;var sub=0;
-  dRows().forEach(function(m){var q=r.M[m[0]],cube=m[2]==='م³',qq=cube?Math.round(q*100)/100:Math.ceil(q);
-    $('dq_'+m[0]).textContent=fmt(qq,cube?2:0);var pr=parseFloat(P[m[0]])||0,t=qq*pr;sub+=t;$('ds_'+m[0]).textContent=pr?fmt(t,2):'—';});
-  $('dx_h12').textContent=fmt(r.kg12,0)+' كغ';$('dx_h6').textContent=fmt(r.kg6,0)+' كغ';$('dx_cement').textContent=fmt(r.M.cement*50,0)+' كغ';
-  var cont=sub*cp/100;
-  $('dBoqSum').textContent=fmt(sub,2);$('dSub').textContent=fmt(sub,2);$('dCont').textContent=fmt(cont,2);$('dAll').textContent=fmt(sub+cont,2);$('dContP').textContent=fmt(cp);
-  $('dArea').textContent=fmt(r.area,1);$('dConc').textContent=fmt(r.vc,2);$('dKg12').textContent=fmt(r.kg12,0);$('dKg6').textContent=fmt(r.kg6,0);
-  var h='';r.els.forEach(function(e){h+='<tr><td>'+e.n+'</td><td class="unit">'+e.d+'</td><td class="n num">'+fmt(e.v,2)+'</td><td class="n num">'+(e.h12?fmt(e.h12,0):'—')+'</td><td class="n num">'+(e.h6?fmt(e.h6,0):'—')+'</td><td class="n num">'+(e.hd?fmt(e.hd,0):'—')+'</td><td class="n num">'+(e.pt?fmt(e.pt,0):'—')+'</td></tr>';});
-  $('dEl').tBodies[0].innerHTML=h;
-  $('dEl').tFoot.innerHTML='<tr><td colspan="2">المجموع (قبل الضياع)</td><td class="n num">'+fmt(r.T.v,2)+'</td><td class="n num">'+fmt(r.T.h12,0)+'</td><td class="n num">'+fmt(r.T.h6,0)+'</td><td class="n num">'+fmt(r.T.hd,0)+'</td><td class="n num">'+fmt(r.T.pt,0)+'</td></tr>';
-}
-$('dTow').addEventListener('change',function(){DON.tow=this.checked;render();});
-$('dCorr').addEventListener('change',function(){DON.corr=this.checked;render();});
-$('dCsv').addEventListener('click',function(){csvRows(dRows(),'dq_','mawad-dalle.csv');});
-buildDalle();
-document.addEventListener('input',function(e){var t=e.target;if(!t.dataset||!t.dataset.g)return;var g=t.dataset.g,k=t.dataset.k;
-  if(g==='P')P[k]=t.value;else{var v=parseFloat(t.value);if(isFinite(v))(g==='Q'?Q:R)[k]=v;}render();});
+
+/* inputs: quantities and ratios */
+document.addEventListener('input',function(e){var t=e.target;if(!t.dataset||!t.dataset.g)return;var v=parseFloat(t.value);if(isFinite(v))(t.dataset.g==='Q'?Q:R)[t.dataset.k]=v;render();});
 $('cur').addEventListener('input',render);$('cont').addEventListener('input',render);
 $('onCorr').addEventListener('change',function(){ON.corr=this.checked;render();});
 $('onPar').addEventListener('change',function(){ON.par=this.checked;render();});
-$('reset').addEventListener('click',function(){Q=Object.assign({},Q0);R=Object.assign({},R0);ON={corr:true,par:true};$('onCorr').checked=true;$('onPar').checked=true;buildInputs();render();});
-function csv(){csvRows(MATS,'q_','mawad-tabe9-awel.csv');}
-function csvRows(list,pre,name){
+$('dTow').addEventListener('change',function(){DON.tow=this.checked;render();});
+$('dCorr').addEventListener('change',function(){DON.corr=this.checked;render();});
+
+/* materials tables: every cell editable */
+function onRow(ev){
+  var el=ev.target,f=el.dataset&&el.dataset.f;if(!f)return;
+  var isSel=el.tagName==='SELECT';
+  if(ev.type==='click'&&el.tagName!=='BUTTON')return;
+  if(ev.type==='input'&&isSel)return;
+  if(ev.type==='change'&&!isSel)return;
+  var tr=el.closest('tr'),t=tr.dataset.t,id=tr.dataset.id,cid=tr.dataset.cid;
+  if(cid){
+    var c=CUS[t].filter(function(x){return x.id===cid;})[0];if(!c)return;
+    if(f==='del'){CUS[t]=CUS[t].filter(function(x){return x.id!==cid;});}
+    else if(f==='n'||f==='u')c[f]=el.value;
+    else{var v=parseFloat(el.value);c[f]=isFinite(v)?v:0;}
+    render();return;
+  }
+  if(f==='del'){HID[t].push(id);delete OV[t][id];}
+  else if(f==='rq'){delete OV[t][id];}
+  else if(f==='n'){setCfg(id,'n',el.value);}
+  else if(f==='p'){var p=parseFloat(el.value);setCfg(id,'p',isFinite(p)?p:0);setCfg(id,'src','you');}
+  else if(f==='q'){if(el.value==='')delete OV[t][id];else{var q=parseFloat(el.value);if(isFinite(q))OV[t][id]=q;}}
+  else if(f==='u'){var cc=cfg(id),us=units(cc.k,cc.d),o=us.filter(function(x){return x[0]===cc.u;})[0]||us[0],nu=us.filter(function(x){return x[0]===el.value;})[0];
+    if(nu){setCfg(id,'p',Math.round((+cc.p||0)*nu[2]/o[2]*1000)/1000);setCfg(id,'u',nu[0]);
+      ['main','dalle'].forEach(function(tt){if(OV[tt][id]!=null)OV[tt][id]=Math.round(OV[tt][id]*o[2]/nu[2]*100)/100;});}}
+  render();
+}
+['boq','dBoq'].forEach(function(id){var tb=$(id);['input','change','click'].forEach(function(ev){tb.addEventListener(ev,onRow);});});
+['byEl','dEl'].forEach(function(id){$(id).addEventListener('change',function(ev){var s=ev.target;if(!s.dataset||!s.dataset.e)return;E[s.dataset.e][s.dataset.w]=+s.value;render();});});
+document.querySelectorAll('[data-add]').forEach(function(b){b.addEventListener('click',function(){var t=b.dataset.add;CUS[t].push({id:'c'+Date.now(),n:'مادة جديدة',q:1,u:'حبة',p:0});render();
+  var rows=tbOf(t).querySelectorAll('tr[data-cid]');var last=rows[rows.length-1];if(last){var i=last.querySelector('[data-f=n]');i.focus();i.select();}});});
+document.querySelectorAll('[data-restore]').forEach(function(b){b.addEventListener('click',function(){HID[b.dataset.restore]=[];render();});});
+$('reset').addEventListener('click',function(){
+  if(!confirm('نرجّعو كل شيء للأصل؟ الأسوام، الكميات، الوحدات، المواد اللي زدتها والنسب الكل يرجعو للأرقام الأولى.'))return;
+  initState({});syncSwitches();$('cont').value=10;SIG={};buildInputs();render();});
+
+function csvRows(t,name){
   var cur=$('cur').value,rows=[['المادة','الكمية','الوحدة','سوم الوحدة ('+cur+')','المجموع ('+cur+')']],sub=0;
-  list.forEach(function(m){var q=$(pre+m[0]).textContent.replace(/,/g,''),pr=parseFloat(P[m[0]])||0,t=(parseFloat(q)||0)*pr;sub+=t;rows.push([m[1],q,m[2],pr||'',pr?t.toFixed(2):'']);});
+  LAST[t].M.forEach(function(m){var tt=m.q*m.p;sub+=tt;rows.push([m.c.n,m.q,m.u[1],m.p||'',m.p?tt.toFixed(2):'']);});
+  CUS[t].forEach(function(c){var tt=(+c.q||0)*(+c.p||0);sub+=tt;rows.push([c.n,c.q,c.u,c.p||'',c.p?tt.toFixed(2):'']);});
   var cp=parseFloat($('cont').value)||0;rows.push(['المجموع','','','',sub.toFixed(2)]);rows.push(['احتياط '+cp+'%','','','',(sub*cp/100).toFixed(2)]);rows.push(['المجموع مع الاحتياط','','','',(sub*(1+cp/100)).toFixed(2)]);
   var txt='﻿'+rows.map(function(r){return r.map(function(v){v=String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}).join(',');}).join('\n');
   var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/csv;charset=utf-8'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);
 }
+function csv(){csvRows('main','mawad-tabe9-awel.csv');}
 $('csv').addEventListener('click',csv);$('csvSide').addEventListener('click',csv);
+$('dCsv').addEventListener('click',function(){csvRows('dalle','mawad-dalle.csv');});
 buildInputs();render();
 
 /* ---------------- draw + theme + scrollspy ---------------- */
