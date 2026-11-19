@@ -23,6 +23,7 @@
   --accent:#e0a35e; --accent-soft:#3a2b1b; --blue:#8bb6ea; --good:#5cc497; --warn:#f08a5d; color-scheme:dark;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth;scroll-padding-top:16px}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.75}
 .num{font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
@@ -122,6 +123,25 @@ input.in.ov{border-color:var(--accent);background:var(--accent-soft);color:var(-
 .hint{font-size:12px;color:var(--muted);text-align:left;margin-top:3px}
 .diacell{display:flex;gap:8px;align-items:center;white-space:nowrap}
 .rowtools{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.xcell{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+input.in.sm{width:58px}
+.tools{display:flex;gap:4px;justify-content:flex-end;white-space:nowrap}
+.lotsrow>td{background:var(--surface2);padding:10px 12px}
+.lots table{width:100%;font-size:13.5px}
+.lots th{background:transparent}
+.lots input.txt{min-width:140px;width:100%}
+.lots input[type=date]{width:150px;direction:ltr}
+.lotfoot{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-top:8px}
+.seg{display:inline-flex;gap:4px;background:var(--surface2);border-radius:10px;padding:4px;margin-bottom:10px}
+.seg label{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:14px}
+.seg label:has(input:checked){background:var(--surface);font-weight:700;color:var(--accent)}
+.seg input{accent-color:var(--accent)}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin-top:10px;padding:10px 16px}
+.share{margin-top:10px;display:grid;gap:10px}
+.sharebtns{display:flex;flex-wrap:wrap;gap:8px}
+input.shareout{width:100%;direction:ltr;text-align:left;font-size:12px}
+.v.good{color:var(--good)}
+@media (max-width:980px){.boq input.txt{min-width:120px}.boq select.sel{min-width:84px}input.in.sm{width:48px}.boq th,.boq td{padding:6px 6px}}
 .print-only{display:none}
 </style>
 </head>
@@ -144,7 +164,8 @@ input.in.ov{border-color:var(--accent);background:var(--accent-soft);color:var(-
   </nav>
   <div class="tools">
     <button class="btn" onclick="window.print()">طباعة / PDF</button>
-    <button class="btn" id="csvSide">تحميل جدول المواد (CSV)</button>
+    <button class="btn" id="csvSide">تحميل جدول التكلفة (CSV)</button>
+    <a class="btn" href="#share">حفظ ومشاركة الأرقام</a>
   </div>
 </aside>
 
@@ -160,7 +181,7 @@ input.in.ov{border-color:var(--accent);background:var(--accent-soft);color:var(-
       <div class="card stat"><div class="k">عرض الدار (شرق ← غرب)</div><div class="v num">12.7 <small>م</small></div></div>
       <div class="card stat"><div class="k">طول البناء (شمال ← الشارع)</div><div class="v num">19 <small>م</small></div></div>
       <div class="card stat"><div class="k">الطوابق</div><div class="v">أرضي + أوّل <small>+ كهف</small></div></div>
-      <div class="card stat"><div class="k">مجموع مواد الطابق الأول</div><div class="v"><span class="num" id="sumTotal">0</span> <small id="sumCur">د.ت</small></div></div>
+      <div class="card stat"><div class="k">تكلفة الطابق الأول (مواد + كوفراج + يد عاملة)</div><div class="v"><span class="num" id="sumTotal">0</span> <small id="sumCur">د.ت</small></div></div>
     </div>
     <p class="lede" style="margin-top:18px">الكرّاس هذا يلمّ كل شيء في بلاصة وحدة: النموذج النهائي ثلاثي الأبعاد، مقاسات الدار الكل والبيوت، الأساسات بمقاساتها، الدراسة المناخية كاملة (الشمس والريح)، وفي الآخر قائمة المواد الأولية للطابق الأول (حديد 6 و 12، إسمنت، رمل، حصى، آجر، هوردي، بوترال) بأسوام تونس (نوفمبر 2026)، وكل شيء فيه يتبدّل: الكمية، الوحدة، السوم وقطر الحديد. الحساب للطابق الأول برك، خاطر هو اللي باش تصير فيه الأشغال؛ الأساسات والطابق الأرضي موجودين للمعلومة.</p>
     <div class="note">الكميات محسوبة من النموذج والنسب تقديرية. قبل الشراء، خلّي المهندس ولا المقاول يثبّت عدد السواري، الحديد، وسمك السقف.</div>
@@ -285,41 +306,83 @@ input.in.ov{border-color:var(--accent);background:var(--accent-soft);color:var(-
 <!-- 6 -->
 <section class="chapter" id="c-cost">
   <span class="eyebrow">الفصل 6 · الطابق الأول فقط</span>
-  <h2>المواد الأولية والتكلفة</h2>
-  <p class="lede">كل شيء في الجدول يتبدّل: اسم المادة، الكمية، الوحدة، سوم الوحدة، ونوع الحديد (القطر) لكل عنصر. الأسوام المكتوبة هي أسوام تونس (المصدر مكتوب تحت كل مادة). اللي مكتوب عليه "تقديري" ما لقيتلوش سوم منشور، بدّلو بسوم الكرّاء متاعك. الأرقام تتسجّل في المتصفّح متاعك.</p>
+  <h2>التكلفة: المواد، الكوفراج واليد العاملة</h2>
+  <p class="lede">ثلاثة جداول: المواد الأولية، الكوفراج، واليد العاملة. كل خانة فيهم تتبدّل: الاسم، الكمية، الوحدة، السوم، قطر الحديد، نشريو ولا نكريو ولا عندنا، وشكون يعمل الخدمة (صنايعي ولا عبد العزيز). كل سطر تنجم تزيدلو دفعات بالتاريخ والسوم متاع كل مرّة. الأسوام اللي مكتوب عليها "تقديري" ما لقيتلهاش مصدر: بدّلها بالسوم الحقيقي.</p>
 
   <div class="card total-card">
-    <div><div class="unit">مجموع المواد</div><div class="big"><span class="num" id="tSub">0</span> <span class="cur">د.ت</span></div></div>
+    <div><div class="unit">المجموع مع الاحتياط</div><div class="big"><span class="num" id="tAll">0</span> <span class="cur">د.ت</span></div></div>
+    <div><div class="unit">المواد</div><div class="stat"><div class="v num" id="tMat">0</div></div></div>
+    <div><div class="unit">الكوفراج</div><div class="stat"><div class="v num" id="tForm">0</div></div></div>
+    <div><div class="unit">اليد العاملة</div><div class="stat"><div class="v num" id="tLab">0</div></div></div>
     <div><div class="unit">احتياط (<span class="num" id="tContP">10</span>%)</div><div class="stat"><div class="v num" id="tCont">0</div></div></div>
-    <div><div class="unit">المجموع مع الاحتياط</div><div class="stat"><div class="v"><span class="num" id="tAll">0</span> <span class="cur">د.ت</span></div></div></div>
-    <div style="margin-inline-start:auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center" class="noprint">
-      <label class="unit">العملة <input class="in" id="cur" style="width:70px" value="د.ت"></label>
-      <label class="unit">الاحتياط % <input class="in" id="cont" type="number" step="1" min="0" style="width:64px" value="10"></label>
-      <button class="btn" id="csv">CSV</button>
-      <button class="btn" id="reset">رجّع كل شيء للأصل</button>
-    </div>
+    <div><div class="unit">ما يتخلّصش (عبد العزيز + عندنا)</div><div class="stat"><div class="v num good" id="tSaved">0</div></div></div>
+  </div>
+  <div class="card ctrl noprint">
+    <label class="unit">العملة <input class="in" id="cur" style="width:70px" value="د.ت"></label>
+    <label class="unit">الاحتياط % <input class="in" id="cont" type="number" step="1" min="0" style="width:64px" value="10"></label>
+    <button class="btn" id="csv">CSV</button>
+    <button class="btn" id="reset">رجّع كل شيء للأصل</button>
   </div>
 
-  <h3>1. قائمة المواد والأسوام</h3>
+  <div class="card share noprint" id="share">
+    <div><b>حفظ ومشاركة الأرقام</b><div class="unit">الأرقام تتسجّل في الجهاز اللي تكتب فيه برك. باش عبد العزيز يبعثلك أرقامو (ولا العكس): ابعث رابط بالواتساب، ولا احفظ ملف وابعثو. اللي يحلّ الرابط ولا الملف يتسألو قبل ما تتبدّل أرقامو.</div></div>
+    <div class="sharebtns">
+      <button class="btn primary" data-share="link">ابعث رابط فيه الأرقام</button>
+      <button class="btn" data-share="save">احفظ في ملف</button>
+      <button class="btn" data-share="open">افتح ملف</button>
+    </div>
+    <input class="in shareout" id="shareOut" readonly hidden aria-label="رابط الأرقام">
+    <div class="unit" id="shareMsg" role="status"></div>
+  </div>
+
+  <h3>1. المواد الأولية</h3>
   <div class="tbl"><table id="boq" class="boq">
     <thead><tr><th>المادة</th><th class="n">الكمية</th><th>الوحدة</th><th class="n">سوم الوحدة</th><th class="n">المجموع</th><th class="noprint"></th></tr></thead>
     <tbody></tbody>
-    <tfoot><tr><td colspan="4">المجموع</td><td class="n num" id="boqSum"></td><td class="noprint"></td></tr></tfoot>
+    <tfoot><tr><td colspan="4">مجموع المواد</td><td class="n num" id="boqSum"></td><td class="noprint"></td></tr></tfoot>
   </table></div>
   <div class="rowtools noprint">
     <button class="btn" data-add="main">+ زيد مادة</button>
-    <button class="btn" data-restore="main" hidden>رجّع المواد اللي نحّيتها</button>
+    <button class="btn" data-restore="main" hidden></button>
   </div>
-  <p class="unit">الكمية محسوبة من النموذج. كي تكتب رقمك يولّي ملوّن، والزرّ ↺ يرجّع الرقم المحسوب. كي تبدّل الوحدة (مثلاً الحديد من القضيب للكغ) الكمية والسوم يتحوّلو وحدهم. الزرّ × ينحّي المادة.</p>
 
-  <h3>2. منين جات الكميات (حسب العنصر) · اختار قطر الحديد</h3>
+  <h3>2. الكوفراج</h3>
+  <div class="tbl"><table id="fq" class="boq">
+    <thead><tr><th>المادة</th><th class="n">الكمية</th><th>الوحدة</th><th>نشريو / نكريو / عندنا</th><th class="n">سوم الوحدة</th><th class="n">المجموع</th><th class="noprint"></th></tr></thead>
+    <tbody></tbody>
+    <tfoot><tr><td colspan="5">مجموع الكوفراج</td><td class="n num" id="fqSum"></td><td class="noprint"></td></tr></tfoot>
+  </table></div>
+  <div class="rowtools noprint">
+    <button class="btn" data-add="main_form">+ زيد سطر</button>
+    <button class="btn" data-restore="main_form" hidden></button>
+  </div>
+  <p class="unit">كي تختار "نكريو" السوم يولّي للحبة في النهار وتكتب عدد الأيام. "عندنا" يعني موجود: يتحسب بلاش.</p>
+
+  <h3>3. اليد العاملة</h3>
+  <div class="seg noprint" role="radiogroup" aria-label="طريقة حساب اليد العاملة">
+    <label><input type="radio" name="labmode" value="task"> خدمة بخدمة</label>
+    <label><input type="radio" name="labmode" value="m2"> مقطوعية بالمتر المربع</label>
+  </div>
+  <div class="tbl"><table id="lq" class="boq">
+    <thead><tr><th>الخدمة</th><th class="n">الكمية</th><th>الوحدة</th><th>شكون يعملها</th><th class="n">سوم الوحدة</th><th class="n">المجموع</th><th class="noprint"></th></tr></thead>
+    <tbody></tbody>
+    <tfoot><tr><td colspan="5">مجموع اليد العاملة</td><td class="n num" id="lqSum"></td><td class="noprint"></td></tr></tfoot>
+  </table></div>
+  <div class="rowtools noprint">
+    <button class="btn" data-add="main_lab">+ زيد خدمة</button>
+    <button class="btn" data-restore="main_lab" hidden></button>
+  </div>
+  <p class="unit">"عبد العزيز" يعني الخدمة يعملها هو: ما تتخلّصش، وقيمتها تبان في "ما يتخلّصش". "جزء" تكتب فيه النسبة اللي يعملها هو.</p>
+  <p class="unit">الكمية محسوبة من النموذج: كي تكتب رقمك يتلوّن، والزرّ ↺ يرجّع الرقم المحسوب. الزرّ "دفعات" تكتب فيه كل شرية ولا خلاص بتاريخو وكمّيتو وسومو؛ الباقي اللي ما تشراش يتحسب بالسوم الحالي. × ينحّي السطر.</p>
+
+  <h3>4. منين جات الكميات (حسب العنصر) · اختار قطر الحديد</h3>
   <div class="tbl"><table id="byEl">
     <thead><tr><th>العنصر</th><th>المقاس</th><th class="n">خرسانة م³</th><th>الحديد الرئيسي</th><th>الحديد الثانوي (كادرات، شبكة)</th><th class="n">آجر (حبة)</th><th class="n">ملاط م³</th></tr></thead>
     <tbody></tbody>
     <tfoot></tfoot>
   </table></div>
 
-  <h3>3. الكميات من النموذج <span class="unit">(تنجم تبدّلها)</span></h3>
+  <h3>5. الكميات من النموذج <span class="unit">(تنجم تبدّلها)</span></h3>
   <div class="grid g2">
     <div class="tbl"><table id="qStruct"><thead><tr><th>الهيكل</th><th class="n">القيمة</th><th>الوحدة</th></tr></thead><tbody></tbody></table></div>
     <div class="tbl"><table id="qWalls"><thead><tr><th>الحيوط والطلي</th><th class="n">القيمة</th><th>الوحدة</th></tr></thead><tbody></tbody></table></div>
@@ -329,10 +392,11 @@ input.in.ov{border-color:var(--accent);background:var(--accent-soft);color:var(-
     <label class="switch"><input type="checkbox" id="onPar" checked> حيوط البالكونات والكوريدور (garde-corps)</label>
   </div>
 
-  <h3>4. النسب المستعملة <span class="est">تقديرية · يثبّتها المهندس</span></h3>
-  <div class="grid g2">
+  <h3>6. النسب المستعملة <span class="est">تقديرية · يثبّتها المهندس</span></h3>
+  <div class="grid g3">
     <div class="tbl"><table id="rConc"><thead><tr><th>الخرسانة والحديد</th><th class="n">القيمة</th><th>الوحدة</th></tr></thead><tbody></tbody></table></div>
     <div class="tbl"><table id="rMas"><thead><tr><th>البني والطلي والسقف والتحويل</th><th class="n">القيمة</th><th>الوحدة</th></tr></thead><tbody></tbody></table></div>
+    <div class="tbl"><table id="rForm"><thead><tr><th>الكوفراج واليد العاملة</th><th class="n">القيمة</th><th>الوحدة</th></tr></thead><tbody></tbody></table></div>
   </div>
   <p class="unit" id="ratioCheck"></p>
 </section>
@@ -341,19 +405,22 @@ input.in.ov{border-color:var(--accent);background:var(--accent-soft);color:var(-
 <section class="chapter" id="c-dalle">
   <span class="eyebrow">الفصل 7 · الدالة فقط</span>
   <h2>حساب الدالة (سقف الطابق الأول)</h2>
-  <p class="lede">حساب منفصل للدالة وحدها: السقف بالهوردي 16 + بلاكة 5 سم، مع الجسور اللي تتصبّ معاها في نفس النهار. السواري، الدرج، الحيوط والطلي موش داخلين هنا. اسم المادة، الوحدة والسوم مشتركين مع الفصل 6 (تبدّل هنا يتبدّل غادي)، أما الكمية والمواد اللي تزيدها ولا تنحّيها خاصّين بالدالة.</p>
+  <p class="lede">حساب منفصل للدالة وحدها: السقف بالهوردي 16 + بلاكة 5 سم، مع الجسور اللي تتصبّ معاها في نفس النهار، والكوفراج واليد العاملة متاعها. السواري، الدرج، الحيوط والطلي موش داخلين هنا. الاسم، الوحدة، السوم، شكون يعمل، نشريو ولا نكريو، والدفعات مشتركين مع الفصل 6؛ أما الكمية والسطور اللي تزيدها ولا تنحّيها خاصّين بالدالة.</p>
 
   <div class="card total-card">
-    <div><div class="unit">مجموع مواد الدالة</div><div class="big"><span class="num" id="dSub">0</span> <span class="cur">د.ت</span></div></div>
+    <div><div class="unit">المجموع مع الاحتياط</div><div class="big"><span class="num" id="dAll">0</span> <span class="cur">د.ت</span></div></div>
+    <div><div class="unit">المواد</div><div class="stat"><div class="v num" id="dMat">0</div></div></div>
+    <div><div class="unit">الكوفراج</div><div class="stat"><div class="v num" id="dForm">0</div></div></div>
+    <div><div class="unit">اليد العاملة</div><div class="stat"><div class="v num" id="dLab">0</div></div></div>
     <div><div class="unit">احتياط (<span class="num" id="dContP">10</span>%)</div><div class="stat"><div class="v num" id="dCont">0</div></div></div>
-    <div><div class="unit">المجموع مع الاحتياط</div><div class="stat"><div class="v"><span class="num" id="dAll">0</span> <span class="cur">د.ت</span></div></div></div>
-    <div style="margin-inline-start:auto;display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center" class="noprint">
-      <label class="switch"><input type="checkbox" id="dTow" checked> غطاء البرج</label>
-      <label class="switch"><input type="checkbox" id="dCorr" checked> دالة الكوريدور الخارجي</label>
-      <button class="btn" id="dCsv">CSV</button>
-    </div>
+    <div><div class="unit">ما يتخلّصش</div><div class="stat"><div class="v num good" id="dSaved">0</div></div></div>
   </div>
-  <p class="unit" style="margin:8px 0 0">تحب السقف الرئيسي وحدو؟ طفّي "غطاء البرج" و"دالة الكوريدور".</p>
+  <div class="card ctrl noprint">
+    <label class="switch"><input type="checkbox" id="dTow" checked> غطاء البرج</label>
+    <label class="switch"><input type="checkbox" id="dCorr" checked> دالة الكوريدور الخارجي</label>
+    <button class="btn" id="dCsv">CSV</button>
+    <span class="unit">السقف الرئيسي وحدو؟ طفّي الزوز.</span>
+  </div>
 
   <div class="grid g4" style="margin-top:14px">
     <div class="card stat"><div class="k">مساحة الدالة</div><div class="v"><span class="num" id="dArea">0</span> <small>م²</small></div></div>
@@ -362,16 +429,39 @@ input.in.ov{border-color:var(--accent);background:var(--accent-soft);color:var(-
     <div class="card stat"><div class="k" id="dKgSL">الحديد الثانوي</div><div class="v"><span class="num" id="dKgS">0</span> <small>كغ</small></div></div>
   </div>
 
-  <h3>مواد الدالة والأسوام</h3>
+  <h3>مواد الدالة</h3>
   <div class="tbl"><table id="dBoq" class="boq">
     <thead><tr><th>المادة</th><th class="n">الكمية</th><th>الوحدة</th><th class="n">سوم الوحدة</th><th class="n">المجموع</th><th class="noprint"></th></tr></thead>
     <tbody></tbody>
-    <tfoot><tr><td colspan="4">المجموع</td><td class="n num" id="dBoqSum"></td><td class="noprint"></td></tr></tfoot>
+    <tfoot><tr><td colspan="4">مجموع المواد</td><td class="n num" id="dBoqSum"></td><td class="noprint"></td></tr></tfoot>
   </table></div>
   <div class="rowtools noprint">
     <button class="btn" data-add="dalle">+ زيد مادة</button>
-    <button class="btn" data-restore="dalle" hidden>رجّع المواد اللي نحّيتها</button>
+    <button class="btn" data-restore="dalle" hidden></button>
   </div>
+
+  <h3>كوفراج الدالة</h3>
+  <div class="tbl"><table id="dFq" class="boq">
+    <thead><tr><th>المادة</th><th class="n">الكمية</th><th>الوحدة</th><th>نشريو / نكريو / عندنا</th><th class="n">سوم الوحدة</th><th class="n">المجموع</th><th class="noprint"></th></tr></thead>
+    <tbody></tbody>
+    <tfoot><tr><td colspan="5">مجموع الكوفراج</td><td class="n num" id="dFqSum"></td><td class="noprint"></td></tr></tfoot>
+  </table></div>
+  <div class="rowtools noprint">
+    <button class="btn" data-add="dalle_form">+ زيد سطر</button>
+    <button class="btn" data-restore="dalle_form" hidden></button>
+  </div>
+
+  <h3>اليد العاملة متاع الدالة</h3>
+  <div class="tbl"><table id="dLq" class="boq">
+    <thead><tr><th>الخدمة</th><th class="n">الكمية</th><th>الوحدة</th><th>شكون يعملها</th><th class="n">سوم الوحدة</th><th class="n">المجموع</th><th class="noprint"></th></tr></thead>
+    <tbody></tbody>
+    <tfoot><tr><td colspan="5">مجموع اليد العاملة</td><td class="n num" id="dLqSum"></td><td class="noprint"></td></tr></tfoot>
+  </table></div>
+  <div class="rowtools noprint">
+    <button class="btn" data-add="dalle_lab">+ زيد خدمة</button>
+    <button class="btn" data-restore="dalle_lab" hidden></button>
+  </div>
+  <p class="unit">طريقة حساب اليد العاملة (خدمة بخدمة ولا مقطوعية بالمتر) هي نفسها متاع الفصل 6.</p>
 
   <h3>تفصيل الدالة حسب العنصر · اختار قطر الحديد</h3>
   <div class="tbl"><table id="dEl">
@@ -379,7 +469,7 @@ input.in.ov{border-color:var(--accent);background:var(--accent-soft);color:var(-
     <tbody></tbody>
     <tfoot></tfoot>
   </table></div>
-  <p class="unit">قطر الحديد هنا هو نفسو متاع الفصل 6. المقاسات والنسب تتبدّل في الفصل 6 والدالة تتعاود وحدها. الكوفراج والدعائم (étais) واليد العاملة موش داخلين.</p>
+  <p class="unit">قطر الحديد هنا هو نفسو متاع الفصل 6. المقاسات والنسب تتبدّل في الفصل 6 والدالة تتعاود وحدها.</p>
 </section>
 
 <!-- 8 -->
@@ -394,10 +484,12 @@ input.in.ov{border-color:var(--accent);background:var(--accent-soft);color:var(-
         <li>الحيوط بالآجر: الواجهات، الحيوط اللاصقة للجيران، الحيوط الداخلية، وحيوط البرج فوق الأول. المساحات بعد ما نقصنا الأبواب والشبابيك.</li>
         <li>الطلي (اللياجة) من داخل ومن برّا، والسقف من تحت.</li>
         <li>الكوريدور الخارجي وحيوط البالكونات (تنجم تطفيهم).</li>
+        <li>الكوفراج: لوح، دعائم (نشريو، نكريو بالنهار، ولا عندنا)، مادريي، مسامير وزيت.</li>
+        <li>اليد العاملة: خدمة بخدمة ولا مقطوعية بالمتر، مع شكون يعملها (صنايعي ولا عبد العزيز).</li>
       </ul>
       <h3>شنوّة موش داخل</h3>
       <ul class="plain">
-        <li>اليد العاملة، الكوفراج (اللوح والكراء)، النقل.</li>
+        <li>النقل، كراء الماكينات (بيتونيار، رافعة)، والماء والضوء متاع الحضيرة.</li>
         <li>الجليز، الدهن، الكهرباء، الماء، الأبواب والشبابيك، العزل (étanchéité) متاع السطح.</li>
         <li>الأساسات والطابق الأرضي (معروضين للمعلومة).</li>
       </ul>
@@ -413,6 +505,7 @@ input.in.ov{border-color:var(--accent);background:var(--accent-soft);color:var(-
         <li>الآجر: 15 حبة في المتر المربع لوجه 30 × 20 مع فاصل 1 سم (حساب؛ بدّلها حسب الآجر اللي تشريه).</li>
         <li>الأسوام: <a href="https://www.tuniscope.com/ar/article/444538/actu-arabe/arabe/materiaux-construction-prix-tunisie-144409">Tuniscope، 12 نوفمبر 2026</a> للحديد بالقطر (6: 2.700، 8: 13.500، 10: 19.000، 12: 26.500، 14: 37.000، 16: 48.500)، الآجر BKS 12 (0.930) و BKS 8 (0.850)، والهوردي 16 (1.400). المقال ما يكتبش الوحدة: حسبنا حديد 6 للكغ والباقي للقضيب 12 م، لأنها هكّا تجي قريبة من بعضها في الكغ (حوالي 2.5 د.ت).</li>
         <li>الإسمنت، الرمل، الحصى، البوترال، الماء وسلك الربط: ما لقيناش سوم منشور، الأسوام المكتوبة تقديرية. <a href="https://www.lapresse.tn/2026/11/13/construction-en-tunisie-les-prix-du-sable-et-du-gravier-explosent-de-50/">La Presse، 13 نوفمبر 2026</a>: الإسمنت والحديد طلعو حوالي 10%، والرمل والحصى لين 50%.</li>
+        <li>اليد العاملة والكوفراج (لوح، دعائم، مادريي، مسامير، زيت): ما لقيناش أسوام تونسية منشورة. الأسوام والنسب المكتوبة (مرّات استعمال اللوح، الدعائم في المتر، أيام المساعد) تقديرية باش يكون عندك رقم تقريبي؛ عبد العزيز ولا الصنايعي يبدّلوهم بالأسوام الحقيقية.</li>
         <li>الشمس: معادلات NOAA، مدنين <span class="num">33.35°N 10.50°E</span>.</li>
       </ul>
     </div>
@@ -543,7 +636,7 @@ function drawFound(){
   f.addEventListener('load',function(){fit();try{new ResizeObserver(fit).observe(f.contentDocument.body);}catch(e){setInterval(fit,1500);}setTimeout(fit,800);setTimeout(fit,2500);});
 })();
 
-/* ---------------- materials (first floor) ---------------- */
+/* ---------------- costs: materials, formwork, labour (first floor) ---------------- */
 var Q0={ /* quantities measured from the final model */
   nCol:18, hCol:3.0, sCol:0.25,
   beamLen:98.3, beamB:0.25, beamH:0.40,
@@ -573,7 +666,8 @@ var R0={
   slabConc:0.05, slabMesh:11, hourdis:8.33, pout:1.67,
   brick:15, layExt:2, layNeigh:1, layInt:1, wasteB:5,
   mortM2:0.025, mortCem:350, mortSand:1.1, plast:0.02, wasteP:10,
-  dSand:1.6, dGrav:1.5, truck:6
+  dSand:1.6, dGrav:1.5, truck:6,
+  reuse:3, propM2:1, madM2:1.2, nailM2:0.15, oilM2:0.1, stairsForm:7, helpDays:20, helpDaysD:6
 };
 var RL={
   cem:['إسمنت في م³ خرسانة','كغ'], sandC:['رمل في م³ خرسانة','م³'], grav:['حصى في م³ خرسانة','م³'], water:['ماء في م³ خرسانة','لتر'], wasteC:['ضياع الخرسانة','%'],
@@ -583,10 +677,13 @@ var RL={
   slabConc:['خرسانة البلاكة (5 سم)','م³/م²'], slabMesh:['شبكة الحديد في البلاكة','م/م²'], hourdis:['هوردي 16','حبة/م²'], pout:['بوترال','م.ط/م²'],
   brick:['آجر في م² لكل طبقة','حبة'], layExt:['طبقات الواجهة','طبقة'], layNeigh:['طبقات الحيط اللاصق للجار','طبقة'], layInt:['طبقات الحيط الداخلي','طبقة'], wasteB:['ضياع الآجر','%'],
   mortM2:['ملاط البني لكل م² وطبقة','م³'], mortCem:['إسمنت في م³ ملاط','كغ'], mortSand:['رمل في م³ ملاط','م³'], plast:['سمك الطلي','م'], wasteP:['ضياع الطلي','%'],
-  dSand:['وزن م³ رمل (للتحويل للطن)','طن'], dGrav:['وزن م³ حصى (للتحويل للطن)','طن'], truck:['حجم الكميون','م³']
+  dSand:['وزن م³ رمل (للتحويل للطن)','طن'], dGrav:['وزن م³ حصى (للتحويل للطن)','طن'], truck:['حجم الكميون','م³'],
+  reuse:['مرّات استعمال لوح الكوفراج','مرّة'], propM2:['دعائم (étais) في م² دالة','حبة/م²'], madM2:['مادريي في م² دالة','م.ط/م²'], nailM2:['مسامير في م² كوفراج','كغ/م²'], oilM2:['زيت الكوفراج في م²','لتر/م²'],
+  stairsForm:['كوفراج الدرج في م³ خرسانة','م²/م³'], helpDays:['أيام العامل المساعد (الطابق)','نهار'], helpDaysD:['أيام العامل المساعد (الدالة)','نهار']
 };
 var CONC=['cem','sandC','grav','water','wasteC','colBars','lap','colStSp','colStL','beamBars','beamLapPct','beamStPm','beamStL','stMain','stSec','wasteS','wire','barL'];
 var MAS=['slabConc','slabMesh','hourdis','pout','brick','layExt','layNeigh','layInt','wasteB','mortM2','mortCem','mortSand','plast','wasteP','dSand','dGrav','truck'];
+var FORMR=['reuse','propM2','madM2','nailM2','oilM2','stairsForm','helpDays','helpDaysD'];
 
 var DIAS=[6,8,10,12,14,16];
 function W(d){return 0.00617*d*d;}   /* kg per metre of bar */
@@ -599,45 +696,76 @@ var SRC={
   you:'سومك'
 };
 var DEF={
-  cement:{n:'إسمنت',k:'cem',u:'bag',p:17.5,src:'est'},
-  sandC:{n:'رمل للخرسانة',k:'sand',u:'m3',p:45,src:'est'},
-  sandM:{n:'رمل للبني والطلي',k:'sand',u:'m3',p:45,src:'est'},
-  grav:{n:'حصى (قرافيا)',k:'grav',u:'m3',p:55,src:'est'},
-  water:{n:'ماء',k:'water',u:'m3',p:1,src:'est'},
-  wire:{n:'سلك الربط',k:'wire',u:'kg',p:5,src:'est'},
-  brExt:{n:'آجر BKS 12 (الواجهات والبرج)',k:'pcs',u:'pc',p:0.93,src:'tn'},
-  brInt:{n:'آجر BKS 8 (الحيوط الداخلية واللاصقة)',k:'pcs',u:'pc',p:0.85,src:'tn'},
-  hourdis:{n:'هوردي 16',k:'pcs',u:'pc',p:1.4,src:'tn'},
-  pout:{n:'بوترال',k:'ml',u:'ml',p:6.5,src:'est'}
+  cement:{g:'mat',n:'إسمنت',k:'cem',u:'bag',p:17.5,src:'est'},
+  sandC:{g:'mat',n:'رمل للخرسانة',k:'sand',u:'m3',p:45,src:'est'},
+  sandM:{g:'mat',n:'رمل للبني والطلي',k:'sand',u:'m3',p:45,src:'est'},
+  grav:{g:'mat',n:'حصى (قرافيا)',k:'grav',u:'m3',p:55,src:'est'},
+  water:{g:'mat',n:'ماء',k:'water',u:'m3',p:1,src:'est'},
+  wire:{g:'mat',n:'سلك الربط',k:'kgonly',u:'kg',p:5,src:'est'},
+  brExt:{g:'mat',n:'آجر BKS 12 (الواجهات والبرج)',k:'pcs',u:'pc',p:0.93,src:'tn'},
+  brInt:{g:'mat',n:'آجر BKS 8 (الحيوط الداخلية واللاصقة)',k:'pcs',u:'pc',p:0.85,src:'tn'},
+  hourdis:{g:'mat',n:'هوردي 16',k:'pcs',u:'pc',p:1.4,src:'tn'},
+  pout:{g:'mat',n:'بوترال',k:'ml',u:'ml',p:6.5,src:'est'},
+  fPlank:{g:'form',n:'لوح الكوفراج',k:'plank',u:'m2',p:25,src:'est',mode:'buy',days:21},
+  fProp:{g:'form',n:'دعائم حديد (étais)',k:'pcs1',u:'pc',p:0.3,src:'est',mode:'rent',days:21},
+  fMad:{g:'form',n:'مادريي (خشب كبير تحت البوترال)',k:'mad',u:'ml',p:8,src:'est',mode:'buy',days:21},
+  fNail:{g:'form',n:'مسامير',k:'kgonly',u:'kg',p:6,src:'est',mode:'buy',days:21},
+  fOil:{g:'form',n:'زيت الكوفراج',k:'oil',u:'l',p:4,src:'est',mode:'buy',days:21},
+  lSteel:{g:'lab',n:'تقطيع وتركيب الحديد',k:'steelkg',u:'kg',p:0.4,src:'est',who:'pro',pct:50},
+  lForm:{g:'lab',n:'كوفراج وصبّة (السواري والجسور)',k:'m2',u:'m2',p:12,src:'est',who:'pro',pct:50},
+  lSlab:{g:'lab',n:'الدالة: تركيب البوترال والهوردي والصبّة',k:'m2',u:'m2',p:15,src:'est',who:'pro',pct:50},
+  lStairs:{g:'lab',n:'الدرج (كوفراج، حديد، صبّة)',k:'ff',u:'ff',p:600,src:'est',who:'pro',pct:50},
+  lBrick:{g:'lab',n:'البني بالآجر',k:'m2',u:'m2',p:10,src:'est',who:'pro',pct:50},
+  lPlast:{g:'lab',n:'الطلي (داخل وبرّا والسقف)',k:'m2',u:'m2',p:8,src:'est',who:'pro',pct:50},
+  lHelp:{g:'lab',n:'عامل مساعد (مانوفر)',k:'day',u:'day',p:40,src:'est',who:'pro',pct:50},
+  lM2:{g:'lab',n:'اليد العاملة مقطوعية (الهيكل + البني + الطلي)',k:'m2',u:'m2',p:120,src:'est',who:'pro',pct:50},
+  lM2d:{g:'lab',n:'اليد العاملة مقطوعية للدالة (حديد + كوفراج + صبّة)',k:'m2',u:'m2',p:35,src:'est',who:'pro',pct:50}
 };
 var STEELP={6:['kg',2.7,'tnKg'],8:['bar',13.5,'tnBar'],10:['bar',19,'tnBar'],12:['bar',26.5,'tnBar'],14:['bar',37,'tnBar'],16:['bar',48.5,'tnBar']};
-function defOf(id){if(DEF[id])return DEF[id];var d=+id.slice(1),s=STEELP[d]||['kg',0,'est'];return {n:'حديد '+d,k:'steel',d:d,u:s[0],p:s[1],src:s[2]};}
+function defOf(id){if(DEF[id])return DEF[id];var d=+id.slice(1),s=STEELP[d]||['kg',0,'est'];return {g:'mat',n:'حديد '+d,k:'steel',d:d,u:s[0],p:s[1],src:s[2]};}
 function n2(v){return String(Math.round(v*100)/100);}
 function units(k,d){
-  if(k==='cem')return [['bag','شكارة 50 كغ',50],['kg','كغ',1],['t','طن',1000]];
-  if(k==='sand')return [['m3','م³',1],['t','طن',1/R.dSand],['truck','كميون '+n2(R.truck)+' م³',R.truck]];
-  if(k==='grav')return [['m3','م³',1],['t','طن',1/R.dGrav],['truck','كميون '+n2(R.truck)+' م³',R.truck]];
-  if(k==='water')return [['m3','م³',1],['l','لتر',0.001]];
-  if(k==='steel'){var w=W(d);return [['bar','قضيب '+n2(R.barL)+' م',R.barL],['kg','كغ',1/w],['t','طن',1000/w]];}
-  if(k==='wire')return [['kg','كغ',1]];
-  if(k==='pcs')return [['pc','حبة',1],['k','ألف حبة',1000]];
+  switch(k){
+    case 'cem':return [['bag','شكارة 50 كغ',50],['kg','كغ',1],['t','طن',1000]];
+    case 'sand':return [['m3','م³',1],['t','طن',1/R.dSand],['truck','كميون '+n2(R.truck)+' م³',R.truck]];
+    case 'grav':return [['m3','م³',1],['t','طن',1/R.dGrav],['truck','كميون '+n2(R.truck)+' م³',R.truck]];
+    case 'water':return [['m3','م³',1],['l','لتر',0.001]];
+    case 'steel':var w=W(d);return [['bar','قضيب '+n2(R.barL)+' م',R.barL],['kg','كغ',1/w],['t','طن',1000/w]];
+    case 'kgonly':return [['kg','كغ',1]];
+    case 'pcs':return [['pc','حبة',1],['k','ألف حبة',1000]];
+    case 'pcs1':return [['pc','حبة',1]];
+    case 'plank':return [['m2','م²',1],['pc','قطعة 4 م × 20 سم',0.8]];
+    case 'mad':return [['ml','م.ط',1],['pc','قطعة 4 م',4]];
+    case 'oil':return [['l','لتر',1],['bid','بيدون 20 لتر',20]];
+    case 'steelkg':return [['kg','كغ',1],['t','طن',1000]];
+    case 'm2':return [['m2','م²',1]];
+    case 'ff':return [['ff','مقطوعية',1]];
+    case 'day':return [['day','نهار',1]];
+  }
   return [['ml','م.ط',1]];
 }
-function roundQ(q,u){return (u==='m3'||u==='t'||u==='truck'||u==='k')?Math.round(q*100)/100:Math.ceil(q-1e-9);}
+function roundQ(q,u){return (u==='m3'||u==='t'||u==='truck'||u==='k'||u==='m2'||u==='bid')?Math.round(q*100)/100:Math.ceil(q-1e-9);}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
 
+var GROUPS=['mat','form','lab'];
+var TID={main:{mat:'boq',form:'fq',lab:'lq'},dalle:{mat:'dBoq',form:'dFq',lab:'dLq'}};
+function tkOf(t,g){return g==='mat'?t:t+'_'+g;}
+var TKS=['main','dalle','main_form','dalle_form','main_lab','dalle_lab'];
 var KEY='house3d-boq-v3';
 var st=load(KEY)||{};
 function merge(a,b){var o={};for(var k in a)o[k]=Object.assign({},a[k],(b||{})[k]||{});return o;}
-var Q,R,E,CFG,OV,HID,CUS,ON,DON;
+function perTk(src,mk){var o={};TKS.forEach(function(k){o[k]=(src&&src[k])||mk();});return o;}
+var Q,R,E,CFG,OV,HID,CUS,ON,DON,LOTS,LABMODE;
 function initState(s){
   Q=Object.assign({},Q0,s.Q||{});R=Object.assign({},R0,s.R||{});E=merge(E0,s.E);
-  CFG=s.CFG||{};OV=s.OV||{main:{},dalle:{}};HID=s.HID||{main:[],dalle:[]};CUS=s.CUS||{main:[],dalle:[]};
+  CFG=s.CFG||{};LOTS=s.LOTS||{};LABMODE=s.LABMODE==='m2'?'m2':'task';
+  OV=perTk(s.OV,function(){return {};});HID=perTk(s.HID,function(){return [];});CUS=perTk(s.CUS,function(){return [];});
   ON=Object.assign({corr:true,par:true},s.ON||{});DON=Object.assign({tow:true,corr:true},s.DON||{});
 }
 initState(st);
 $('cur').value=st.cur||'د.ت';$('cont').value=st.cont==null?10:st.cont;
-function syncSwitches(){$('onCorr').checked=ON.corr;$('onPar').checked=ON.par;$('dTow').checked=DON.tow;$('dCorr').checked=DON.corr;}
+function syncSwitches(){$('onCorr').checked=ON.corr;$('onPar').checked=ON.par;$('dTow').checked=DON.tow;$('dCorr').checked=DON.corr;
+  document.querySelectorAll('input[name=labmode]').forEach(function(r){r.checked=r.value===LABMODE;});}
 syncSwitches();
 function cfg(id){return Object.assign({},defOf(id),CFG[id]||{});}
 function setCfg(id,k,v){CFG[id]=CFG[id]||{};CFG[id][k]=v;}
@@ -653,9 +781,10 @@ function calc(t){
   if(tow){els.push(slabEl('دالة غطاء البرج',Q.towRoof,'towS'));els.push(beamEl('جسور غطاء البرج',Q.towBeam,'towB'));}
   if(main)els.push({n:'درج البرج (الأول ← السطح)',d:'16 درجة · '+fmt(Q.stairs,2)+' م³',key:'stairs',v:Q.stairs,mM:Q.stairs*R.stMain/W(E.stairs.m),sM:Q.stairs*R.stSec/W(E.stairs.s)});
   if(corr){els.push(slabEl('دالة الكوريدور الخارجي',Q.corr,'corrS'));els.push(beamEl('جسر الكوريدور',Q.corrBeam,'corrB'));}
+  var wallA=0,plA=0;
   if(main){
     var b=1+R.wasteB/100,p=1+R.wasteP/100;
-    var wall=function(n,a,lay,ext){var br=a*lay*R.brick*b;els.push({n:n,d:fmt(a,1)+' م² × '+fmt(lay)+' طبقة',brE:ext?br:0,brI:ext?0:br,br:br,m:a*lay*R.mortM2});};
+    var wall=function(n,a,lay,ext){var br=a*lay*R.brick*b;wallA+=a*lay;els.push({n:n,d:fmt(a,1)+' م² × '+fmt(lay)+' طبقة',brE:ext?br:0,brI:ext?0:br,br:br,m:a*lay*R.mortM2});};
     wall('حيوط الواجهات',Q.wExt,R.layExt,1);
     wall('حيوط لاصقة للجيران',Q.wNeigh,R.layNeigh,0);
     wall('حيوط داخلية',Q.wInt,R.layInt,0);
@@ -664,7 +793,8 @@ function calc(t){
     var parA=ON.par?Q.parLen*Q.parH:0;
     if(ON.par)wall('حيوط البالكونات والكوريدور',parA,1,1);
     var inA=2*Q.wInt+Q.wExt+Q.wNeigh+Q.wTowExt+Q.wTowNeigh+Q.roof+Q.towRoof+parA,outA=Q.wExt+Q.wTowExt+parA;
-    els.push({n:'الطلي (داخل + السقف + برّا)',d:fmt(inA,0)+' + '+fmt(outA,0)+' م² · '+fmt(R.plast*100,0)+' سم',m:(inA+outA)*R.plast*p});
+    plA=inA+outA;
+    els.push({n:'الطلي (داخل + السقف + برّا)',d:fmt(inA,0)+' + '+fmt(outA,0)+' م² · '+fmt(R.plast*100,0)+' سم',m:plA*R.plast*p});
   }
   var T={v:0,br:0,brE:0,brI:0,m:0,hd:0,pt:0,kgM:0,kgS:0},steel={};
   els.forEach(function(e){var ek=E[e.key];
@@ -673,60 +803,106 @@ function calc(t){
     for(var k in T)T[k]+=(e[k]||0);});
   var vc=T.v*(1+R.wasteC/100),vm=T.m,kg=0,s=1+R.wasteS/100;
   for(var d in steel){steel[d]*=s;kg+=steel[d]*W(+d);}
-  var base={cement:vc*R.cem+vm*R.mortCem,sandC:vc*R.sandC,sandM:vm*R.mortSand,grav:vc*R.grav,water:vc*R.water/1000,wire:kg*R.wire/100,brExt:T.brE,brInt:T.brI,hourdis:T.hd,pout:T.pt};
+  var slabA=Q.roof+(tow?Q.towRoof:0)+(corr?Q.corr:0);
+  var fCol=main?4*Q.sCol*Q.hCol*Q.nCol:0,fBeam=(2*Q.beamH+Q.beamB)*(Q.beamLen+(tow?Q.towBeam:0)+(corr?Q.corrBeam:0)),fSt=main?Q.stairs*R.stairsForm:0,fArea=fCol+fBeam+fSt;
+  var base={cement:vc*R.cem+vm*R.mortCem,sandC:vc*R.sandC,sandM:vm*R.mortSand,grav:vc*R.grav,water:vc*R.water/1000,wire:kg*R.wire/100,brExt:T.brE,brInt:T.brI,hourdis:T.hd,pout:T.pt,
+    fPlank:fArea/Math.max(R.reuse,1),fProp:slabA*R.propM2,fMad:slabA*R.madM2,fNail:fArea*R.nailM2,fOil:fArea*R.oilM2,
+    lSteel:kg,lForm:fCol+fBeam,lSlab:slabA,lStairs:main?1:0,lBrick:wallA,lPlast:plA,lHelp:main?R.helpDays:R.helpDaysD,lM2:slabA,lM2d:slabA};
   for(d in steel)base['s'+d]=steel[d];
-  return {els:els,T:T,base:base,steel:steel,kg:kg,vc:vc,area:Q.roof+(tow?Q.towRoof:0)+(corr?Q.corr:0)};
+  return {els:els,T:T,base:base,steel:steel,kg:kg,vc:vc,area:slabA,fArea:fArea};
 }
 
-var ORDER={main:['cement','sandC','sandM','grav','water','#steel','wire','brExt','brInt','hourdis','pout'],dalle:['cement','sandC','grav','water','#steel','wire','hourdis','pout']};
-function rowIds(t,r){var out=[];
-  ORDER[t].forEach(function(id){if(id==='#steel')Object.keys(r.steel).map(Number).sort(function(a,b){return a-b;}).forEach(function(d){out.push('s'+d);});else out.push(id);});
-  return out.filter(function(id){return HID[t].indexOf(id)<0&&((r.base[id]||0)>0||OV[t][id]!=null);});}
-function model(t,r){
-  return rowIds(t,r).map(function(id){var c=cfg(id),us=units(c.k,c.d),u=us.filter(function(x){return x[0]===c.u;})[0]||us[0];
-    var auto=roundQ((r.base[id]||0)/u[2],u[0]),ov=OV[t][id],q=ov!=null?ov:auto;
-    return {id:id,c:c,us:us,u:u,auto:auto,ov:ov,q:q,p:+c.p||0};});
+var ORDER={
+  main:{mat:['cement','sandC','sandM','grav','water','#steel','wire','brExt','brInt','hourdis','pout'],form:['fPlank','fProp','fMad','fNail','fOil'],lab:{task:['lSteel','lForm','lSlab','lStairs','lBrick','lPlast','lHelp'],m2:['lM2']}},
+  dalle:{mat:['cement','sandC','grav','water','#steel','wire','hourdis','pout'],form:['fPlank','fProp','fMad','fNail','fOil'],lab:{task:['lSteel','lForm','lSlab','lHelp'],m2:['lM2d']}}
+};
+function rowIds(t,g,r){var tk=tkOf(t,g),list=ORDER[t][g];if(g==='lab')list=list[LABMODE];var out=[];
+  list.forEach(function(id){if(id==='#steel')Object.keys(r.steel).map(Number).sort(function(a,b){return a-b;}).forEach(function(d){out.push('s'+d);});else out.push(id);});
+  return out.filter(function(id){return HID[tk].indexOf(id)<0&&((r.base[id]||0)>0||OV[tk][id]!=null);});}
+function rowCost(m){var c=m.c,rent=c.g==='form'&&c.mode==='rent',mul=rent?(+c.days||0):1,f=1;
+  if(c.g==='form'&&c.mode==='own')f=0;
+  if(c.g==='lab')f=c.who==='abz'?0:c.who==='part'?Math.max(0,1-(+c.pct||0)/100):1;
+  var L=LOTS[m.id]||[],lq=0,lc=0;L.forEach(function(l){lq+=+l.q||0;lc+=(+l.q||0)*(+l.p||0)*mul;});
+  var rem=Math.max(0,(+m.q||0)-lq),full=rem*m.p*mul;
+  return {tot:lc+full*f,saved:full*(1-f),lq:lq,lc:lc,rem:rem,n:L.length};}
+function model(t,g,r){
+  var tk=tkOf(t,g);
+  var M=rowIds(t,g,r).map(function(id){var c=cfg(id),us=units(c.k,c.d),u=us.filter(function(x){return x[0]===c.u;})[0]||us[0];
+    var auto=roundQ((r.base[id]||0)/u[2],u[0]),ov=OV[tk][id],q=ov!=null?ov:auto;
+    var m={id:id,c:c,us:us,u:u,auto:auto,ov:ov,q:q,p:+c.p||0};m.cost=rowCost(m);return m;});
+  CUS[tk].forEach(function(c){var m={id:c.id,cust:true,c:Object.assign({g:g},c),q:+c.q||0,p:+c.p||0,u:[c.u,c.u,1]};m.cost=rowCost(m);M.push(m);});
+  return M;
 }
-var SIG={};
-function tbOf(t){return $(t==='main'?'boq':'dBoq').tBodies[0];}
-function buildTable(t,M){
-  var h='';
-  M.forEach(function(m){
-    h+='<tr data-t="'+t+'" data-id="'+m.id+'"><td><input class="in txt" data-f="n" aria-label="اسم المادة" value="'+esc(m.c.n)+'"><div class="src" data-x="src"></div></td>'+
-      '<td class="n"><div class="qcell"><input class="in" type="number" step="any" min="0" data-f="q" aria-label="الكمية"><button class="mini" data-f="rq" title="رجّع الكمية المحسوبة" aria-label="رجّع الكمية المحسوبة">↺</button></div><div class="hint" data-x="hint"></div></td>'+
-      '<td><select class="in sel" data-f="u" aria-label="الوحدة">'+m.us.map(function(x){return '<option value="'+x[0]+'"'+(x[0]===m.u[0]?' selected':'')+'>'+x[1]+'</option>';}).join('')+'</select></td>'+
-      '<td class="n"><input class="in" type="number" step="any" min="0" data-f="p" placeholder="0" aria-label="سوم الوحدة"></td><td class="n num" data-x="tot"></td>'+
-      '<td class="n noprint"><button class="mini del" data-f="del" title="نحّي المادة" aria-label="نحّي المادة">×</button></td></tr>';
-  });
-  CUS[t].forEach(function(c){
-    h+='<tr data-t="'+t+'" data-cid="'+c.id+'"><td><input class="in txt" data-f="n" aria-label="اسم المادة" value="'+esc(c.n)+'"><div class="src">مادة زدتها إنت</div></td>'+
-      '<td class="n"><div class="qcell"><input class="in" type="number" step="any" min="0" data-f="q" aria-label="الكمية"></div></td>'+
-      '<td><input class="in txt unitin" data-f="u" aria-label="الوحدة" value="'+esc(c.u)+'"></td>'+
-      '<td class="n"><input class="in" type="number" step="any" min="0" data-f="p" placeholder="0" aria-label="سوم الوحدة"></td><td class="n num" data-x="tot"></td>'+
-      '<td class="n noprint"><button class="mini del" data-f="del" title="نحّي المادة" aria-label="نحّي المادة">×</button></td></tr>';
-  });
-  tbOf(t).innerHTML=h;
+var SIG={},OPEN={};
+function tbOf(t,g){return $(TID[t][g]).tBodies[0];}
+function ncols(g){return g==='mat'?6:7;}
+function extraCell(g){
+  if(g==='form')return '<td><div class="xcell"><select class="in sel" data-f="mode" aria-label="نشريو ولا نكريو"><option value="buy">نشريو</option><option value="rent">نكريو</option><option value="own">عندنا (بلاش)</option></select>'+
+    '<span data-x="daysw" class="unit"><input class="in sm" type="number" min="0" step="1" data-f="days" aria-label="عدد الأيام"> نهار</span></div></td>';
+  if(g==='lab')return '<td><div class="xcell"><select class="in sel" data-f="who" aria-label="شكون يعمل الخدمة"><option value="pro">صنايعي (بالخلاص)</option><option value="abz">عبد العزيز (بلاش)</option><option value="part">جزء يعملو عبد العزيز</option></select>'+
+    '<span data-x="pctw" class="unit"><input class="in sm" type="number" min="0" max="100" step="5" data-f="pct" aria-label="النسبة اللي يعملها عبد العزيز">%</span></div></td>';
+  return '';
 }
+function rowHTML(t,g,m){
+  var tk=tkOf(t,g),h='<tr data-tk="'+tk+'" data-t="'+t+'" data-g="'+g+'" '+(m.cust?'data-cid':'data-id')+'="'+m.id+'">';
+  h+='<td><input class="in txt" data-f="n" aria-label="الاسم" value="'+esc(m.c.n)+'"><div class="src" data-x="src">'+(m.cust?'سطر زدتو إنت':'')+'</div></td>';
+  h+='<td class="n"><div class="qcell"><input class="in" type="number" step="any" min="0" data-f="q" aria-label="الكمية">'+(m.cust?'':'<button class="mini" data-f="rq" title="رجّع الكمية المحسوبة" aria-label="رجّع الكمية المحسوبة">↺</button>')+'</div><div class="hint" data-x="hint"></div></td>';
+  h+=m.cust?'<td><input class="in txt unitin" data-f="u" aria-label="الوحدة" value="'+esc(m.c.u)+'"></td>'
+    :'<td><select class="in sel" data-f="u" aria-label="الوحدة">'+m.us.map(function(x){return '<option value="'+x[0]+'"'+(x[0]===m.u[0]?' selected':'')+'>'+x[1]+'</option>';}).join('')+'</select></td>';
+  h+=extraCell(g);
+  h+='<td class="n"><input class="in" type="number" step="any" min="0" data-f="p" placeholder="0" aria-label="سوم الوحدة"><div class="hint" data-x="phint"></div></td>';
+  h+='<td class="n"><span class="num" data-x="tot"></span><div class="hint" data-x="thint"></div></td>';
+  h+='<td class="n noprint"><div class="tools"><button class="mini" data-f="lots" aria-expanded="false">دفعات <span data-x="lc"></span></button><button class="mini del" data-f="del" title="نحّي السطر" aria-label="نحّي السطر">×</button></div></td></tr>';
+  if(OPEN[tk+':'+m.id]){
+    var L=LOTS[m.id]||[];
+    h+='<tr class="lotsrow" data-tk="'+tk+'" data-lotfor="'+m.id+'"><td colspan="'+ncols(g)+'"><div class="lots"><table><thead><tr><th>التاريخ</th><th class="n">الكمية</th><th class="n">سوم الوحدة</th><th>ملاحظة</th><th class="n">المجموع</th><th></th></tr></thead><tbody>';
+    L.forEach(function(l){h+='<tr data-lid="'+l.id+'"><td><input class="in" type="date" data-l="d" aria-label="التاريخ"></td><td class="n"><input class="in" type="number" step="any" min="0" data-l="q" aria-label="الكمية"></td><td class="n"><input class="in" type="number" step="any" min="0" data-l="p" aria-label="السوم"></td><td><input class="in txt" data-l="note" aria-label="ملاحظة" placeholder="منين، شكون..."></td><td class="n num" data-x="lt"></td><td><button class="mini del" data-l="del" aria-label="نحّي الدفعة">×</button></td></tr>';});
+    h+='</tbody></table><div class="lotfoot"><button class="btn" data-l="add">+ دفعة</button><span class="unit" data-x="lsum"></span></div></div></td></tr>';
+  }
+  return h;
+}
+function buildTable(t,g,M){var h='';M.forEach(function(m){h+=rowHTML(t,g,m);});tbOf(t,g).innerHTML=h;}
 function setVal(i,v){if(!i||document.activeElement===i)return;var s=(v===''||v==null)?'':String(Math.round(+v*10000)/10000);if(i.value!==s)i.value=s;}
-function setTxt(i,v){if(!i||document.activeElement===i)return;if(i.value!==v)i.value=v;}
-function fillTable(t,M,r){
-  var tb=tbOf(t),sub=0;
-  M.forEach(function(m){var tr=tb.querySelector('tr[data-id="'+m.id+'"]');if(!tr)return;
-    var qi=tr.querySelector('[data-f=q]');setVal(qi,m.q);qi.classList.toggle('ov',m.ov!=null);
-    tr.querySelector('[data-f=rq]').hidden=m.ov==null;
-    setTxt(tr.querySelector('[data-f=n]'),m.c.n);setVal(tr.querySelector('[data-f=p]'),m.p||'');
-    var src=tr.querySelector('[data-x=src]');src.textContent=SRC[m.c.src]||'';src.classList.toggle('estsrc',m.c.src==='est');
-    var base=m.q*m.u[2],hint='';
-    if(m.c.k==='steel')hint=m.u[0]==='kg'?'≈ '+fmt(base/R.barL,1)+' قضيب':'≈ '+fmt(base*W(m.c.d),0)+' كغ';
-    else if(m.c.k==='cem'&&m.u[0]!=='kg')hint='≈ '+fmt(base,0)+' كغ';
-    if(m.ov!=null)hint=(hint?hint+' · ':'')+'المحسوبة: '+fmt(m.auto,m.auto%1?2:0);
+function setTxt(i,v){if(!i||document.activeElement===i)return;v=v==null?'':String(v);if(i.value!==v)i.value=v;}
+function fillTable(t,g,M){
+  var tb=tbOf(t,g),tk=tkOf(t,g),sum={tot:0,saved:0};
+  M.forEach(function(m){
+    var tr=tb.querySelector('tr['+(m.cust?'data-cid':'data-id')+'="'+m.id+'"]');if(!tr)return;
+    var c=m.c,k=m.cost;
+    setTxt(tr.querySelector('[data-f=n]'),c.n);
+    var qi=tr.querySelector('[data-f=q]');setVal(qi,m.q);
+    if(!m.cust){qi.classList.toggle('ov',m.ov!=null);tr.querySelector('[data-f=rq]').hidden=m.ov==null;
+      var src=tr.querySelector('[data-x=src]');src.textContent=SRC[c.src]||'';src.classList.toggle('estsrc',c.src==='est');}
+    else setTxt(tr.querySelector('[data-f=u]'),c.u);
+    setVal(tr.querySelector('[data-f=p]'),m.p||'');
+    var hint='';
+    if(!m.cust){var base=m.q*m.u[2];
+      if(c.k==='steel')hint=m.u[0]==='kg'?'≈ '+fmt(base/R.barL,1)+' قضيب':'≈ '+fmt(base*W(c.d),0)+' كغ';
+      else if(c.k==='cem'&&m.u[0]!=='kg')hint='≈ '+fmt(base,0)+' كغ';
+      if(m.ov!=null)hint=(hint?hint+' · ':'')+'المحسوبة: '+fmt(m.auto,m.auto%1?2:0);}
     tr.querySelector('[data-x=hint]').textContent=hint;
-    var tot=m.q*m.p;sub+=tot;tr.querySelector('[data-x=tot]').textContent=m.p?fmt(tot,2):'—';});
-  CUS[t].forEach(function(c){var tr=tb.querySelector('tr[data-cid="'+c.id+'"]');if(!tr)return;
-    setVal(tr.querySelector('[data-f=q]'),c.q);setVal(tr.querySelector('[data-f=p]'),c.p||'');setTxt(tr.querySelector('[data-f=n]'),c.n);setTxt(tr.querySelector('[data-f=u]'),c.u);
-    var tot=(+c.q||0)*(+c.p||0);sub+=tot;tr.querySelector('[data-x=tot]').textContent=c.p?fmt(tot,2):'—';});
-  var rb=document.querySelector('[data-restore="'+t+'"]');rb.hidden=!HID[t].length;rb.textContent='رجّع المواد اللي نحّيتها ('+HID[t].length+')';
-  return sub;
+    if(g==='form'){var ms=tr.querySelector('[data-f=mode]');if(ms.value!==(c.mode||'buy'))ms.value=c.mode||'buy';
+      tr.querySelector('[data-x=daysw]').hidden=c.mode!=='rent';setVal(tr.querySelector('[data-f=days]'),c.days);}
+    if(g==='lab'){var ws=tr.querySelector('[data-f=who]');if(ws.value!==(c.who||'pro'))ws.value=c.who||'pro';
+      tr.querySelector('[data-x=pctw]').hidden=c.who!=='part';setVal(tr.querySelector('[data-f=pct]'),c.pct);}
+    tr.querySelector('[data-x=phint]').textContent=(g==='form'&&c.mode==='rent')?'للحبة في النهار':'';
+    tr.querySelector('[data-x=tot]').textContent=(m.p||k.lc)?fmt(k.tot,2):'—';
+    var th=[];
+    if(k.n)th.push('دفعات: '+fmt(k.lc,2)+' · باقي '+fmt(k.rem,k.rem%1?2:0));
+    if(k.saved>0.005)th.push('ما يتخلّصش: '+fmt(k.saved,2));
+    tr.querySelector('[data-x=thint]').textContent=th.join(' · ');
+    tr.querySelector('[data-x=lc]').textContent=k.n?'('+k.n+')':'';
+    tr.querySelector('[data-f=lots]').setAttribute('aria-expanded',OPEN[tk+':'+m.id]?'true':'false');
+    sum.tot+=k.tot;sum.saved+=k.saved;
+    var lr=tb.querySelector('tr[data-lotfor="'+m.id+'"]');
+    if(lr){var L=LOTS[m.id]||[],mul=(g==='form'&&c.mode==='rent')?(+c.days||0):1;
+      L.forEach(function(l){var x=lr.querySelector('tr[data-lid="'+l.id+'"]');if(!x)return;
+        setTxt(x.querySelector('[data-l=d]'),l.d);setVal(x.querySelector('[data-l=q]'),l.q);setVal(x.querySelector('[data-l=p]'),l.p);setTxt(x.querySelector('[data-l=note]'),l.note);
+        x.querySelector('[data-x=lt]').textContent=fmt((+l.q||0)*(+l.p||0)*mul,2);});
+      lr.querySelector('[data-x=lsum]').textContent='تشرى/تخلّص: '+fmt(k.lq,k.lq%1?2:0)+' من '+fmt(m.q,m.q%1?2:0)+' · الباقي '+fmt(k.rem,k.rem%1?2:0)+' بالسوم الحالي'+(mul!==1?' · السوم في الدفعات للحبة في النهار × '+fmt(mul)+' نهار':'');}
+  });
+  var rb=document.querySelector('[data-restore="'+tk+'"]');rb.hidden=!HID[tk].length;rb.textContent='رجّع السطور اللي نحّيتها ('+HID[tk].length+')';
+  return sum;
 }
 function diaSel(key,w){return '<select class="in sel dia" data-e="'+key+'" data-w="'+w+'" aria-label="قطر الحديد">'+DIAS.map(function(d){return '<option value="'+d+'"'+(E[key][w]===d?' selected':'')+'>Ø '+d+'</option>';}).join('')+'</select>';}
 function steelCell(e,w){var ek=E[e.key],m=w==='m'?e.mM:e.sM;if(!ek||!m||ek[w]==null)return '<td class="unit">—</td>';
@@ -749,86 +925,156 @@ function buildInputs(){
   $('qWalls').tBodies[0].innerHTML=WALLS.map(function(k){return inputRow(Q,k,QL[k],'Q');}).join('');
   $('rConc').tBodies[0].innerHTML=CONC.map(function(k){return inputRow(R,k,RL[k],'R');}).join('');
   $('rMas').tBodies[0].innerHTML=MAS.map(function(k){return inputRow(R,k,RL[k],'R');}).join('');
+  $('rForm').tBodies[0].innerHTML=FORMR.map(function(k){return inputRow(R,k,RL[k],'R');}).join('');
 }
-var LAST={};
+var LAST={main:{},dalle:{}};
 function render(){
   var cur=$('cur').value||'',cp=parseFloat($('cont').value)||0;
   document.querySelectorAll('.cur').forEach(function(e){e.textContent=cur;});$('sumCur').textContent=cur;
-  var tot={};
+  var S={};
   ['main','dalle'].forEach(function(t){
-    var r=calc(t),M=model(t,r);
-    var sig=M.map(function(m){return m.id+':'+m.u[0]+':'+m.us.map(function(x){return x[1];}).join('/');}).join('|')+'#'+CUS[t].map(function(c){return c.id;}).join(',');
-    if(SIG[t]!==sig){buildTable(t,M);SIG[t]=sig;}
-    tot[t]=fillTable(t,M,r);LAST[t]={r:r,M:M};
+    var r=calc(t);LAST[t].r=r;S[t]={};
+    GROUPS.forEach(function(g){
+      var M=model(t,g,r),tk=tkOf(t,g);
+      var sig=M.map(function(m){return m.id+':'+m.u[0]+':'+(m.us?m.us.map(function(x){return x[1];}).join('/'):'')+':'+(OPEN[tk+':'+m.id]?(LOTS[m.id]||[]).map(function(l){return l.id;}).join(','):'-');}).join('|');
+      if(SIG[tk]!==sig){buildTable(t,g,M);SIG[tk]=sig;}
+      S[t][g]=fillTable(t,g,M);LAST[t][g]=M;
+    });
     elTable(t==='main'?'byEl':'dEl',r,t==='dalle');
   });
-  var s=tot.main,c=s*cp/100;
-  $('boqSum').textContent=fmt(s,2);$('tSub').textContent=fmt(s,2);$('tCont').textContent=fmt(c,2);$('tAll').textContent=fmt(s+c,2);$('tContP').textContent=fmt(cp);$('sumTotal').textContent=fmt(s+c,0);
-  s=tot.dalle;c=s*cp/100;
-  $('dBoqSum').textContent=fmt(s,2);$('dSub').textContent=fmt(s,2);$('dCont').textContent=fmt(c,2);$('dAll').textContent=fmt(s+c,2);$('dContP').textContent=fmt(cp);
+  function totals(t,p){var s=S[t],sub=s.mat.tot+s.form.tot+s.lab.tot,c=sub*cp/100;
+    $(p+'Mat').textContent=fmt(s.mat.tot,2);$(p+'Form').textContent=fmt(s.form.tot,2);$(p+'Lab').textContent=fmt(s.lab.tot,2);
+    $(p+'Cont').textContent=fmt(c,2);$(p+'ContP').textContent=fmt(cp);$(p+'All').textContent=fmt(sub+c,2);
+    $(p+'Saved').textContent=fmt(s.mat.saved+s.form.saved+s.lab.saved,2);return sub+c;}
+  $('sumTotal').textContent=fmt(totals('main','t'),0);totals('dalle','d');
+  $('boqSum').textContent=fmt(S.main.mat.tot,2);$('fqSum').textContent=fmt(S.main.form.tot,2);$('lqSum').textContent=fmt(S.main.lab.tot,2);
+  $('dBoqSum').textContent=fmt(S.dalle.mat.tot,2);$('dFqSum').textContent=fmt(S.dalle.form.tot,2);$('dLqSum').textContent=fmt(S.dalle.lab.tot,2);
   var dr=LAST.dalle.r;
   $('dArea').textContent=fmt(dr.area,1);$('dConc').textContent=fmt(dr.vc,2);
   $('dKgM').textContent=fmt(dr.T.kgM*(1+R.wasteS/100),0);$('dKgS').textContent=fmt(dr.T.kgS*(1+R.wasteS/100),0);
   $('dKgML').textContent='الحديد الرئيسي (Ø '+E.beam.m+')';$('dKgSL').textContent='الحديد الثانوي (Ø '+E.roof.s+')';
   var mr=LAST.main.r;
-  $('ratioCheck').textContent='للمقارنة: الحديد هنا حوالي '+fmt(mr.kg/mr.area,1)+' كغ في المتر المربع من السقف (بلا أساسات، والبوترال جاهز فيه حديدو). المرجع للبناية الكل بالأساسات حوالي 30 كغ/م².';
-  store(KEY,{Q:Q,R:R,E:E,CFG:CFG,OV:OV,HID:HID,CUS:CUS,ON:ON,DON:DON,cur:$('cur').value,cont:$('cont').value});
+  $('ratioCheck').textContent='للمقارنة: الحديد هنا حوالي '+fmt(mr.kg/mr.area,1)+' كغ في المتر المربع من السقف (بلا أساسات، والبوترال جاهز فيه حديدو). المرجع للبناية الكل بالأساسات حوالي 30 كغ/م². مساحة الكوفراج (سواري + جسور + درج): '+fmt(mr.fArea,1)+' م².';
+  store(KEY,snapshot());
 }
+function snapshot(){return {v:3,Q:Q,R:R,E:E,CFG:CFG,OV:OV,HID:HID,CUS:CUS,ON:ON,DON:DON,LOTS:LOTS,LABMODE:LABMODE,cur:$('cur').value,cont:$('cont').value};}
 
 /* inputs: quantities and ratios */
-document.addEventListener('input',function(e){var t=e.target;if(!t.dataset||!t.dataset.g)return;var v=parseFloat(t.value);if(isFinite(v))(t.dataset.g==='Q'?Q:R)[t.dataset.k]=v;render();});
+document.addEventListener('input',function(e){var t=e.target;if(!t.dataset||!t.dataset.g||!t.dataset.k)return;var v=parseFloat(t.value);if(isFinite(v))(t.dataset.g==='Q'?Q:R)[t.dataset.k]=v;render();});
 $('cur').addEventListener('input',render);$('cont').addEventListener('input',render);
 $('onCorr').addEventListener('change',function(){ON.corr=this.checked;render();});
 $('onPar').addEventListener('change',function(){ON.par=this.checked;render();});
 $('dTow').addEventListener('change',function(){DON.tow=this.checked;render();});
 $('dCorr').addEventListener('change',function(){DON.corr=this.checked;render();});
+document.querySelectorAll('input[name=labmode]').forEach(function(r){r.addEventListener('change',function(){if(r.checked){LABMODE=r.value;render();}});});
 
-/* materials tables: every cell editable */
+/* cost tables: every cell editable */
+function num(v){var x=parseFloat(v);return isFinite(x)?x:0;}
+function onLots(ev,el,lr){
+  var id=lr.dataset.lotfor,L=LOTS[id]=LOTS[id]||[],f=el.dataset.l;
+  if(ev.type==='click'){
+    if(f==='add'){var cc=DEF[id]||/^s\d+$/.test(id)?cfg(id):null,p=cc?(+cc.p||0):0;
+      if(!cc){Object.keys(CUS).forEach(function(k){CUS[k].forEach(function(c){if(c.id===id)p=+c.p||0;});});}
+      L.push({id:'l'+Date.now(),d:new Date().toISOString().slice(0,10),q:0,p:p,note:''});}
+    else if(f==='del'){var lid=el.closest('tr').dataset.lid;LOTS[id]=L.filter(function(l){return l.id!==lid;});}
+    else return;
+    render();return;
+  }
+  if(ev.type!=='input'||!f)return;
+  var lot=L.filter(function(l){return l.id===el.closest('tr').dataset.lid;})[0];if(!lot)return;
+  if(f==='d'||f==='note')lot[f]=el.value;else lot[f]=num(el.value);
+  render();
+}
 function onRow(ev){
-  var el=ev.target,f=el.dataset&&el.dataset.f;if(!f)return;
+  var el=ev.target;
+  if(ev.type==='click'&&el.tagName!=='BUTTON')el=el.closest('button')||el;
+  var lr=el.closest&&el.closest('tr.lotsrow');
+  if(lr&&el.dataset&&el.dataset.l)return onLots(ev,el,lr);
+  var f=el.dataset&&el.dataset.f;if(!f)return;
   var isSel=el.tagName==='SELECT';
   if(ev.type==='click'&&el.tagName!=='BUTTON')return;
   if(ev.type==='input'&&isSel)return;
   if(ev.type==='change'&&!isSel)return;
-  var tr=el.closest('tr'),t=tr.dataset.t,id=tr.dataset.id,cid=tr.dataset.cid;
-  if(cid){
-    var c=CUS[t].filter(function(x){return x.id===cid;})[0];if(!c)return;
-    if(f==='del'){CUS[t]=CUS[t].filter(function(x){return x.id!==cid;});}
-    else if(f==='n'||f==='u')c[f]=el.value;
-    else{var v=parseFloat(el.value);c[f]=isFinite(v)?v:0;}
+  var tr=el.closest('tr'),tk=tr.dataset.tk,g=tr.dataset.g,id=tr.dataset.id||tr.dataset.cid,cust=!!tr.dataset.cid;
+  if(f==='lots'){OPEN[tk+':'+id]=!OPEN[tk+':'+id];if(OPEN[tk+':'+id]&&!(LOTS[id]||[]).length){var c0=cust?CUS[tk].filter(function(x){return x.id===id;})[0]:cfg(id);(LOTS[id]=[]).push({id:'l'+Date.now(),d:new Date().toISOString().slice(0,10),q:0,p:+c0.p||0,note:''});}render();return;}
+  if(cust){
+    var c=CUS[tk].filter(function(x){return x.id===id;})[0];if(!c)return;
+    if(f==='del'){CUS[tk]=CUS[tk].filter(function(x){return x.id!==id;});delete LOTS[id];}
+    else if(f==='n'||f==='u'||f==='mode'||f==='who')c[f]=el.value;
+    else c[f]=num(el.value);
     render();return;
   }
-  if(f==='del'){HID[t].push(id);delete OV[t][id];}
-  else if(f==='rq'){delete OV[t][id];}
-  else if(f==='n'){setCfg(id,'n',el.value);}
-  else if(f==='p'){var p=parseFloat(el.value);setCfg(id,'p',isFinite(p)?p:0);setCfg(id,'src','you');}
-  else if(f==='q'){if(el.value==='')delete OV[t][id];else{var q=parseFloat(el.value);if(isFinite(q))OV[t][id]=q;}}
+  if(f==='del'){HID[tk].push(id);delete OV[tk][id];}
+  else if(f==='rq'){delete OV[tk][id];}
+  else if(f==='n'||f==='mode'||f==='who'){setCfg(id,f,el.value);}
+  else if(f==='days'||f==='pct'){setCfg(id,f,num(el.value));}
+  else if(f==='p'){setCfg(id,'p',num(el.value));setCfg(id,'src','you');}
+  else if(f==='q'){if(el.value==='')delete OV[tk][id];else{var q=parseFloat(el.value);if(isFinite(q))OV[tk][id]=q;}}
   else if(f==='u'){var cc=cfg(id),us=units(cc.k,cc.d),o=us.filter(function(x){return x[0]===cc.u;})[0]||us[0],nu=us.filter(function(x){return x[0]===el.value;})[0];
-    if(nu){setCfg(id,'p',Math.round((+cc.p||0)*nu[2]/o[2]*1000)/1000);setCfg(id,'u',nu[0]);
-      ['main','dalle'].forEach(function(tt){if(OV[tt][id]!=null)OV[tt][id]=Math.round(OV[tt][id]*o[2]/nu[2]*100)/100;});}}
+    if(nu){var r=nu[2]/o[2];setCfg(id,'p',Math.round((+cc.p||0)*r*1000)/1000);setCfg(id,'u',nu[0]);
+      TKS.forEach(function(k){if(OV[k][id]!=null)OV[k][id]=Math.round(OV[k][id]/r*100)/100;});
+      (LOTS[id]||[]).forEach(function(l){l.q=Math.round((+l.q||0)/r*100)/100;l.p=Math.round((+l.p||0)*r*1000)/1000;});}}
   render();
 }
-['boq','dBoq'].forEach(function(id){var tb=$(id);['input','change','click'].forEach(function(ev){tb.addEventListener(ev,onRow);});});
+['boq','fq','lq','dBoq','dFq','dLq'].forEach(function(id){var tb=$(id);['input','change','click'].forEach(function(ev){tb.addEventListener(ev,onRow);});});
 ['byEl','dEl'].forEach(function(id){$(id).addEventListener('change',function(ev){var s=ev.target;if(!s.dataset||!s.dataset.e)return;E[s.dataset.e][s.dataset.w]=+s.value;render();});});
-document.querySelectorAll('[data-add]').forEach(function(b){b.addEventListener('click',function(){var t=b.dataset.add;CUS[t].push({id:'c'+Date.now(),n:'مادة جديدة',q:1,u:'حبة',p:0});render();
-  var rows=tbOf(t).querySelectorAll('tr[data-cid]');var last=rows[rows.length-1];if(last){var i=last.querySelector('[data-f=n]');i.focus();i.select();}});});
+document.querySelectorAll('[data-add]').forEach(function(b){b.addEventListener('click',function(){var tk=b.dataset.add,g=tk.indexOf('_form')>0?'form':tk.indexOf('_lab')>0?'lab':'mat';
+  var row={id:'c'+Date.now(),n:g==='lab'?'خدمة جديدة':'مادة جديدة',q:1,u:g==='lab'?'مقطوعية':'حبة',p:0};
+  if(g==='form'){row.mode='buy';row.days=21;}if(g==='lab'){row.who='pro';row.pct=50;}
+  CUS[tk].push(row);render();
+  var rows=document.querySelectorAll('tr[data-tk="'+tk+'"][data-cid]');var last=rows[rows.length-1];if(last){var i=last.querySelector('[data-f=n]');i.focus();i.select();}});});
 document.querySelectorAll('[data-restore]').forEach(function(b){b.addEventListener('click',function(){HID[b.dataset.restore]=[];render();});});
+function applySnap(s){initState(s);syncSwitches();$('cur').value=s.cur||'د.ت';$('cont').value=s.cont==null?10:s.cont;SIG={};OPEN={};buildInputs();render();}
 $('reset').addEventListener('click',function(){
-  if(!confirm('نرجّعو كل شيء للأصل؟ الأسوام، الكميات، الوحدات، المواد اللي زدتها والنسب الكل يرجعو للأرقام الأولى.'))return;
-  initState({});syncSwitches();$('cont').value=10;SIG={};buildInputs();render();});
+  if(!confirm('نرجّعو كل شيء للأصل؟ الأسوام، الكميات، الوحدات، الدفعات، السطور اللي زدتها والنسب الكل يرجعو للأرقام الأولى. احفظ ملف قبل إذا تحب ترجعلهم.'))return;
+  applySnap({});});
 
+/* CSV */
+var GNAME={mat:'المواد',form:'الكوفراج',lab:'اليد العاملة'};
+var MODEN={buy:'نشريو',rent:'نكريو',own:'عندنا'},WHON={pro:'صنايعي',abz:'عبد العزيز',part:'جزء يعملو عبد العزيز'};
 function csvRows(t,name){
-  var cur=$('cur').value,rows=[['المادة','الكمية','الوحدة','سوم الوحدة ('+cur+')','المجموع ('+cur+')']],sub=0;
-  LAST[t].M.forEach(function(m){var tt=m.q*m.p;sub+=tt;rows.push([m.c.n,m.q,m.u[1],m.p||'',m.p?tt.toFixed(2):'']);});
-  CUS[t].forEach(function(c){var tt=(+c.q||0)*(+c.p||0);sub+=tt;rows.push([c.n,c.q,c.u,c.p||'',c.p?tt.toFixed(2):'']);});
-  var cp=parseFloat($('cont').value)||0;rows.push(['المجموع','','','',sub.toFixed(2)]);rows.push(['احتياط '+cp+'%','','','',(sub*cp/100).toFixed(2)]);rows.push(['المجموع مع الاحتياط','','','',(sub*(1+cp/100)).toFixed(2)]);
+  var cur=$('cur').value,rows=[['القسم','الاسم','الكمية','الوحدة','الحالة','سوم الوحدة ('+cur+')','الدفعات ('+cur+')','المجموع ('+cur+')']],sub=0;
+  GROUPS.forEach(function(g){(LAST[t][g]||[]).forEach(function(m){var c=m.c,st2=g==='form'?(MODEN[c.mode]||'')+(c.mode==='rent'?' '+c.days+' نهار':''):g==='lab'?(WHON[c.who]||'')+(c.who==='part'?' '+c.pct+'%':''):'';
+    sub+=m.cost.tot;rows.push([GNAME[g],c.n,m.q,m.u[1],st2,m.p||'',m.cost.n?m.cost.lc.toFixed(2):'',m.cost.tot.toFixed(2)]);
+    (LOTS[m.id]||[]).forEach(function(l){rows.push(['','  دفعة '+(l.d||''),l.q,m.u[1],l.note||'',l.p,'','']);});});});
+  var cp=parseFloat($('cont').value)||0;rows.push(['','المجموع','','','','','',sub.toFixed(2)]);rows.push(['','احتياط '+cp+'%','','','','','',(sub*cp/100).toFixed(2)]);rows.push(['','المجموع مع الاحتياط','','','','','',(sub*(1+cp/100)).toFixed(2)]);
   var txt='﻿'+rows.map(function(r){return r.map(function(v){v=String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}).join(',');}).join('\n');
-  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/csv;charset=utf-8'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);
+  download(new Blob([txt],{type:'text/csv;charset=utf-8'}),name);
 }
-function csv(){csvRows('main','mawad-tabe9-awel.csv');}
+function download(blob,name){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);}
+function csv(){csvRows('main','takalif-tabe9-awel.csv');}
 $('csv').addEventListener('click',csv);$('csvSide').addEventListener('click',csv);
-$('dCsv').addEventListener('click',function(){csvRows('dalle','mawad-dalle.csv');});
+$('dCsv').addEventListener('click',function(){csvRows('dalle','takalif-dalle.csv');});
+
+/* save, open, share link */
+function toB64(u){var s='';for(var i=0;i<u.length;i+=8192)s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
+function fromB64(b){b=b.replace(/-/g,'+').replace(/_/g,'/');while(b.length%4)b+='=';var s=atob(b),u=new Uint8Array(s.length);for(var i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u;}
+async function makeLink(){var u=new TextEncoder().encode(JSON.stringify(snapshot())),pre='j';
+  if(window.CompressionStream){try{u=new Uint8Array(await new Response(new Blob([u]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer());pre='z';}catch(e){}}
+  return location.origin+location.pathname+'#'+pre+'='+toB64(u);}
+async function readLink(h){var m=/^#([zj])=([A-Za-z0-9_-]+)$/.exec(h||'');if(!m)return null;var u=fromB64(m[2]);
+  if(m[1]==='z')u=new Uint8Array(await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+  return JSON.parse(new TextDecoder().decode(u));}
+function shareMsg(t){$('shareMsg').textContent=t;}
+var fileIn=document.createElement('input');fileIn.type='file';fileIn.accept='.json,application/json';fileIn.hidden=true;document.body.appendChild(fileIn);
+fileIn.addEventListener('change',function(){var f=fileIn.files[0];if(!f)return;var rd=new FileReader();
+  rd.onload=function(){try{var s=JSON.parse(rd.result);if(!s||!s.v)throw 0;
+      if(confirm('نحمّلو الأرقام اللي في الملف "'+f.name+'"؟ الأرقام اللي عندك توّا يتبدّلو.')){applySnap(s);shareMsg('تحمّلت الأرقام من الملف.');}}
+    catch(e){shareMsg('الملف هذا موش ملف أرقام الكرّاس.');}fileIn.value='';};
+  rd.readAsText(f);});
+async function doShare(kind){
+  if(kind==='save'){download(new Blob([JSON.stringify(snapshot(),null,1)],{type:'application/json'}),'karras-dar-'+new Date().toISOString().slice(0,10)+'.json');shareMsg('تحفظ الملف. ابعثو بالواتساب ولا الإيميل، واللي يستقبلو يحلّو بـ"افتح ملف".');return;}
+  if(kind==='open'){fileIn.click();return;}
+  var url=await makeLink(),out=$('shareOut');out.hidden=false;out.value=url;
+  if(navigator.share&&matchMedia('(pointer:coarse)').matches){try{await navigator.share({title:'أرقام كرّاس الدار',url:url});shareMsg('تبعث الرابط.');return;}catch(e){}}
+  try{await navigator.clipboard.writeText(url);shareMsg('تنسخ الرابط: حطّو في الواتساب وابعثو. اللي يحلّو يتسأل قبل ما تتبدّل أرقامو.');}
+  catch(e){out.focus();out.select();shareMsg('انسخ الرابط من الخانة وابعثو.');}
+}
+document.querySelectorAll('[data-share]').forEach(function(b){b.addEventListener('click',function(){doShare(b.dataset.share);});});
 buildInputs();render();
+(async function(){try{var s=await readLink(location.hash);if(!s)return;
+  if(confirm('الرابط هذا فيه أرقام (أسوام، كميات، دفعات). نحمّلوهم ونبدّلو الأرقام اللي عندك؟')){applySnap(s);shareMsg('تحمّلت الأرقام من الرابط.');document.getElementById('c-cost').scrollIntoView();}
+  history.replaceState(null,'',location.pathname);}catch(e){shareMsg('الرابط فيه غلطة، ما نجمتش نقرا الأرقام.');}})();
 
 /* ---------------- draw + theme + scrollspy ---------------- */
 function drawAll(){drawPlans();drawFound();}
