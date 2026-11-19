@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>لوحة نسخ البيت</title>
+<title>لوحة البيت</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -105,13 +105,11 @@ input[type=number]{direction:ltr;text-align:right}
 <div class="wrap">
 <header>
   <div>
-    <h1>لوحة نسخ البيت</h1>
-    <p class="sub">كل نسخ التصميم في مكان واحد، مع حاسبة التكلفة</p>
+    <h1>لوحة البيت</h1>
+    <p class="sub">النموذج النهائي وحساب التكلفة</p>
   </div>
   <nav>
-    <a href="#final">النسخة النهائية</a>
-    <a href="#versions">كل النسخ</a>
-    <a href="#plans">المخططات</a>
+    <a href="#final">النموذج النهائي</a>
     <a href="#cost">حساب التكلفة</a>
   </nav>
 </header>
@@ -119,12 +117,12 @@ input[type=number]{direction:ltr;text-align:right}
 <section id="final" style="margin-top:0">
   <div class="hero">
     <div>
-      <span class="tag">النسخة النهائية المعتمدة</span>
-      <h3>البيت v3 مع درج البرج واقتراح سلوى</h3>
-      <p class="lead" style="margin:0">آخر تعديل: 2 أكتوبر 2026، حمّام الطابق الأول 2.7 × 1.7 م. فيها البيت والأساسات والكهف واقتراح سلوى للدرج.</p>
+      <span class="tag">المعتمد</span>
+      <h3>النموذج النهائي</h3>
+      <p class="lead" style="margin:0">النموذج اللي نخدمو عليه: البيت بالطابقين، درج البرج، والكهف. آخر تعديل: حمّام الطابق الأول 2.7 × 1.7 م.</p>
       <div class="btns">
-        <a class="btn" href="./">افتح النسخة النهائية</a>
-        <button class="btn ghost" data-preview="./" data-title="النسخة النهائية">معاينة هنا</button>
+        <a class="btn" href="./#sSalwa">افتح النموذج النهائي</a>
+        <button class="btn ghost" data-preview="./#sSalwa" data-title="النموذج النهائي">معاينة هنا</button>
       </div>
     </div>
     <div class="facts">
@@ -136,17 +134,7 @@ input[type=number]{direction:ltr;text-align:right}
   </div>
 </section>
 
-<section id="versions">
-  <h2>كل النسخ ثلاثية الأبعاد</h2>
-  <p class="lead">من الأحدث إلى الأقدم. كل نسخة محفوظة كما هي، ما تحذف منها شيء.</p>
-  <div class="grid" id="vgrid"></div>
-</section>
 
-<section id="plans">
-  <h2>المخططات والواجهات</h2>
-  <p class="lead">اضغط على أي صورة لفتحها بالحجم الكامل.</p>
-  <div id="pgroups"></div>
-</section>
 
 <section id="cost">
   <h2>حساب التكلفة</h2>
@@ -174,7 +162,7 @@ input[type=number]{direction:ltr;text-align:right}
   </div>
 </section>
 
-<footer>تصميم البيت · كل النسخ محفوظة في مجلد <span dir="ltr">versions/</span></footer>
+<footer>النسخ والمخططات القديمة ما تفسختش: محفوظة في مجلدي <span dir="ltr">versions/</span> و<span dir="ltr">plans/</span></footer>
 </div>
 
 <dialog id="dlg">
@@ -183,41 +171,9 @@ input[type=number]{direction:ltr;text-align:right}
 </dialog>
 
 <script>
-var VERSIONS=[
-  {f:'versions/house-3d-v3.html',t:'v3 مع اقتراح سلوى',d:'2026-10-02',k:'بيت كامل',hot:'الأحدث',p:'نسخة محفوظة من النسخة النهائية: 12.7 × 9.5 م، الأساسات، الكهف، واقتراح سلوى للدرج.'},
-  {f:'versions/stairs-SALWA-proposal.html',t:'اقتراح سلوى للدرج (البداية)',d:'2026-09-28',k:'الدرج',p:'أول خطوات اقتراح سلوى، منفصل. النسخة الكاملة موجودة داخل النسخة النهائية.'},
-  {f:'versions/foundation-3d-v1.html',t:'الأساسات v1',d:'2026-09-27',k:'الأساسات',p:'مخطط الأساسات ثلاثي الأبعاد: القواعد والأعمدة والجسور.'},
-  {f:'versions/house-3d-FINAL.html',t:'النسخة "FINAL" القديمة',d:'2026-09-16',k:'بيت كامل',p:'نسخة مجمدة من v3 قبل تعديلات سلوى (وسم final-version).'},
-  {f:'versions/house-3d-AZIZ-version.html',t:'نسخة عزيز',d:'2026-09-16',k:'بيت كامل',p:'نسخة مجمدة من البيت مع درج البرج (وسم aziz-version).'},
-  {f:'versions/stairs-BEST-locked.html',t:'الدرج المعتمد (مقفل)',d:'2026-09-16',k:'الدرج',p:'درج البرج المعتمد، محفوظ كما هو بدون أي تعديل.'},
-  {f:'versions/stairs-tour.approved-v1.html',t:'جولة الدرج: المعتمدة v1',d:'2026-09-16',k:'الدرج',p:'أول نسخة معتمدة من درج البرج.'},
-  {f:'versions/stairs-tour.html',t:'جولة الدرج',d:'2026-09-16',k:'الدرج',p:'اختبار الدرج والبرج منفصلين.'},
-  {f:'versions/house-3d-v2.html',t:'البيت v2',d:'2026-09-07',k:'بيت كامل',p:'المقترح الثاني: 11.5 × 9.5 م مع الكراج والغرفة الإضافية.'},
-  {f:'versions/house-3d-v1.html',t:'البيت v1',d:'2026-09-07',k:'بيت كامل',p:'أول نموذج ثلاثي الأبعاد للطابقين.'}
-];
-var PLANS=[
-  {g:'المقترح الثاني (v2)',items:[
-    ['house-plans-v2-both-floors.svg','الطابقان في لوحة واحدة'],['ground-floor-v2.svg','الطابق الأرضي'],['first-floor-v2.svg','الطابق الأول']]},
-  {g:'واجهات ومراجع v2',items:[
-    ['facade-elevation-v2.png','الواجهة'],['facade-elevation-alt-v2.png','واجهة بديلة'],['facade-elevation-alt-dimensioned-v2.png','واجهة بديلة بالمقاسات'],
-    ['entrance-door-stairwell-elevation-v2.png','باب الدخول وبيت الدرج'],['ground-floor-projected-plan-rdc-v2.png','مسقط الطابق الأرضي'],['first-floor-projected-plan-etage-v2.png','مسقط الطابق الأول']]},
-  {g:'المقترح الأول (v1)',items:[
-    ['house-plans-v1-both-floors.png','الطابقان في لوحة واحدة'],['ground-floor-v1.png','الطابق الأرضي'],['first-floor-v1.png','الطابق الأول'],['house-plans-v1-both-floors.pdf','نسخة PDF للطباعة']]},
-  {g:'المقترحات المبكرة',items:[
-    ['floor-plan-v4.png','مقترح 4'],['floor-plan-v3.png','مقترح 3'],['floor-plan-v2.png','مقترح 2']]}
-];
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function fmtDate(d){var p=d.split('-'),m=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];return (+p[2])+' '+m[+p[1]-1]+' '+p[0];}
 
-document.getElementById('vgrid').innerHTML=VERSIONS.map(function(v){
-  return '<div class="card"><h4>'+esc(v.t)+'</h4><div class="meta"><span class="chip">'+esc(v.k)+'</span><span>'+fmtDate(v.d)+'</span>'+(v.hot?'<span class="chip hot">'+esc(v.hot)+'</span>':'')+'</div><p>'+esc(v.p)+'</p><div class="btns"><a class="btn" href="'+v.f+'">افتح</a><button class="btn ghost" data-preview="'+v.f+'" data-title="'+esc(v.t)+'">معاينة</button></div></div>';
-}).join('');
-document.getElementById('pgroups').innerHTML=PLANS.map(function(g){
-  return '<div class="group-title">'+esc(g.g)+'</div><div class="plans">'+g.items.map(function(it){
-    var src='plans/'+it[0],pdf=/\.pdf$/.test(it[0]);
-    return '<a class="plan" href="'+src+'" target="_blank" rel="noopener">'+(pdf?'<img alt="" src="plans/house-plans-v1-both-floors.png">':'<img loading="lazy" alt="'+esc(it[1])+'" src="'+src+'">')+'<span>'+esc(it[1])+'<small dir="ltr">'+esc(it[0])+'</small></span></a>';
-  }).join('')+'</div>';
-}).join('');
 
 /* preview dialog */
 var dlg=document.getElementById('dlg'),frame=document.getElementById('dlgFrame');
