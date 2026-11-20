@@ -326,15 +326,15 @@ var gCave=new THREE.Group();scene.add(gCave);gCave.visible=false;
 var gFound=new THREE.Group();scene.add(gFound);
 if(ALL){
   var Mp=mat(0x9a9486),Mcl=mat(0x6f6a60),Mbm=mat(0xc9c2b2),Mbl=mat(0x2f7fd9),BW=0.25,BH=0.4,PT=0.35;
-  var L1=0,L2=4.0,L2b=4.0,L3=6.7,L4=9.7,L5=12.7,A=2.5,B=5.5,C=9.5,D=11.5,E=15,X1=-4,X2=0;   // 2026-10-02: bedrooms 4 m (L2), corridor 2.7 m (L3), east block +1.2 (L4, L5)
-  [[L1,A],[L2,A],[L2b,A],[L3,A],[L4,A],[L5,A],[L1,B],[L2,B],[L2b,B],[L3,B],[L4,B,1],[L5,B],[L1,C],[L3,C],[L4,C],[L5,C],
-   [L1,D],[L2,D],[L3,D],[L4,D],[L5,D],[L1,E],[L2,E],[L5,E],[L4,X1],[L5,X1],[L4,X2],[L5,X2]].forEach(function(q){
-    var inCave=(q[0]>=6.7&&q[0]<=12.7&&q[1]>=2.5&&q[1]<=9.5)||(q[0]>=11.6&&q[0]<=12.7&&q[1]>=9.5&&q[1]<=14.5);
-    var dp=(q[2]||inCave)?2.8+PT:1.2;                                  // footing depth: -1.2 m, or under the cave floor
-    box(gFound,1.0,PT,1.0,q[0],-dp+PT/2,q[1],q[2]?Mbl:Mp);box(gFound,0.25,dp-PT,0.25,q[0],(-dp+PT)/2,q[1],q[2]?Mbl:Mcl);});
+  var L1=0,L2=3.6,L3=6.7,L4=9.7,L5=12.7,GX=12.5,AP=5.0,A=2.5,B=5.5,C=9.5,D=11.5,E=14.9,X1=-4,X2=0;   // foundation plan v5 (20/11/2026): L2 3.6, E 14.9, grandmother east columns at 12.5, L2b merged into L2
+  [[L1,A],[L2,A],[AP,A],[L3,A],[L4,A],[L5,A],[L1,B],[L2,B],[L3,B],[L4,B],[L5,B],[L1,C],[L2,C],[L3,C],[L4,C],[L5,C],
+   [L1,D],[L2,D],[L3,D],[L4,D],[L5,D],[L1,E],[L2,E],[L5,E],[L4,X1],[GX,X1],[L4,X2],[GX,X2]].forEach(function(q){
+    var inCave=(q[0]>=6.7&&q[0]<=12.7&&q[1]>=2.5&&q[1]<=9.5)||(q[0]===L5&&q[1]===D);   // 10 deep footings: L3-L5 x A-C + L5/D (cave stair)
+    var dp=inCave?2.8+PT:1.2;                                  // footing depth: -1.2 m, or under the cave floor
+    box(gFound,1.0,PT,1.0,q[0],-dp+PT/2,q[1],inCave?Mbl:Mp);box(gFound,0.25,dp-PT,0.25,q[0],(-dp+PT)/2,q[1],inCave?Mbl:Mcl);});
   function bX(z,x1,x2){box(gFound,x2-x1+BW,BH,BW,(x1+x2)/2,-BH/2,z,Mbm);}function bZ(x,z1,z2){box(gFound,BW,BH,z2-z1+BW,x,-BH/2,(z1+z2)/2,Mbm);}
-  bX(A,L1,L5);bX(B,L1,L5);bX(C,L1,L5);bX(D,L2,L5);bX(E,L1,L5);bX(X1,L4,L5);bX(X2,L4,L5);
-  bZ(L1,A,E);bZ(L2,A,E);bZ(L2b,A,B);bZ(L3,A,C);bZ(L4,X1,B);bZ(L5,X1,E);
+  bX(A,L1,L5);bX(B,L1,L5);bX(C,L1,L5);bX(D,L2,L5);bX(E,L1,L5);bX(X1,L4,GX);bX(X2,L4,GX);
+  bZ(L1,A,E);bZ(L2,A,E);bZ(L3,A,C);bZ(L4,X1,B);bZ(L5,X2,E);bZ(GX,X1,X2);
   gCave.visible=true;
   plotM.concat(gndFloors.map(function(o){return o.material;})).forEach(function(m){m.transparent=true;m.opacity=0.3;m.depthWrite=false;});
 }

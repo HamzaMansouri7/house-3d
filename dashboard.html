@@ -241,17 +241,31 @@ input.shareout{width:100%;direction:ltr;text-align:left;font-size:12px}
 <section class="chapter" id="c-found">
   <span class="eyebrow">الفصل 4 · للمعلومة</span>
   <h2>الأساسات ومقاساتها</h2>
-  <p class="lede">الشبكة متاع السواري والجسور الأرضية كيما هي في النموذج. القاعدة الزرقاء هي القاعدة القوية اللي تنزل لين أرضية الكهف. الأساسات موش داخلة في حساب التكلفة.</p>
+  <p class="lede">الشبكة متاع السواري والجسور الأرضية كيما هي في النموذج. مصدر المعطيات: مخطط الأساسات v5 (رسم الوالد باليد، 20/11/2026). القواعد الزرقاء (10 قواعد في منطقة الكهف) تنزل لين تحت أرضية الكهف. الجسور المتقطّعة موصى بها فقط. الأساسات موش داخلة في حساب التكلفة.</p>
 
   <div class="card"><svg class="plan" id="planFound" style="max-width:600px;margin:0 auto" role="img" aria-label="مخطط الأساسات"></svg>
-    <div class="legend"><span><i style="background:var(--muted)"></i>قاعدة + سارية</span><span><i style="background:var(--blue)"></i>القاعدة القوية (−2.8 م)</span><span><i style="background:var(--accent)"></i>جسر أرضي 25 × 40</span></div>
+    <div class="legend"><span><i style="background:var(--muted)"></i>قاعدة + سارية</span><span><i style="background:var(--blue)"></i>القاعدة القوية (−3.15 م)</span><span><i style="background:var(--accent)"></i>جسر أرضي 25 × 40</span><span><i style="background:var(--accent);opacity:.5"></i>جسر موصى به (متقطّع)</span></div>
   </div>
 
   <div class="grid g3" style="margin-top:14px">
-    <div class="card stat"><div class="k">عدد القواعد والسواري</div><div class="v num">26</div></div>
+    <div class="card stat"><div class="k">عدد القواعد والسواري</div><div class="v num">28</div></div>
     <div class="card stat"><div class="k">طول الجسور الأرضية</div><div class="v num" id="fBeamLen">126 <small>م</small></div></div>
-    <div class="card stat"><div class="k">خرسانة القواعد (معلومة)</div><div class="v num">9.1 <small>م³</small></div></div>
+    <div class="card stat"><div class="k">خرسانة القواعد فقط (28 × 0.35)</div><div class="v num">9.80 <small>م³</small></div></div>
   </div>
+
+  <h3>الكميات التقريبية</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>البند</th><th class="n">الكمية</th></tr></thead>
+    <tbody>
+      <tr><td>القواعد: 28 × 0.35</td><td class="n num">9.80 م³</td></tr>
+      <tr><td>أصل السواري تحت الأرض</td><td class="n num">2.71 م³</td></tr>
+      <tr><td>الجسور الأرضية (≈125.7 م، صافي)</td><td class="n num">11.87 م³</td></tr>
+      <tr><th>المجموع (خرسانة الأساسات)</th><th class="n num">24.38 م³</th></tr>
+      <tr><td>جسور موصى بها زيادة (17.0 م)</td><td class="n num">+ 1.70 م³</td></tr>
+      <tr><td>خرسانة النظافة (béton de propreté)</td><td class="n num">+ 3.90 م³</td></tr>
+      <tr><td>الحديد</td><td class="n num">≈ 2.2 – 2.7 طن</td></tr>
+    </tbody>
+  </table></div>
 
   <div class="grid g2">
     <div>
@@ -261,7 +275,7 @@ input.shareout{width:100%;direction:ltr;text-align:left;font-size:12px}
         <tbody>
           <tr><td>القاعدة (سمل)</td><td class="n num">1.0 × 1.0 × 0.35 م</td></tr>
           <tr><td>عمق القاعدة العادية</td><td class="n num">−1.2 م</td></tr>
-          <tr><td>القاعدة القوية (L4، B)</td><td class="n num">−2.8 م (أسفلها −3.15)</td></tr>
+          <tr><td>القاعدة القوية (10 قواعد: L3–L5 × A–C + L5/D)</td><td class="n num">−3.15 م (أرضية الكهف −2.8)</td></tr>
           <tr><td>السارية</td><td class="n num">25 × 25 سم</td></tr>
           <tr><td>الجسر الأرضي</td><td class="n num">25 × 40 سم</td></tr>
         </tbody>
@@ -284,7 +298,7 @@ input.shareout{width:100%;direction:ltr;text-align:left;font-size:12px}
     <tfoot><tr><td colspan="2">المجموع</td><td class="n num" id="fBeamSum"></td></tr></tfoot>
   </table></div>
 
-  <h3>القواعد (26)</h3>
+  <h3>القواعد (28)</h3>
   <div class="tbl"><table>
     <thead><tr><th>#</th><th>المحور</th><th class="n">x (م)</th><th class="n">z (م)</th><th class="n">العمق</th></tr></thead>
     <tbody id="fCols"></tbody>
@@ -539,6 +553,7 @@ function plan(svg,items,opt){
   var h='';
   function X(x){return (x-x0)*S;} function Z(z){return (z-z0)*S;}
   items.forEach(function(r){
+    if(r.line){h+='<line x1="'+X(r.line[0])+'" y1="'+Z(r.line[1])+'" x2="'+X(r.line[2])+'" y2="'+Z(r.line[3])+'" stroke="'+css('--accent')+'" stroke-width="3" stroke-linecap="round"/>';return;}
     var dash=r.dash?' stroke-dasharray="6 4"':'';
     h+='<rect x="'+X(r.x0)+'" y="'+Z(r.z0)+'" width="'+(r.x1-r.x0)*S+'" height="'+(r.z1-r.z0)*S+'" fill="'+(r.fill||'none')+'" fill-opacity="'+(r.op==null?0.55:r.op)+'" stroke="'+css('--ink')+'" stroke-opacity="'+(r.dash?0.7:0.5)+'" stroke-width="1.2"'+dash+'/>';
     if(r.n){var cx=X((r.x0+r.x1)/2),cy=Z((r.z0+r.z1)/2)+(r.dy||0)*S;
@@ -570,41 +585,61 @@ var ground=[
   {x0:6.7,x1:12.7,z0:2.5,z1:9.5,dash:true,op:0,n:'',s:''}
 ];
 var first=[
-  {x0:0,x1:4,z0:0.5,z1:5.5,fill:C.room,n:'غرفة النوم الكبيرة',s:'4 × 5',fs:11},
-  {x0:0,x1:4,z0:5.5,z1:9.5,fill:C.room,n:'غرفة نوم 2',s:'4 × 4'},
-  {x0:4,x1:6.7,z0:0,z1:1.7,fill:C.wet,n:'حمّام',s:'2.7 × 1.7',fs:11},
-  {x0:4,x1:6.7,z0:1.7,z1:9.5,fill:C.circ,n:'كوريدور',s:'عرض 2.7',fs:11},
-  {x0:6.7,x1:12.7,z0:1.5,z1:5.5,fill:C.room,n:'كوجينة',s:'6 × 4'},
-  {x0:6.7,x1:12.7,z0:5.5,z1:9.5,fill:C.room,n:'صالون',s:'6 × 4'},
-  {x0:7.7,x1:12.7,z0:-4,z1:0,fill:C.bal,n:'بالكون 2',s:'5 × 4'},
-  {x0:0,x1:4.1,z0:9.5,z1:15,fill:C.bal,n:'بالكون 1',s:'فوق القاراج',fs:11},
+  /* Hamza v3 (2026-11-20): main block x 0-12.7, back facade straight at z=1.5, front z=9.5 */
+  {x0:0,x1:3.6,z0:1.5,z1:5.5,fill:C.room,n:'غرفة الوالدين',s:'3.6 × 4',fs:11},
+  {x0:0,x1:1.5,z0:0.5,z1:1.5,fill:C.bal,n:'بالكون',s:'1.5 × 1',fs:9},
+  {x0:3.6,x1:5,z0:1.5,z1:4,fill:C.wet,n:'ح. الوالدين',s:'1.4 × 2.5',fs:9},
+  {x0:5,x1:7.6,z0:1.5,z1:4,fill:C.wet,n:'حمّام الضيوف',s:'2.6 × 2.5',fs:10},
+  {x0:3.6,x1:7.6,z0:4,z1:5.5,fill:C.circ,n:'ممر',s:'عرض 1.5',fs:10},
+  {x0:7.6,x1:12.7,z0:1.5,z1:5.5,fill:C.room,n:'كوجينة',s:'5.1 × 4'},
+  {line:[7.6,4.6,8.5,5.5]},
+  {x0:8.8,x1:12.7,z0:5.5,z1:9.5,fill:C.room,n:'غرفة نوم 2',s:'3.9 × 4'},
+  {x0:0,x1:8.8,z0:5.5,z1:9.5,fill:C.room,n:'صالون + بيت الأكل',s:'8.8 × 4'},
+  {x0:7.7,x1:12.7,z0:-4,z1:1.5,fill:C.bal,n:'بالكون 2',s:'5 × 5.5'},
+  {x0:0,x1:4.1,z0:9.5,z1:15,fill:C.bal,n:'بالكون 1',s:'4.1 × 5.5',fs:11},
   {x0:4.1,x1:10.3,z0:9.5,z1:11.5,fill:C.circ,n:'كوريدور خارجي',s:'6.2 × 2',fs:11},
-  {x0:10.3,x1:12.7,z0:9.5,z1:15,fill:C.tower,n:'برج الدرج',s:'16 درجة',fs:11}
+  {x0:10.3,x1:12.7,z0:9.5,z1:15,fill:C.tower,n:'برج الدرج',s:'2.4 × 5.5',fs:11}
 ];
 function drawPlans(){plan($('planG'),ground,{dims:1});plan($('planF'),first,{dims:1});}
 function roomTable(id,rows){
   var h='<thead><tr><th>البيت</th><th class="n">المقاس (م)</th><th class="n">المساحة م²</th></tr></thead><tbody>';
-  var tot=0;rows.forEach(function(r){var a=r[2]*r[3];tot+=a;h+='<tr><td>'+r[0]+'</td><td class="n num">'+r[1]+'</td><td class="n num">'+fmt(a,1)+'</td></tr>';});
+  var tot=0;rows.forEach(function(r){var a=r[2]*r[3];if(!r[4])tot+=a;h+='<tr><td>'+r[0]+(r[4]?' <small class="unit">(مفتوح)</small>':'')+'</td><td class="n num">'+r[1]+'</td><td class="n num">'+fmt(a,1)+'</td></tr>';});
   $(id).innerHTML=h+'</tbody><tfoot><tr><td colspan="2">المجموع (البيوت المغطّاة)</td><td class="n num">'+fmt(tot,1)+'</td></tr></tfoot>';
 }
 roomTable('tG',[['غرفة البنات','3 × 4',3,4],['غرفة نوم 2','3 × 4',3,4],['حمّام','1.5 × 2.5',1.5,2.5],['غرفة سلوى','3 × 3',3,3],['كوجينة','3 × 5.5',3,5.5],['صالون','6 × 4',6,4],['غرفة الجدّة','3 × 4',3,4],['قاراج','3 × 4.5',3,4.5],['حمّام خارجي','1.5 × 2.5',1.5,2.5],['علوش العيد','2 × 2',2,2]]);
-roomTable('tF',[['غرفة النوم الكبيرة','4 × 5',4,5],['غرفة نوم 2','4 × 4',4,4],['حمّام','2.7 × 1.7',2.7,1.7],['كوريدور','2.7 × 7.8',2.7,7.8],['كوجينة','6 × 4',6,4],['صالون','6 × 4',6,4],['بالكون 1 (فوق القاراج)','4.1 × 5.5',4.1,5.5],['بالكون 2','5 × 4',5,4],['كوريدور خارجي','6.2 × 2',6.2,2]]);
+roomTable('tF',[['غرفة الوالدين','3.6 × 4',3.6,4],['حمّام الوالدين (WC 1)','1.4 × 2.5',1.4,2.5],['حمّام الضيوف (WC 2)','2.6 × 2.5',2.6,2.5],['ممر','4 × 1.5',4,1.5],['كوجينة (باب بزاوية 45°)','5.1 × 4',5.1,4],['غرفة نوم 2','3.9 × 4',3.9,4],['صالون + بيت الأكل','8.8 × 4',8.8,4],['بالكون (غرفة الوالدين)','1.5 × 1',1.5,1,1],['بالكون 2','5 × 5.5',5,5.5,1],['بالكون 1','4.1 × 5.5',4.1,5.5,1],['كوريدور خارجي','6.2 × 2',6.2,2,1],['برج الدرج','2.4 × 5.5',2.4,5.5,1]]);
 
 /* ---------------- foundations ---------------- */
-var AX={L1:0,L2:4.0,L3:6.7,L4:9.7,L5:12.7},AZ={X1:-4,X2:0,A:2.5,B:5.5,C:9.5,D:11.5,E:15};
-var fcols=[['L1','A'],['L2','A'],['L3','A'],['L4','A'],['L5','A'],['L1','B'],['L2','B'],['L3','B'],['L4','B',1],['L5','B'],['L1','C'],['L3','C'],['L4','C'],['L5','C'],['L1','D'],['L2','D'],['L3','D'],['L4','D'],['L5','D'],['L1','E'],['L2','E'],['L5','E'],['L4','X1'],['L5','X1'],['L4','X2'],['L5','X2']];
-var fbeams=[['صف A','A','L1','L5'],['صف B','B','L1','L5'],['صف C','C','L1','L5'],['صف D','D','L2','L5'],['صف E','E','L1','L5'],['صف X1','X1','L4','L5'],['صف X2','X2','L4','L5'],
-  ['محور L1','L1','A','E'],['محور L2','L2','A','E'],['محور L3','L3','A','C'],['محور L4','L4','X1','B'],['محور L5','L5','X1','E']];
+var AX={L1:0,L2:3.6,L3:6.7,L4:9.7,L5:12.7},AZ={X1:-4,X2:0,A:2.5,B:5.5,C:9.5,D:11.5,E:14.9};
+/* extra x positions (not main axes): A' = column between L2 and L3 on row A; G = grandmother room east wall (2.80 wide); T = tower west wall */
+var XP={"A\u2032":5.0,G:12.5,T:10.3};
+function xv(k){return k in AX?AX[k]:XP[k];}
+/* col: [x, z, deep]; deep = footing down to -3.15 (cave zone x 6.7-12.7 x z 2.5-9.5, plus L5/D at the cave stair) */
+var fcols=[['L1','A'],['L2','A'],["A\u2032",'A'],['L3','A',1],['L4','A',1],['L5','A',1],
+  ['L1','B'],['L2','B'],['L3','B',1],['L4','B',1],['L5','B',1],
+  ['L1','C'],['L2','C'],['L3','C',1],['L4','C',1],['L5','C',1],
+  ['L1','D'],['L2','D'],['L3','D'],['L4','D'],['L5','D',1],
+  ['L1','E'],['L2','E'],['L5','E'],
+  ['L4','X1'],['G','X1'],['L4','X2'],['G','X2']];
+/* beam: [label, axis, from, to, recommended] */
+var fbeams=[['صف A','A','L1','L5'],['صف B','B','L1','L5'],['صف C','C','L1','L5'],['صف D','D','L2','L5'],['صف E','E','L1','L5'],
+  ['صف X1 (غرفة الجدّة)','X1','L4','G'],['صف X2 (غرفة الجدّة)','X2','L4','G'],
+  ['محور L1','L1','A','E'],['محور L2','L2','A','E'],['محور L3','L3','A','C'],['محور L4','L4','X1','B'],['محور L5','L5','X2','E'],
+  ['حيط غرفة الجدّة الشرقي (x = 12.5)','G','X1','X2'],
+  ['موصى به: صف D','D','L1','L2',1],['موصى به: محور L3','L3','C','D',1],['موصى به: محور L4','L4','B','D',1],['موصى به: تحت حيط البرج الغربي (x = 10.3)','T','C','E',1]];
+function blen(b){return (b[1] in AZ)?xv(b[3])-xv(b[2]):AZ[b[3]]-AZ[b[2]];}
 (function(){
   var h='',prev=null;
   Object.keys(AX).forEach(function(k){h+='<tr><td>'+k+' (شرق–غرب)</td><td class="n num">x = '+AX[k]+'</td><td class="n num">'+(prev==null?'—':fmt(AX[k]-prev,1))+'</td></tr>';prev=AX[k];});
-  prev=null;Object.keys(AZ).forEach(function(k){h+='<tr><td>'+k+' (شمال–جنوب)</td><td class="n num">z = '+AZ[k]+'</td><td class="n num">'+(prev==null?'—':fmt(AZ[k]-prev,1))+'</td></tr>';prev=AZ[k];});
+  h+='<tr><td>A\u2032 (سارية زايدة في الصف A)</td><td class="n num">x = 5.0</td><td class="n num">—</td></tr>';
+  h+='<tr><td>G (حيط غرفة الجدّة الشرقي)</td><td class="n num">x = 12.5</td><td class="n num">2.8 من L4</td></tr>';
+  prev=null;Object.keys(AZ).forEach(function(k){h+='<tr><td>'+k+' (شمال–جنوب)</td><td class="n num">z = '+AZ[k]+'</td><td class="n num">'+(prev==null?'—':fmt(AZ[k]-prev,2))+'</td></tr>';prev=AZ[k];});
   $('axes').innerHTML=h;
-  var s=0;h='';
-  fbeams.forEach(function(b){var row=b[1] in AZ,len=row?AX[b[3]]-AX[b[2]]:AZ[b[3]]-AZ[b[2]];s+=len;
-    h+='<tr><td>'+b[0]+'</td><td class="num">'+b[2]+' → '+b[3]+'</td><td class="n num">'+fmt(len,1)+' م</td></tr>';});
-  $('fBeams').innerHTML=h;$('fBeamSum').textContent=fmt(s,1)+' م';$('fBeamLen').innerHTML=fmt(s,1)+' <small>م</small>';
-  h='';fcols.forEach(function(c,i){h+='<tr><td class="num">'+(i+1)+'</td><td class="num">'+c[0]+' / '+c[1]+'</td><td class="n num">'+AX[c[0]]+'</td><td class="n num">'+AZ[c[1]]+'</td><td class="n num">'+(c[2]?'<b style="color:var(--blue)">−2.8 م</b>':'−1.2 م')+'</td></tr>';});
+  var s=0,sr=0;h='';
+  fbeams.forEach(function(b){var len=blen(b);if(b[4])sr+=len;else s+=len;
+    h+='<tr'+(b[4]?' style="opacity:.75;font-style:italic"':'')+'><td>'+b[0]+'</td><td class="num">'+b[2]+' → '+b[3]+'</td><td class="n num">'+fmt(len,1)+' م</td></tr>';});
+  $('fBeams').innerHTML=h;$('fBeamSum').textContent=fmt(s,1)+' م  (+ '+fmt(sr,1)+' م موصى بها)';$('fBeamLen').innerHTML=fmt(s,1)+' <small>م</small>';
+  h='';fcols.forEach(function(c,i){h+='<tr><td class="num">'+(i+1)+'</td><td class="num">'+c[0]+' / '+c[1]+'</td><td class="n num">'+xv(c[0])+'</td><td class="n num">'+AZ[c[1]]+'</td><td class="n num">'+(c[2]?'<b style="color:var(--blue)">−3.15 م (قاعدة قوية)</b>':'−1.2 م')+'</td></tr>';});
   $('fCols').innerHTML=h;
 })();
 function drawFound(){
@@ -614,18 +649,18 @@ function drawFound(){
   var ink=css('--ink'),mut=css('--muted'),acc=css('--accent'),blue=css('--blue');
   Object.keys(AX).forEach(function(k){h+='<line x1="'+X(AX[k])+'" y1="'+Z(-4.6)+'" x2="'+X(AX[k])+'" y2="'+Z(15.6)+'" stroke="'+mut+'" stroke-dasharray="3 5" stroke-width="1"/><text x="'+X(AX[k])+'" y="'+(Z(-4.6)-6)+'" text-anchor="middle" font-size="13" font-weight="700" direction="ltr">'+k+'</text>';});
   Object.keys(AZ).forEach(function(k){h+='<line x1="'+X(-0.6)+'" y1="'+Z(AZ[k])+'" x2="'+X(13.3)+'" y2="'+Z(AZ[k])+'" stroke="'+mut+'" stroke-dasharray="3 5" stroke-width="1"/><text x="'+(X(-0.6)-4)+'" y="'+(Z(AZ[k])+4)+'" text-anchor="end" font-size="13" font-weight="700" direction="ltr">'+k+'</text>';});
-  fbeams.forEach(function(b){var row=b[1] in AZ;
-    if(row)h+='<line x1="'+X(AX[b[2]])+'" y1="'+Z(AZ[b[1]])+'" x2="'+X(AX[b[3]])+'" y2="'+Z(AZ[b[1]])+'" stroke="'+acc+'" stroke-width="6" stroke-opacity=".75"/>';
-    else h+='<line x1="'+X(AX[b[1]])+'" y1="'+Z(AZ[b[2]])+'" x2="'+X(AX[b[1]])+'" y2="'+Z(AZ[b[3]])+'" stroke="'+acc+'" stroke-width="6" stroke-opacity=".75"/>';});
-  fcols.forEach(function(c){var x=X(AX[c[0]]),z=Z(AZ[c[1]]),p=0.5*S;
+  fbeams.forEach(function(b){var row=b[1] in AZ,rec=b[4],st=rec?' stroke-dasharray="7 5" stroke-opacity=".9" stroke-width="4"':' stroke-opacity=".75" stroke-width="6"';
+    if(row)h+='<line x1="'+X(xv(b[2]))+'" y1="'+Z(AZ[b[1]])+'" x2="'+X(xv(b[3]))+'" y2="'+Z(AZ[b[1]])+'" stroke="'+acc+'"'+st+'/>';
+    else h+='<line x1="'+X(xv(b[1]))+'" y1="'+Z(AZ[b[2]])+'" x2="'+X(xv(b[1]))+'" y2="'+Z(AZ[b[3]])+'" stroke="'+acc+'"'+st+'/>';});
+  fcols.forEach(function(c){var x=X(xv(c[0])),z=Z(AZ[c[1]]),p=0.5*S;
     h+='<rect x="'+(x-p)+'" y="'+(z-p)+'" width="'+2*p+'" height="'+2*p+'" fill="'+(c[2]?blue:mut)+'" fill-opacity="'+(c[2]?0.55:0.3)+'" stroke="'+(c[2]?blue:ink)+'" stroke-opacity=".6"/>';
     h+='<rect x="'+(x-0.125*S)+'" y="'+(z-0.125*S)+'" width="'+0.25*S+'" height="'+0.25*S+'" fill="'+ink+'"/>';});
-  var dims=[[0,4,'4.0'],[4,6.7,'2.7'],[6.7,9.7,'3.0'],[9.7,12.7,'3.0']];
-  dims.forEach(function(d){h+='<text x="'+X((d[0]+d[1])/2)+'" y="'+(Z(15)+40)+'" text-anchor="middle" font-size="13" direction="ltr">'+d[2]+'</text>';});
-  var dz=[[-4,0,'4'],[0,2.5,'2.5'],[2.5,5.5,'3'],[5.5,9.5,'4'],[9.5,11.5,'2'],[11.5,15,'3.5']];
+  var dims=[[0,3.6,'3.6'],[3.6,6.7,'3.1'],[6.7,9.7,'3.0'],[9.7,12.7,'3.0']];
+  dims.forEach(function(d){h+='<text x="'+X((d[0]+d[1])/2)+'" y="'+(Z(AZ.E)+40)+'" text-anchor="middle" font-size="13" direction="ltr">'+d[2]+'</text>';});
+  var dz=[[-4,0,'4'],[0,2.5,'2.5'],[2.5,5.5,'3'],[5.5,9.5,'4'],[9.5,11.5,'2'],[11.5,14.9,'3.4']];
   dz.forEach(function(d){h+='<text x="'+(X(12.7)+30)+'" y="'+(Z((d[0]+d[1])/2)+4)+'" text-anchor="middle" font-size="13" direction="ltr">'+d[2]+'</text>';});
-  h+='<text x="'+X(6.35)+'" y="'+(Z(15)+60)+'" text-anchor="middle" font-size="14" font-weight="700" direction="ltr">12.7 m</text>';
-  h+='<text x="'+(X(12.7)+58)+'" y="'+Z(5.5)+'" text-anchor="middle" font-size="14" font-weight="700" direction="ltr" transform="rotate(90 '+(X(12.7)+58)+' '+Z(5.5)+')">19 m</text>';
+  h+='<text x="'+X(6.35)+'" y="'+(Z(AZ.E)+60)+'" text-anchor="middle" font-size="14" font-weight="700" direction="ltr">12.7 m</text>';
+  h+='<text x="'+(X(12.7)+58)+'" y="'+Z(5.5)+'" text-anchor="middle" font-size="14" font-weight="700" direction="ltr" transform="rotate(90 '+(X(12.7)+58)+' '+Z(5.5)+')">18.9 m</text>';
   svg.innerHTML=h;
 }
 

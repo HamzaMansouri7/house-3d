@@ -326,15 +326,15 @@ var gCave=new THREE.Group();scene.add(gCave);gCave.visible=false;
 var gFound=new THREE.Group();scene.add(gFound);
 if(ALL){
   var Mp=mat(0x9a9486),Mcl=mat(0x6f6a60),Mbm=mat(0xc9c2b2),Mbl=mat(0x2f7fd9),BW=0.25,BH=0.4,PT=0.35;
-  var L1=0,L2=4.0,L2b=4.0,L3=6.7,L4=9.7,L5=12.7,A=2.5,B=5.5,C=9.5,D=11.5,E=15,X1=-4,X2=0;   // 2026-10-02: bedrooms 4 m (L2), corridor 2.7 m (L3), east block +1.2 (L4, L5)
-  [[L1,A],[L2,A],[L2b,A],[L3,A],[L4,A],[L5,A],[L1,B],[L2,B],[L2b,B],[L3,B],[L4,B,1],[L5,B],[L1,C],[L3,C],[L4,C],[L5,C],
-   [L1,D],[L2,D],[L3,D],[L4,D],[L5,D],[L1,E],[L2,E],[L5,E],[L4,X1],[L5,X1],[L4,X2],[L5,X2]].forEach(function(q){
-    var inCave=(q[0]>=6.7&&q[0]<=12.7&&q[1]>=2.5&&q[1]<=9.5)||(q[0]>=11.6&&q[0]<=12.7&&q[1]>=9.5&&q[1]<=14.5);
-    var dp=(q[2]||inCave)?2.8+PT:1.2;                                  // footing depth: -1.2 m, or under the cave floor
-    box(gFound,1.0,PT,1.0,q[0],-dp+PT/2,q[1],q[2]?Mbl:Mp);box(gFound,0.25,dp-PT,0.25,q[0],(-dp+PT)/2,q[1],q[2]?Mbl:Mcl);});
+  var L1=0,L2=3.6,L3=6.7,L4=9.7,L5=12.7,GX=12.5,AP=5.0,A=2.5,B=5.5,C=9.5,D=11.5,E=14.9,X1=-4,X2=0;   // foundation plan v5 (20/11/2026): L2 3.6, E 14.9, grandmother east columns at 12.5, L2b merged into L2
+  [[L1,A],[L2,A],[AP,A],[L3,A],[L4,A],[L5,A],[L1,B],[L2,B],[L3,B],[L4,B],[L5,B],[L1,C],[L2,C],[L3,C],[L4,C],[L5,C],
+   [L1,D],[L2,D],[L3,D],[L4,D],[L5,D],[L1,E],[L2,E],[L5,E],[L4,X1],[GX,X1],[L4,X2],[GX,X2]].forEach(function(q){
+    var inCave=(q[0]>=6.7&&q[0]<=12.7&&q[1]>=2.5&&q[1]<=9.5)||(q[0]===L5&&q[1]===D);   // 10 deep footings: L3-L5 x A-C + L5/D (cave stair)
+    var dp=inCave?2.8+PT:1.2;                                  // footing depth: -1.2 m, or under the cave floor
+    box(gFound,1.0,PT,1.0,q[0],-dp+PT/2,q[1],inCave?Mbl:Mp);box(gFound,0.25,dp-PT,0.25,q[0],(-dp+PT)/2,q[1],inCave?Mbl:Mcl);});
   function bX(z,x1,x2){box(gFound,x2-x1+BW,BH,BW,(x1+x2)/2,-BH/2,z,Mbm);}function bZ(x,z1,z2){box(gFound,BW,BH,z2-z1+BW,x,-BH/2,(z1+z2)/2,Mbm);}
-  bX(A,L1,L5);bX(B,L1,L5);bX(C,L1,L5);bX(D,L2,L5);bX(E,L1,L5);bX(X1,L4,L5);bX(X2,L4,L5);
-  bZ(L1,A,E);bZ(L2,A,E);bZ(L2b,A,B);bZ(L3,A,C);bZ(L4,X1,B);bZ(L5,X1,E);
+  bX(A,L1,L5);bX(B,L1,L5);bX(C,L1,L5);bX(D,L2,L5);bX(E,L1,L5);bX(X1,L4,GX);bX(X2,L4,GX);
+  bZ(L1,A,E);bZ(L2,A,E);bZ(L3,A,C);bZ(L4,X1,B);bZ(L5,X2,E);bZ(GX,X1,X2);
   gCave.visible=true;
   plotM.concat(gndFloors.map(function(o){return o.material;})).forEach(function(m){m.transparent=true;m.opacity=0.3;m.depthWrite=false;});
 }
@@ -401,10 +401,10 @@ function label(g,t,x,y,z,sc,col){var cv=document.createElement('canvas');cv.widt
   sp.scale.set(sc||2.4,(sc||2.4)*0.25,1);sp.position.set(x,y,z);g.add(sp);return sp;}
 
 /* ---- grid = hand sketch topology, snapped to the V3 walls (house-3d-v3.html; V3 wins on sizes) ----
-   x: L1 0 west wall | L2 4.0 west-strip wall (L2b merged) | L3 6.7 corridor east / living west | L4 9.7 kitchen+grandma west | L5 12.7 east wall
-   z: X1 -4 grandma back | X2 0 grandma/kitchen | A 2.5 yard line | B 5.5 living front (sketch 3) | C 9.5 main back (sketch 4) | D 11.5 (sketch 2) | E 15 street line */
-var L1=0,L2=4.0,L2b=4.0,L3=6.7,L4=9.7,L5=12.7;   // 2026-10-02: bedrooms 4 m (L2; L2b merged), corridor 2.7 m (L3), east block +1.2 (L4, L5)
-var A=2.5,B=5.5,C=9.5,D=11.5,E=15,X1=-4,X2=0;
+   x: L1 0 west wall | L2 3.6 west-strip wall (L2b merged into L2) | L3 6.7 corridor east / living west | L4 9.7 kitchen+grandma west | L5 12.7 east wall
+   z: X1 -4 grandma back | X2 0 grandma/kitchen | A 2.5 yard line | B 5.5 living front (sketch 3) | C 9.5 main back (sketch 4) | D 11.5 (sketch 2) | E 14.9 street line */
+var L1=0,L2=3.6,L3=6.7,L4=9.7,L5=12.7,GX=12.5,AP=5.0;   // foundation plan v5 (20/11/2026): L2 3.6; GX = grandmother east wall (2.80 wide); AP = extra column A' on row A
+var A=2.5,B=5.5,C=9.5,D=11.5,E=14.9,X1=-4,X2=0;
 var BW=0.25,BH=0.4;          // ground beam 25 x 40 cm
 var CS=0.25;                 // column 25 x 25 cm
 var PD=1.0,PT=0.35,DEPTH=1.2;// pad footing 1.0 x 1.0 x 0.35 at -1.2 m (assumed)
@@ -412,19 +412,19 @@ var PD=1.0,PT=0.35,DEPTH=1.2;// pad footing 1.0 x 1.0 x 0.35 at -1.2 m (assumed)
 var gStruct=new THREE.Group(),gDim=new THREE.Group();scene.add(gStruct);scene.add(gDim);
 
 var cols=[
-  [L1,A],[L2,A],[L2b,A],[L3,A],[L4,A],[L5,A],
-  [L1,B],[L2,B],[L2b,B],[L3,B],[L4,B,'blue'],[L5,B],
-  [L1,C],[L3,C],[L4,C],[L5,C],   // red-circled column at (L2,C) removed — wrong on sketch
-  [L1,D],[L2,D],[L3,D],[L4,D],[L5,D],
+  [L1,A],[L2,A],[AP,A],[L3,A,'blue'],[L4,A,'blue'],[L5,A,'blue'],
+  [L1,B],[L2,B],[L3,B,'blue'],[L4,B,'blue'],[L5,B,'blue'],
+  [L1,C],[L2,C],[L3,C,'blue'],[L4,C,'blue'],[L5,C,'blue'],
+  [L1,D],[L2,D],[L3,D],[L4,D],[L5,D,'blue'],
   [L1,E],[L2,E],[L5,E],
-  [L4,X1],[L5,X1],[L4,X2],[L5,X2]
-];
+  [L4,X1],[GX,X1],[L4,X2],[GX,X2]
+];   // 28 columns; 10 deep (blue) = cave zone L3-L5 x A-C + L5/D
 cols.forEach(function(p){
   var m=p[2]?M[p[2]]:M.col;
   var dp=p[2]==='blue'?2.8+PT:DEPTH;                                   // blue = base of the underground floor (floor at -2.8 m)
   box(gStruct,PD,PT,PD,p[0],-dp+PT/2,p[1],p[2]?m:M.pad);               // pad footing
   box(gStruct,CS,dp-PT+0.6,CS,p[0],(-dp+PT+0.6)/2,p[1],m);             // column starter (0.6 m above ground beam)
-  if(p[2]==='blue')label(gDim,'قاعدة قوية (حمل كبير) · −2.8 م',p[0],-dp-0.4,p[1],3.2,'#2f7fd9');
+  if(p[2]==='blue'&&p[0]===L4&&p[1]===B)label(gDim,'قاعدة قوية · −3.15 م (10 قواعد)',p[0],-dp-0.4,p[1],3.2,'#2f7fd9');
   if(p[2]){var ring=new THREE.Mesh(new THREE.TorusGeometry(0.7,0.06,8,40),m);ring.rotation.x=Math.PI/2;ring.position.set(p[0],0.02,p[1]);gStruct.add(ring);}
 });
 
@@ -432,9 +432,13 @@ function beamX(z,x1,x2){box(gStruct,x2-x1+BW,BH,BW,(x1+x2)/2,-BH/2,z,M.beam);}
 function beamZ(x,z1,z2){box(gStruct,BW,BH,z2-z1+BW,x,-BH/2,(z1+z2)/2,M.beam);}
 // rows
 beamX(A,L1,L5);beamX(B,L1,L5);beamX(C,L1,L5);beamX(D,L2,L5);beamX(E,L1,L5);
-beamX(X1,L4,L5);beamX(X2,L4,L5);
+beamX(X1,L4,GX);beamX(X2,L4,GX);                  // grandmother room, 2.80 wide
 // column lines
-beamZ(L1,A,E);beamZ(L2,A,E);beamZ(L2b,A,B);beamZ(L3,A,C);beamZ(L4,X1,B);beamZ(L5,X1,E);
+beamZ(L1,A,E);beamZ(L2,A,E);beamZ(L3,A,C);beamZ(L4,X1,B);beamZ(L5,X2,E);beamZ(GX,X1,X2);
+// recommended extra beams (translucent)
+var Mrec=new THREE.MeshLambertMaterial({color:0xc9c2b2,transparent:true,opacity:0.4});
+function recX(z,x1,x2){box(gStruct,x2-x1+BW,BH,BW,(x1+x2)/2,-BH/2,z,Mrec);}function recZ(x,z1,z2){box(gStruct,BW,BH,z2-z1+BW,x,-BH/2,(z1+z2)/2,Mrec);}
+recX(D,L1,L2);recZ(L3,C,D);recZ(L4,B,D);recZ(10.3,C,E);
 
 // dashed outline (not built) from the sketch — position estimated
 var dash=new THREE.LineDashedMaterial({color:0x3a3a36,dashSize:0.3,gapSize:0.2});
@@ -446,8 +450,8 @@ var ground=box(scene,16,0.02,20,L5/2,-0.01,(X1+E)/2,new THREE.MeshLambertMateria
 
 // dimensions (from V3)
 var y=0.9;
-label(gDim,'4.0',(L1+L2)/2,y,E+0.9);
-label(gDim,'2.7',(L2b+L3)/2,y,A-0.6,1.6);
+label(gDim,'3.6',(L1+L2)/2,y,E+0.9);
+label(gDim,'3.1',(L2+L3)/2,y,A-0.6,1.6);
 label(gDim,'3.0',(L3+L4)/2,y,A-0.6);
 label(gDim,'3.0',(L4+L5)/2,y,X1-0.7);
 label(gDim,'4',L5+1.0,y,(X1+X2)/2);
@@ -455,9 +459,9 @@ label(gDim,'2.5',L5+1.0,y,(X2+A)/2);
 label(gDim,'3',L5+1.0,y,(A+B)/2);
 label(gDim,'4',L5+1.0,y,(B+C)/2);
 label(gDim,'2',L5+1.0,y,(C+D)/2);
-label(gDim,'3.5',L5+1.0,y,(D+E)/2);
+label(gDim,'3.4',L5+1.0,y,(D+E)/2);
 label(gDim,'12.7',(L1+L5)/2,y,E+1.8,2.4,'#3a3a36');
-label(gDim,'19',L5+2.4,y,(X1+E)/2,2.4,'#3a3a36');
+label(gDim,'18.9',L5+2.4,y,(X1+E)/2,2.4,'#3a3a36');
 
 // camera
 var cx=L5/2,cz=(X1+E)/2,theta=0.9,phi=0.9,r=28,auto=true;
@@ -511,10 +515,10 @@ function label(g,t,x,y,z,sc,col){var cv=document.createElement('canvas');cv.widt
   sp.scale.set(sc||2.4,(sc||2.4)*0.25,1);sp.position.set(x,y,z);g.add(sp);return sp;}
 
 /* ---- grid = hand sketch topology, snapped to the V3 walls (house-3d-v3.html; V3 wins on sizes) ----
-   x: L1 0 west wall | L2 4.0 west-strip wall (L2b merged) | L3 6.7 corridor east / living west | L4 9.7 kitchen+grandma west | L5 12.7 east wall
-   z: X1 -4 grandma back | X2 0 grandma/kitchen | A 2.5 yard line | B 5.5 living front (sketch 3) | C 9.5 main back (sketch 4) | D 11.5 (sketch 2) | E 15 street line */
-var L1=0,L2=4.0,L2b=4.0,L3=6.7,L4=9.7,L5=12.7;   // 2026-10-02: bedrooms 4 m (L2; L2b merged), corridor 2.7 m (L3), east block +1.2 (L4, L5)
-var A=2.5,B=5.5,C=9.5,D=11.5,E=15,X1=-4,X2=0;
+   x: L1 0 west wall | L2 3.6 west-strip wall (L2b merged into L2) | L3 6.7 corridor east / living west | L4 9.7 kitchen+grandma west | L5 12.7 east wall
+   z: X1 -4 grandma back | X2 0 grandma/kitchen | A 2.5 yard line | B 5.5 living front (sketch 3) | C 9.5 main back (sketch 4) | D 11.5 (sketch 2) | E 14.9 street line */
+var L1=0,L2=3.6,L3=6.7,L4=9.7,L5=12.7,GX=12.5,AP=5.0;   // foundation plan v5 (20/11/2026): L2 3.6; GX = grandmother east wall (2.80 wide); AP = extra column A' on row A
+var A=2.5,B=5.5,C=9.5,D=11.5,E=14.9,X1=-4,X2=0;
 var BW=0.25,BH=0.4;          // ground beam 25 x 40 cm
 var CS=0.25;                 // column 25 x 25 cm
 var PD=1.0,PT=0.35,DEPTH=1.2;// pad footing 1.0 x 1.0 x 0.35 at -1.2 m (assumed)
@@ -522,20 +526,20 @@ var PD=1.0,PT=0.35,DEPTH=1.2;// pad footing 1.0 x 1.0 x 0.35 at -1.2 m (assumed)
 var gStruct=new THREE.Group(),gDim=new THREE.Group();scene.add(gStruct);scene.add(gDim);
 
 var cols=[
-  [L1,A],[L2,A],[L2b,A],[L3,A],[L4,A],[L5,A],
-  [L1,B],[L2,B],[L2b,B],[L3,B],[L4,B,'blue'],[L5,B],
-  [L1,C],[L3,C],[L4,C],[L5,C],   // red-circled column at (L2,C) removed — wrong on sketch
-  [L1,D],[L2,D],[L3,D],[L4,D],[L5,D],
+  [L1,A],[L2,A],[AP,A],[L3,A,'blue'],[L4,A,'blue'],[L5,A,'blue'],
+  [L1,B],[L2,B],[L3,B,'blue'],[L4,B,'blue'],[L5,B,'blue'],
+  [L1,C],[L2,C],[L3,C,'blue'],[L4,C,'blue'],[L5,C,'blue'],
+  [L1,D],[L2,D],[L3,D],[L4,D],[L5,D,'blue'],
   [L1,E],[L2,E],[L5,E],
-  [L4,X1],[L5,X1],[L4,X2],[L5,X2]
-];
+  [L4,X1],[GX,X1],[L4,X2],[GX,X2]
+];   // 28 columns; 10 deep (blue) = cave zone L3-L5 x A-C + L5/D
 cols.forEach(function(p){
   var m=p[2]?M[p[2]]:M.col;
   var inCave=(p[0]>=6.7&&p[0]<=12.7&&p[1]>=2.5&&p[1]<=9.5)||(p[0]>=11.6&&p[0]<=12.7&&p[1]>=9.5&&p[1]<=14.5);
   var dp=(p[2]==='blue'||inCave)?2.8+PT:DEPTH;                         // blue + cave-outline columns: footing under the cave floor (-2.8 m)                                   // blue = base of the underground floor (floor at -2.8 m)
   box(gStruct,PD,PT,PD,p[0],-dp+PT/2,p[1],p[2]?m:M.pad);               // pad footing
   box(gStruct,CS,dp-PT+0.6,CS,p[0],(-dp+PT+0.6)/2,p[1],m);             // column starter (0.6 m above ground beam)
-  if(p[2]==='blue')label(gDim,'قاعدة قوية (حمل كبير) · −2.8 م',p[0],-dp-0.4,p[1],3.2,'#2f7fd9');
+  if(p[2]==='blue'&&p[0]===L4&&p[1]===B)label(gDim,'قاعدة قوية · −3.15 م (10 قواعد)',p[0],-dp-0.4,p[1],3.2,'#2f7fd9');
   if(p[2]){var ring=new THREE.Mesh(new THREE.TorusGeometry(0.7,0.06,8,40),m);ring.rotation.x=Math.PI/2;ring.position.set(p[0],0.02,p[1]);gStruct.add(ring);}
 });
 
@@ -543,9 +547,13 @@ function beamX(z,x1,x2){box(gStruct,x2-x1+BW,BH,BW,(x1+x2)/2,-BH/2,z,M.beam);}
 function beamZ(x,z1,z2){box(gStruct,BW,BH,z2-z1+BW,x,-BH/2,(z1+z2)/2,M.beam);}
 // rows
 beamX(A,L1,L5);beamX(B,L1,L5);beamX(C,L1,L5);beamX(D,L2,L5);beamX(E,L1,L5);
-beamX(X1,L4,L5);beamX(X2,L4,L5);
+beamX(X1,L4,GX);beamX(X2,L4,GX);                  // grandmother room, 2.80 wide
 // column lines
-beamZ(L1,A,E);beamZ(L2,A,E);beamZ(L2b,A,B);beamZ(L3,A,C);beamZ(L4,X1,B);beamZ(L5,X1,E);
+beamZ(L1,A,E);beamZ(L2,A,E);beamZ(L3,A,C);beamZ(L4,X1,B);beamZ(L5,X2,E);beamZ(GX,X1,X2);
+// recommended extra beams (translucent)
+var Mrec=new THREE.MeshLambertMaterial({color:0xc9c2b2,transparent:true,opacity:0.4});
+function recX(z,x1,x2){box(gStruct,x2-x1+BW,BH,BW,(x1+x2)/2,-BH/2,z,Mrec);}function recZ(x,z1,z2){box(gStruct,BW,BH,z2-z1+BW,x,-BH/2,(z1+z2)/2,Mrec);}
+recX(D,L1,L2);recZ(L3,C,D);recZ(L4,B,D);recZ(10.3,C,E);
 
 // dashed outline (not built) from the sketch — position estimated
 var dash=new THREE.LineDashedMaterial({color:0x3a3a36,dashSize:0.3,gapSize:0.2});
@@ -557,8 +565,8 @@ var ground=box(scene,16,0.02,20,L5/2,-0.01,(X1+E)/2,new THREE.MeshLambertMateria
 
 // dimensions (from V3)
 var y=0.9;
-label(gDim,'4.0',(L1+L2)/2,y,E+0.9);
-label(gDim,'2.7',(L2b+L3)/2,y,A-0.6,1.6);
+label(gDim,'3.6',(L1+L2)/2,y,E+0.9);
+label(gDim,'3.1',(L2+L3)/2,y,A-0.6,1.6);
 label(gDim,'3.0',(L3+L4)/2,y,A-0.6);
 label(gDim,'3.0',(L4+L5)/2,y,X1-0.7);
 label(gDim,'4',L5+1.0,y,(X1+X2)/2);
@@ -566,9 +574,9 @@ label(gDim,'2.5',L5+1.0,y,(X2+A)/2);
 label(gDim,'3',L5+1.0,y,(A+B)/2);
 label(gDim,'4',L5+1.0,y,(B+C)/2);
 label(gDim,'2',L5+1.0,y,(C+D)/2);
-label(gDim,'3.5',L5+1.0,y,(D+E)/2);
+label(gDim,'3.4',L5+1.0,y,(D+E)/2);
 label(gDim,'12.7',(L1+L5)/2,y,E+1.8,2.4,'#3a3a36');
-label(gDim,'19',L5+2.4,y,(X1+E)/2,2.4,'#3a3a36');
+label(gDim,'18.9',L5+2.4,y,(X1+E)/2,2.4,'#3a3a36');
 
 // ---- underground cave (same as the house view): x 5.5-11.5, z 2.5-9.5, floor -2.8 m; stair shaft under the tower east lane x 10.4-11.5, z 9.5-14.5 ----
 (function(){var g=gStruct,CY=-2.8,T=0.2,Hc=2.8-BH,Mc=new THREE.MeshLambertMaterial({color:0xa89f8c,transparent:true,opacity:0.45,depthWrite:false});
