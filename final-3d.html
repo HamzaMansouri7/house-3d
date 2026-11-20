@@ -252,58 +252,178 @@ function tower(g){
   })();
 }
 /* ---- first floor ---- */
-function first(g){
-  var FW=3.0;                              // first-floor room height 3 m
-  var y=FH,w=interior(g,y,FW);
-  if(SALWA){
-    w.wz(0.5,0,0.4);w.wz(0.5,1.4,4.0);w.wz(0,4.0,6.7);   // SALWA: master balcony (z 0-0.5, x 0-4) only; bathroom front wall extended to z 0 (x 4-6.7)
-    box(g,1.0,FW-2.2,0.16,0.9,y+2.2+(FW-2.2)/2,0.5,M.wall);   // master bedroom french door (porte-fenêtre) x 0.4-1.4, h 2.2, onto the walkway
-    box(g,0.48,2.2,0.04,0.65,y+1.1,0.5,M.glass);box(g,0.48,2.2,0.04,1.15,y+1.1,0.5,M.glass);
-    box(g,1.0,0.06,0.1,0.9,y+2.2,0.5,M.wood);box(g,0.05,2.2,0.1,0.9,y+1.1,0.5,M.wood);box(g,0.05,2.2,0.1,0.42,y+1.1,0.5,M.wood);box(g,0.05,2.2,0.1,1.38,y+1.1,0.5,M.wood);
-    box(g,4.0,0.9,0.05,2.0,y+0.45,0.02,M.rail);box(g,0.05,0.9,0.5,0.02,y+0.45,0.25,M.rail);box(g,0.05,0.9,0.5,4.0,y+0.45,0.25,M.rail);   // master balcony rail (front edge x 0-4 + west end + east end at x 4)
-    // SALWA: kitchen 6 x 4 (x 6.7-12.7, z 1.5-5.5): back wall at z 1.5 with the wide window 2.0 x 1.2 (x 8.5-10.5, sill 1.0); strip z 0-1.5 joins balcony 2
-    w.wz(1.5,6.7,8.5);w.wz(1.5,10.5,11.3);w.wz(1.5,12.1,12.7);   // + kitchen door x 11.3-12.1 from the strip (east of the window)
-    box(g,0.8,FW-2.0,0.16,11.7,y+2.0+(FW-2.0)/2,1.5,M.wall);box(g,0.8,2.0,0.08,11.7,y+1.0,1.5,M.wood);
-    box(g,2.0,1.0,0.16,9.5,y+0.5,1.5,M.wall);box(g,2.0,FW-2.2,0.16,9.5,y+2.2+(FW-2.2)/2,1.5,M.wall);
-    box(g,2.0,1.2,0.05,9.5,y+1.6,1.5,M.glass);box(g,2.06,0.06,0.2,9.5,y+1.0,1.5,M.rail);box(g,2.06,0.06,0.2,9.5,y+2.2,1.5,M.rail);
-  }else w.wz(0,0,9.7);
-  w.wx(0,SALWA?0.5:0,1.5);w.wx(6.7,0,1.5);   // SALWA: bathroom east wall x 6.7, z 0-1.5   // 1st floor: close the ground yard openings
-  if(SALWA){   // SALWA 1st floor: master 4 x 5 (x 0-4, z 0.5-5.5); bedroom 2 4 x 4 (x 0-4, z 5.5-9.5); corridor x 4-5.5
-    w.wz(5.5,0,4.0);w.wx(4.0,0,4.5);w.wx(4.0,5.3,6.0);w.wx(4.0,6.8,9.5);w.wz(9.5,0,4.0);   // shared wall z 5.5 + x 4 wall (master door z 4.5-5.3, bedroom 2 door z 6.0-6.8) + bedroom 2 end z 9.5
-    box(g,0.08,2.0,0.8,4.0,y+1.0,4.9,M.wood);box(g,0.08,2.0,0.8,4.0,y+1.0,6.4,M.wood);        // door leaves
-    floor(g,0,0.5,4.0,5.5,0xf2e3c4,y+0.002);floor(g,0,5.5,4.0,9.5,0xf2e3c4,y+0.002);           // master + bedroom 2 floors (x 0-4)
-  }else w.wz(5.0,0,4.1);                   // 1st floor: master / bedroom 2 split at z 5.0
-  // living-room back wall (z 9.5) with a 1.2 x 1.2 window onto the external corridor, centred x 8.5, sill 1.0 m
-  w.wz(9.5,6.4,7.9);w.wz(9.5,9.1,12.7);
-  box(g,1.2,1.0,0.16,8.5,y+0.5,9.5,M.wall);box(g,1.2,FW-2.2,0.16,8.5,y+2.2+(FW-2.2)/2,9.5,M.wall);
-  box(g,1.2,1.2,0.05,8.5,y+1.6,9.5,M.glass);box(g,1.26,0.06,0.2,8.5,y+1.0,9.5,M.rail);   // glass + sill (centred on the corridor-facing stretch x 6.7-10.3)
-  if(!SALWA){w.wx(4.1,6.1,9.5);           // 1st floor: bedroom 2 east wall (door gap z 5.3-6.1)
-  w.wx(4.1,0,3.9);w.wx(4.1,4.7,5.3);}      // 1st floor: master bedroom east wall (door gap z 3.9-4.7) + segment to bedroom 2 door gap
-  w.wx(6.7,6.5,9.5);                       // 1st floor: living room west wall (door gap z 5.7-6.5)
-  if(!SALWA)w.wx(4.1,1.0,1.8);            // close the ground-floor master-bedroom door gap on the 1st floor
-  if(SALWA){floor(g,4.0,0,6.7,1.7,0xdde8ec,y+0.003);w.wz(1.7,4.0,4.95);w.wz(1.7,5.75,6.7);}   // SALWA: bathroom 2.7 x 1.7 (x 4.0-6.7, z 0-1.7), door z 1.7 x 4.95-5.75
-  else{floor(g,4.1,0,5.5,2.2,0xdde8ec,y+0.001);w.wz(2.2,4.1,4.3);w.wz(2.2,5.1,5.5);}   // 1st-floor bathroom stays at the corridor end
-  w.wz(5.5,10.7,11.6);                      // close the kitchen/living-room door gap on the 1st floor
-  // bedroom 2 extension into balcony 1: 2.5 long (z 9.5-12.0) x 3.5 wide (x 0-3.5); door to balcony at x 1.6-2.4
-  var ZB2=SALWA?9.5:12.0, XB2=SALWA?4.0:3.5;   // SALWA: bedroom 2 ends at z 9.5, 4 m wide (no extension)
-  floor(g,0,9.5,XB2,ZB2,0xf2e3c4,y);
-  w.wx(0,9.5,ZB2);if(!SALWA){w.wx(XB2,9.5,ZB2);w.wz(ZB2,0,1.6);w.wz(ZB2,2.4,XB2);}
-  w.wz(9.5,XB2-0.08,4.1+0.08);            // close the gap at the corner (x 3.5-4.1, z 9.5)
-  roofs1.push(box(g,XB2,0.22,ZB2-9.5,XB2/2,y+3.0+0.11,(9.5+ZB2)/2,mat(0xcfc7b3)));  // roof over the extension
-  furniture(g,y);
-  // slab under the first floor (visible edge) + balconies, gallery, stairwell landing
-  box(g,W,0.25,H,W/2,y-0.13,H/2,mat(0xb4b2a9));
-  roofs1.push(box(g,W,0.22,H,W/2,y+FW+0.11,H/2,mat(0xcfc7b3)));   // roof cover over first floor (main block z0-9.5; balconies & stairwell open)
-  box(g,5,0.25,4,10.2,y-0.13,-2.0,mat(0xd8d2c2));box(g,4.1,0.25,5.5,2.05,y-0.13,12.25,mat(0xd8d2c2));  // balcony 2 = 5x4 (x 7.7-12.7, z -4..0); balcony 1 = full garage roof
-  box(g,6.2,0.25,SALWA?2.0:3.0,7.2,y-0.13,SALWA?10.5:11.0,mat(0xe4ddcb));   // external corridor (x 4.1-10.3); SALWA: 2 m (z 9.5-11.5)
-  function rx(x,z1,z2){box(g,0.06,0.5,z2-z1,x,y+0.25,(z1+z2)/2,M.rail);}
-  function rz(z,x1,x2){box(g,x2-x1,0.5,0.06,(x1+x2)/2,y+0.25,z,M.rail);}
-  rz(-4,7.7,12.7);rx(7.7,-4,0);rx(12.7,-4,0);
-  var zCE=SALWA?11.5:12.5;rz(15,0,4.1);rx(0,ZB2,15);rx(4.1,zCE,15);rz(zCE,4.1,10.3);
-  if(SALWA)box(g,0.08,2.0,0.9,X0,y+1.0,11.0,M.wood);else{box(g,0.08,2.0,0.85,X0,y+1.0,12.05,M.wood);box(g,0.08,2.0,0.9,X0,y+1.0,10.2,M.wood);}   // + stair-exit door (z 9.75-10.65)                                                   // door corridor -> tower, top-right corner of corridor
+function first(g){   // Hamza v3 first floor (ported from the proposals file, function firstHamza); structure toggles not ported
+  var FW=3.0,y=FH,Tk=0.16;
+  function wx(x,z1,z2,h,y0){h=h||FW;y0=y0||0;return box(g,Tk,h,z2-z1,x,y+y0+h/2,(z1+z2)/2,M.wall);}
+  function wz(z,x1,x2,h,y0){h=h||FW;y0=y0||0;return box(g,x2-x1,h,Tk,(x1+x2)/2,y+y0+h/2,z,M.wall);}
+  // Hamza v3 layout on the v5 foundation grid (father sketch 20/11)
+  var xC1=3.6,xWC=5.0,xE=6.7,xR=7.6,xC2=8.8,zWC=2.5,zR=5.5,zC1=5.5,xDoor1=4.6,xDoor2=5.8,xG2=6.7;   // snapped to the ground-floor grid: x 4.0, z 5.5; entrance door 1.2 m
+  floor(g,0,1.5,W,H,0xf2e3c4,y);   // whole back facade on z 1.5 (same line as the WCs)
+  floor(g,0,zC1,xC2,H,0xe6e6e3,y+0.002);                        // salon + dining: light terrazzo
+  function frenchDoor(z,x1,x2,h){var fw=x2-x1,fc=(x1+x2)/2;
+    box(g,fw/2-0.06,h-0.08,0.04,fc-fw/4,y+h/2,z,M.glass);box(g,fw/2-0.06,h-0.08,0.04,fc+fw/4,y+h/2,z,M.glass);
+    [x1+0.03,fc,x2-0.03].forEach(function(xx){box(g,0.06,h,0.1,xx,y+h/2,z,M.wood);});box(g,fw,0.06,0.1,fc,y+h,z,M.wood);}
+  var ledM=new THREE.MeshBasicMaterial({color:0xffd27a});
+  // MODERN palette: white, light grey, matt black, anthracite, light oak, marble
+  var MO={black:mat(0x1f1f1f),anth:mat(0x3b3e42),lacq:mat(0xf4f4f2),quartz:mat(0xf7f7f5),oak:mat(0xd9b98c),grey:mat(0x9a9ea3),
+    marble:new THREE.MeshLambertMaterial({color:0xf1efec}),vein:mat(0xb9bcc0),coolLed:new THREE.MeshBasicMaterial({color:0xfff4dc})};
+  floor(g,xC1,1.5,xR,4.0,0xdde8ec,y+0.002);                      // WC floors
+  // exterior walls; front (z 9.5) has the entrance door from the external corridor
+  // back wall (z 0) with openings: chambre 1 window, WC windows, kitchen door to balcony 2
+  (function(){var ZB=1.5,op=[[0.25,1.25,0,2.3,1],[4.0,7.6,0,0,2],[8.4,10.4,1.05,1.25],[11.1,12.0,0,2.2]],x=0;
+    op.forEach(function(o){wz(ZB,x,o[0]);if(o[4]===2){x=o[1];return;}   // type 2 = no wall (patio)
+      if(o[2]>0)wz(ZB,o[0],o[1],o[2],0);
+      wz(ZB,o[0],o[1],FW-o[2]-o[3],o[2]+o[3]);
+      if(o[2]>0)box(g,o[1]-o[0],o[3],0.05,(o[0]+o[1])/2,y+o[2]+o[3]/2,ZB,M.glass);
+      else if(o[4]){var fw=o[1]-o[0],fc=(o[0]+o[1])/2;   // french door (porte-fenêtre), 2 glass leaves + frame
+        box(g,fw/2-0.06,o[3]-0.08,0.04,fc-fw/4,y+o[3]/2,ZB,M.glass);box(g,fw/2-0.06,o[3]-0.08,0.04,fc+fw/4,y+o[3]/2,ZB,M.glass);
+        [o[0]+0.03,fc,o[1]-0.03].forEach(function(xx){box(g,0.06,o[3],0.1,xx,y+o[3]/2,ZB,M.wood);});box(g,fw,0.06,0.1,fc,y+o[3],ZB,M.wood);}
+      else box(g,0.9,2.2,0.05,(o[0]+o[1])/2,y+1.1,ZB+0.02,M.dark);
+      x=o[1];});wz(ZB,x,W);
+    [8.4,8.9,9.4,9.9,10.4].forEach(function(xx){box(g,0.05,1.25,0.09,xx,y+1.675,ZB,mat(0x2b2b2b));});box(g,2.05,0.05,0.25,9.4,y+1.05,ZB,mat(0x2b2b2b));})();   // kitchen: 2 m window, 4 vertical panes
+  wx(0,1.5,H);wx(W,1.5,H);   // east wall = neighbour: no window
+  wz(H,0,1.2);wz(H,2.8,xDoor1);wz(H,1.2,2.8,FW-2.3,2.3);frenchDoor(H,1.2,2.8,2.3);   // salon -> balcony 1
+  // chambre 2: window onto the external corridor, 1.0 x 1.2 (x 9.1-10.1, sill 1.0), 2 casement leaves opening inward
+  wz(H,xDoor2,9.1);wz(H,10.1,W);wz(H,9.1,10.1,1.0,0);wz(H,9.1,10.1,FW-2.2,2.2);
+  // aluminium window (anthracite), double glazing with tinted "fumé" glass + motorised aluminium roller shutter outside
+  var alu=mat(0x3a3d40),fume=new THREE.MeshLambertMaterial({color:0x9fb6c4,transparent:true,opacity:0.6});
+  box(g,1.06,0.05,0.25,9.6,y+1.0,H,alu);
+  [[9.1,1],[10.1,-1]].forEach(function(p){var pv=new THREE.Group();pv.position.set(p[0],y+1.0,H-0.08);
+    box(pv,0.5,1.2,0.03,p[1]*0.25,0.6,0,fume);box(pv,0.5,0.06,0.07,p[1]*0.25,1.17,0,alu);box(pv,0.5,0.06,0.07,p[1]*0.25,0.03,0,alu);
+    box(pv,0.06,1.2,0.07,p[1]*0.47,0.6,0,alu);box(pv,0.06,1.2,0.07,p[1]*0.03,0.6,0,alu);pv.rotation.y=p[1]*1.1;g.add(pv);});
+  box(g,1.1,0.22,0.22,9.6,y+2.31,H+0.12,alu);                                            // shutter box (caisson) with the motor
+  box(g,0.04,1.2,0.04,9.07,y+1.6,H+0.1,alu);box(g,0.04,1.2,0.04,10.13,y+1.6,H+0.1,alu);  // side rails
+  for(var k=0;k<9;k++)box(g,1.02,0.05,0.02,9.6,y+2.17-k*0.055,H+0.1,mat(0x5a5e62));        // shutter half lowered
+  label(g,'Alu + verre réfléchissant','volet roulant motorisé',9.6,y+2.75,H+0.4,1.8);
+  // pergola on balcony 1 (x 0-4.1, z 9.5-13.5): 4 posts + slats, plants
+  [[0.25,13.3],[3.85,13.3]].forEach(function(p){box(g,0.12,2.5,0.12,p[0],y+1.25,p[1],MO.black);});
+  box(g,3.8,0.12,0.12,2.05,y+2.5,13.3,MO.black);box(g,3.8,0.12,0.12,2.05,y+2.5,9.65,MO.black);
+  for(var k=0;k<12;k++)box(g,0.18,0.03,3.7,0.35+k*0.31,y+2.6,11.5,MO.black);
+  [[0.4,13.7],[3.7,13.7],[0.4,10.0]].forEach(function(p){box(g,0.45,0.5,0.45,p[0],y+0.25,p[1],M.plant);});
+  box(g,0.9,0.45,0.9,2.05,y+0.4,11.6,MO.quartz);wz(H,xDoor1,xDoor2,FW-2.2,2.2);
+  [[xDoor1,1],[xDoor2,-1]].forEach(function(p){var pv=new THREE.Group();pv.position.set(p[0],y,H-0.08);
+    var lf=box(pv,(xDoor2-xDoor1)/2,2.2,0.05,p[1]*(xDoor2-xDoor1)/4,1.1,0,M.dark);pv.rotation.y=p[1]*1.1;g.add(pv);});
+  // window of the top-right room onto balcony 2 (z 0, x 9.5-11)
+  // interior walls
+  wx(xC1,1.5,2.9);wx(xC1,3.7,4.6);wx(xC1,2.9,3.7,FW-2.1,2.1);   // chambre parents east wall (z 0-2.5 = patio side); WC 1 door z 3.6-4.4; chambre door z 4.6-5.5
+  wx(xWC,1.5,4.0);   // merged: no middle wall, chambre 1 side closed                     // chambre 1 / WC 1 + hall (WC 1 opens into chambre 1 at z 0-1.0; chambre 1 door z 4.4-5.2)
+  // WC back wall on line A (z 2.5) facing the patio, with the 2 WC windows (60 x 60, sill 1.6)
+  wz(1.5,xC1,4.0);wz(1.5,4.6,6.2);wz(1.5,6.8,xR);   // porte-à-faux 1.0 m beyond line A
+  [[4.0,4.6],[6.2,6.8]].forEach(function(w){wz(1.5,w[0],w[1],1.6,0);wz(1.5,w[0],w[1],FW-2.2,2.2);box(g,0.6,0.6,0.05,(w[0]+w[1])/2,y+1.9,1.5,M.glass);});
+  function leaf(px,pz,len,dir,rot){var pv=new THREE.Group();pv.position.set(px,y,pz);
+    box(pv,dir==='x'?len:0.05,2.1,dir==='x'?0.05:len,dir==='x'?len/2:0,1.05,dir==='x'?0:len/2,M.dark);pv.rotation.y=rot;g.add(pv);}
+  wz(4.0,xC1,6.6);wz(4.0,7.4,xR);wz(4.0,6.6,7.4,FW-2.1,2.1);leaf(6.6,4.0,0.8,'x',1.2);   // WC front wall z 4.5, WC 2 door x 6.6-7.4 onto the 1 m passage
+  // kitchen corner cut at 45° (pan coupé, legs 0.8 m) with the 0.9 m kitchen door on the diagonal
+  wx(xR,zWC,4.7);
+  (function(){var x1=xR,z1=4.7,dx=0.8,dz=0.8,Ld=Math.hypot(dx,dz),ux=dx/Ld,uz=dz/Ld,side=(Ld-0.9)/2;
+    function dseg(a,b,h,y0){var m=new THREE.Mesh(new THREE.BoxGeometry(b-a,h,Tk),M.wall);var c=(a+b)/2;
+      m.position.set(x1+ux*c,y+y0+h/2,z1+uz*c);m.rotation.y=-Math.PI/4;g.add(m);}
+    dseg(0,side,FW,0);dseg(Ld-side,Ld,FW,0);dseg(side,Ld-side,FW-2.1,2.1);
+    var pv=new THREE.Group();pv.position.set(x1+ux*side,y,z1+uz*side);
+    box(pv,0.82,2.02,0.03,0.45,1.05,0,M.glass);box(pv,0.9,0.05,0.06,0.45,2.08,0,MO.black);box(pv,0.9,0.05,0.06,0.45,0.03,0,MO.black);box(pv,0.05,2.1,0.06,0.03,1.05,0,MO.black);box(pv,0.05,2.1,0.06,0.87,1.05,0,MO.black);pv.rotation.y=-Math.PI/4+1.2;g.add(pv);})();
+  wx(xR,1.5,zWC);                        // WC 2 / room top-right
+  wz(zR,xR+0.8,W);         // room top-right / chambre 2
+  wz(zC1,0,xC1);                       // chambre 1 / salon (solid part, chambre 1 only)
+  // decorative partition hall / salon (x 3.8-6.35): fluted glass in black steel frame + warm LED
+  (function(){var x1=xC1+0.08,x2=xG2,len=x2-x1,cx=(x1+x2)/2,steel=mat(0x2b2b2b),
+    led=new THREE.MeshBasicMaterial({color:0xffd27a}),
+    gl=new THREE.MeshLambertMaterial({color:0xcfe3ea,transparent:true,opacity:0.45});
+    box(g,len,0.35,0.3,cx,y+0.175,zC1,mat(0xe9e2d4));                 // plinth / bench
+    box(g,len-0.06,0.03,0.04,cx,y+0.36,zC1+0.13,led);                 // LED under-glow line
+    box(g,len,2.05,0.03,cx,y+0.35+1.025,zC1,gl);                      // fluted glass
+    for(var i=0;i<=Math.round(len/0.42);i++){var xx=x1+i*len/Math.round(len/0.42);
+      box(g,0.04,2.05,0.06,xx,y+0.35+1.025,zC1,steel);}               // steel mullions
+    box(g,len,0.08,0.08,cx,y+2.44,zC1,steel);                         // top rail
+    box(g,len,FW-2.48,Tk,cx,y+2.48+(FW-2.48)/2,zC1,M.wall);           // bulkhead above
+    box(g,len-0.1,0.03,0.05,cx,y+2.46,zC1+0.07,led);                  // LED strip under bulkhead
+    [0.25,0.5,0.75].forEach(function(f){box(g,0.12,0.12,0.12,x1+len*f,y+0.42,zC1,mat(0x8fae6a));});   // small plants on the bench
+  })();
+  wx(xC2,6.4,H);   // chambre 2 door z 5.5-6.4                      // séjour / chambre 2 (door z 4.5-5.45)
+  // wardrobes, beds, table, sofa, WCs
+  box(g,2.7,2.4,0.6,1.45,y+1.2,zC1-0.38,MO.lacq);
+  box(g,2.7,2.4,0.6,W-1.45,y+1.2,zR+0.38,MO.lacq);
+  (function(){var pv=new THREE.Group();bed(pv,0,0,1.8,2.0,0);box(pv,1.7,0.02,1.9,0,0.06,0,MO.coolLed);pv.rotation.y=Math.PI/2;pv.position.set(1.05,y,3.0);g.add(pv);})();
+  box(g,0.05,1.3,3.0,0.05,y+0.95,3.0,MO.anth);box(g,0.03,0.03,2.9,0.09,y+1.62,3.0,ledM);   // 3D/dark panel headboard + LED   // master bed, headboard on the west wall
+  box(g,0.45,0.25,0.4,0.28,y+0.45,1.8,MO.black);box(g,0.45,0.25,0.4,0.28,y+0.45,4.2,MO.black);   // bedside tables
+  // parents balcony: 2.2 wide x 1.0 deep, cantilever from the facade z 1.5 (z 0.5-1.5), no columns
+  box(g,1.5,0.2,1.0,0.75,y-0.1,1.0,mat(0xd8d2c2));   // 1.5 x 1.0 = same width as the RDC outdoor bathroom below (x 0-1.5)
+  box(g,1.5,1.0,0.05,0.75,y+0.5,0.53,M.rail);box(g,0.05,1.0,1.0,1.47,y+0.5,1.0,M.rail);
+  for(var k=0;k<4;k++)box(g,0.04,1.8,0.06,0.05,y+0.9,1.4-k*0.27,MO.black);               // claustra on the west side (neighbour)
+  box(g,0.35,0.45,0.35,1.2,y+0.22,0.75,M.plant);
+  // kitchen (ex "Pièce ?"): L counter along back wall + east wall, small island toward the hall
+  box(g,2.3,0.86,0.6,8.85,y+0.43,1.88,MO.anth);box(g,0.6,0.86,1.7,W-0.38,y+0.43,2.65,MO.anth);
+  box(g,2.3,0.04,0.62,8.85,y+0.88,1.88,MO.quartz);box(g,0.62,0.04,1.7,W-0.38,y+0.88,2.65,MO.quartz);
+  box(g,2.3,0.15,0.02,8.85,y+0.975,1.59,MO.marble);box(g,0.02,0.6,1.7,W-0.09,y+1.2,2.65,MO.marble);   // quartz/marble backsplash
+  box(g,0.35,0.7,1.7,W-0.25,y+1.85,2.65,MO.anth);
+  box(g,0.04,0.02,1.6,W-0.42,y+1.49,2.65,ledM);   // LED under the upper cabinets   // upper cabinets
+  box(g,0.36,FW,0.36,9.7,y+FW/2,2.5,MO.quartz);   // kitchen column (9.7,2.5) clad in quartz = head of the island
+  box(g,1.5,0.88,0.8,10.65,y+0.44,3.9,MO.anth);box(g,1.7,0.06,1.0,10.65,y+0.91,3.9,MO.quartz);box(g,0.06,0.9,1.0,11.5,y+0.45,3.9,MO.quartz);   // island, waterfall quartz
+  [10.15,10.65,11.15].forEach(function(x){box(g,0.03,0.5,0.03,x,y+2.65,3.9,MO.black);box(g,0.22,0.22,0.22,x,y+2.3,3.9,MO.black);box(g,0.16,0.02,0.16,x,y+2.18,3.9,MO.coolLed);});   // black pendants over the island    // island
+  box(g,0.7,2.0,0.65,W-0.4,y+1.0,3.85,MO.grey);                                                // fridge
+  bed(g,10.75,7.6,1.6,2.0,y);box(g,1.5,0.02,1.9,10.75,y+0.06,7.6,MO.coolLed);box(g,2.6,1.4,0.04,10.75,y+1.0,zR+0.72,MO.grey);   // floating bed + headboard panel
+  box(g,0.9,0.05,1.9,7.75,y+0.74,7.5,MO.marble);box(g,0.5,0.7,0.12,7.75,y+0.36,6.9,MO.black);box(g,0.5,0.7,0.12,7.75,y+0.36,8.1,MO.black);   // marble table on black legs
+  [6.9,7.5,8.1].forEach(function(z){box(g,0.42,0.45,0.42,7.2,y+0.225,z,MO.grey);box(g,0.42,0.45,0.42,8.3,y+0.225,z,MO.grey);});
+  // built-in dokkana (L): west wall + chambre 1 wall, with cushions
+  // modern L sofa (light grey), floating marble TV wall on the west wall with LED, black coffee table
+  box(g,0.95,0.42,2.8,3.2,y+0.21,7.4,MO.grey);box(g,0.2,0.4,2.8,3.6,y+0.62,7.4,MO.grey);
+  box(g,2.0,0.42,0.95,2.6,y+0.21,6.3,MO.grey);box(g,2.0,0.4,0.2,2.6,y+0.62,5.92,MO.grey);
+  box(g,0.04,2.6,3.4,0.1,y+1.3,7.4,MO.marble);for(var k=0;k<6;k++)box(g,0.045,0.02,3.3,0.1,y+0.4+k*0.42,7.4,MO.vein);
+  box(g,0.03,0.03,3.3,0.14,y+2.62,7.4,ledM);box(g,0.06,0.75,1.3,0.15,y+1.5,7.4,MO.black);   // TV
+  box(g,0.4,0.3,2.2,0.32,y+0.5,7.4,MO.anth);box(g,0.03,0.02,2.1,0.53,y+0.34,7.4,ledM);   // floating console + LED
+  box(g,1.1,0.32,0.7,1.85,y+0.16,7.5,MO.black);                                          // low table
+  // 6. lit niches in the salon wall (above the dokkana)
+  [1.6,2.1].forEach(function(yy){box(g,2.2,0.04,0.25,2.0,y+yy,zC1+0.2,MO.oak);box(g,2.1,0.01,0.02,2.0,y+yy-0.025,zC1+0.3,ledM);});   // floating oak shelves with LED
+  // 1. skifa: wooden claustra screen facing the entrance (x 3.8-5.8, z 8.3), bench + LED
+  for(var k=0;k<17;k++)box(g,0.03,2.2,0.08,4.2+k*0.125,y+1.1,8.3,MO.black);
+  box(g,2.05,0.04,0.1,5.2,y+2.22,8.3,MO.black);box(g,2.0,0.03,0.04,5.2,y+2.18,8.38,ledM);
+  box(g,1.2,0.3,0.35,5.2,y+0.45,8.55,MO.oak);box(g,1.1,0.02,0.03,5.2,y+0.29,8.68,ledM);   // floating oak bench
+  // 7. wooden beams over the dining area + 8. copper lantern
+  // suspended ceiling (faux plafond) over salon + dining with a hidden LED cove all around, spots
+  // perimeter band (caisson) 0.5 m wide, LED cove on its inner edge, spots in the band
+  var fy=y+FW-0.3;box(g,8.4,0.08,0.5,4.2,fy,5.85,MO.lacq);box(g,8.4,0.08,0.5,4.2,fy,9.25,MO.lacq);box(g,0.5,0.08,2.9,0.25,fy,7.55,MO.lacq);box(g,0.5,0.08,2.9,8.15,fy,7.55,MO.lacq);
+  box(g,7.4,0.02,0.04,4.2,fy+0.05,6.12,ledM);box(g,7.4,0.02,0.04,4.2,fy+0.05,8.98,ledM);box(g,0.04,0.02,2.9,0.52,fy+0.05,7.55,ledM);box(g,0.04,0.02,2.9,7.88,fy+0.05,7.55,ledM);
+  [1.2,2.6,4.0,5.4,6.8].forEach(function(x){[5.85,9.25].forEach(function(z){box(g,0.08,0.01,0.08,x,fy-0.045,z,MO.coolLed);});});
+  // linear black pendant over the marble table
+  box(g,0.01,0.45,0.01,7.75,y+2.45,6.9,MO.black);box(g,0.01,0.45,0.01,7.75,y+2.45,8.1,MO.black);
+  box(g,0.08,0.06,1.6,7.75,y+2.2,7.5,MO.black);box(g,0.05,0.01,1.55,7.75,y+2.165,7.5,MO.coolLed);
+  var pl=new THREE.PointLight(0xfff0d0,0.5,5);pl.position.set(7.75,y+2.0,7.5);g.add(pl);
+  // hall: one black linear pendant
+  box(g,0.01,0.45,0.01,5.8,y+2.65,4.75,MO.black);box(g,1.2,0.05,0.08,5.8,y+2.4,4.75,MO.black);box(g,1.15,0.01,0.05,5.8,y+2.37,4.75,MO.coolLed);
+  box(g,0.4,0.4,0.6,3.95,y+0.2,1.85,M.white);box(g,0.4,0.4,0.6,7.0,y+0.2,1.85,M.white);
+  // WC 1 = salle d'eau of chambre 1: walk-in shower, vanity, sliding door
+  box(g,0.9,0.05,0.9,4.55,y+0.03,3.45,M.water);box(g,0.04,2.0,0.9,4.08,y+1.0,3.45,M.glass);
+  box(g,0.45,0.5,0.6,4.75,y+0.6,1.85,MO.anth);box(g,0.47,0.04,0.62,4.75,y+0.87,1.85,MO.quartz);   // floating vanity
+  box(g,0.03,0.8,0.6,4.96,y+1.5,1.85,M.glass);box(g,0.01,0.82,0.62,4.98,y+1.5,1.85,MO.coolLed);    // LED back-lit mirror
+  box(g,0.04,0.2,0.04,4.92,y+1.0,1.85,MO.black);box(g,0.03,1.1,0.03,4.93,y+1.6,3.45,MO.black);    // black taps + shower bar
+  box(g,0.04,2.1,0.85,3.5,y+1.05,2.45,M.dark);   // sliding door (open)
+  // WC 2 = guests: basin
+  box(g,0.5,0.85,0.4,5.8,y+0.43,1.75,M.white);
+  // slab, roof, balconies, external corridor (kept from the final model)
+  box(g,W,0.25,H-1.5,W/2,y-0.13,(H+1.5)/2,mat(0xb4b2a9));   // slab z 1.5-9.5
+  roofs1.push(box(g,W,0.22,H-1.5,W/2,y+FW+0.11,(H+1.5)/2,mat(0xcfc7b3)));   // roof slab (no light well)
+  // chambre 2: tube solaire Ø 35 cm (dome on the roof, diffuser in the ceiling)
+  var tdome=new THREE.Mesh(new THREE.SphereGeometry(0.22,16,8,0,Math.PI*2,0,Math.PI/2),new THREE.MeshLambertMaterial({color:0xcfe8f2,transparent:true,opacity:0.6}));
+  tdome.position.set(11.2,y+FW+0.24,7.2);g.add(tdome);roofs1.push(tdome);
+  var tdif=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,0.02,24),MO.coolLed);tdif.position.set(11.2,y+FW-0.02,7.2);g.add(tdif);
+  label(g,'Tube solaire','Ø 35 cm',11.2,y+FW+0.7,7.2,1.6);   // patch of daylight on the hall floor
+  box(g,5,0.25,5.5,10.2,y-0.13,-1.25,mat(0xd8d2c2));   // balcony 2 now 5.0 x 5.5 (to the facade)box(g,4.1,0.25,5.5,2.05,y-0.13,12.25,mat(0xd8d2c2));
+  var CD=SALWA?2.0:3.0;   // external corridor depth: 2 m (Hamza v3 / final model); the old approved-stairs tower keeps its 3 m corridor
+  box(g,6.2,0.25,CD,7.2,y-0.13,9.5+CD/2,mat(0xe4ddcb));
+  function rx(x,z1,z2){box(g,0.05,1.0,z2-z1,x,y+0.5,(z1+z2)/2,M.rail);}   // guard rail 1.0 m (norm)
+  function rz(z,x1,x2){box(g,x2-x1,1.0,0.05,(x1+x2)/2,y+0.5,z,M.rail);}
+  rz(-4,7.7,12.7);rx(7.7,-4,1.5);rx(12.7,-4,1.5);
+  rz(15,0,4.1);rx(0,H,15);rx(4.1,9.5+CD,15);rz(9.5+CD,4.1,10.3);
+  if(SALWA)box(g,0.08,2.0,0.9,X0,y+1.0,11.0,M.wood);else{box(g,0.08,2.0,0.85,X0,y+1.0,12.05,M.wood);box(g,0.08,2.0,0.9,X0,y+1.0,10.2,M.wood);}   // door(s) corridor -> tower
   var L=y+1.7;
-  label(g,'14. Balcony 2','5 × 4',10.2,L,-2.1,2.6);label(g,'15. Balcony 1','4.1 × 3.0 + 0.6 strip',1.9,L,13.5,2.6);
-  label(g,'16. External Corridor',SALWA?'width 2 m':'width 3 m',7.2,L,SALWA?10.5:11.0,2.2);label(g,'13. Stairwell','from ground',XC,L,11.2,2.0);
+  label(g,'Chambre 1 (parents)','3.6 × 4.0',1.8,L,3.4,2.6);label(g,'Balcon parents','1.5 × 1.0 · porte-à-faux',0.75,L,0.6,2.0);
+  label(g,'WC 1','1.4 × 2.5',4.3,L,2.75,1.6);
+  label(g,'WC 2','2.6 × 2.5',6.3,L,2.75,1.6);
+  label(g,'Cuisine','5.1 × 4.0',10.15,L,2.6,2.4);
+  label(g,'Passage 1.5 m','',5.8,L,4.75,1.6);label(g,'Porte WC 2','0.8 m',7.0,y+2.5,4.2,1.4);label(g,'Façade arrière z 1.5','porte-à-faux 1.0 m',5.8,L,0.75,2.2);label(g,'Porte cuisine 45°','0.9 m',8.05,y+2.5,5.05,1.6);label(g,'Skifa','claustra',5.2,L+0.7,8.3,1.6);label(g,'Pergola','',2.05,L+1.2,11.5,1.6);label(g,'Glass + LED','2.5 m',5.1,y+2.75,zC1+0.2,1.8);
+  label(g,'Salon + salle à manger','8.8 × 4.0 · style moderne',4.4,L,7.3,3.4);
+  label(g,'Chambre 2','3.9 × 4.0',10.75,L,6.9,2.4);
+  label(g,'14. Balcony 2','5 × 5.5',10.2,L,-1.3,2.6);label(g,'15. Balcony 1','4.1 × 5.5',1.9,L,13.5,2.6);
+  label(g,'16. External Corridor',SALWA?'width 2 m':'width 3 m',7.2,L,9.5+CD/2,2.2);label(g,'13. Stairwell','from ground',XC,L,11.2,2.0);
 }
 var plotM=[mat(0xb4b2a9),mat(0xcfd9b8)];box(scene,16.2,0.3,24,6.35,-0.15,4.0,plotM[0]);   // plot: x -1.75..14.45, z -8..16 (8 m backyard)
 box(scene,12.7,0.06,8,6.35,0.03,-4.0,plotM[1]);   // backyard ground (z -8..0)
